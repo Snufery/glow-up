@@ -1,26 +1,187 @@
 @import "tailwindcss";
 
+/* ═══════════════════════════════════════════
+   GLOW UP — Design System Tokens
+   Green: #7AB648  |  Teal: #2BBCB3
+   ═══════════════════════════════════════════ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --green: #7AB648;
+  --green-dark: #5E9A2F;
+  --teal: #2BBCB3;
+  --teal-dark: #1F9A92;
+  --bg-primary: #0B1A2B;
+  --bg-secondary: #0F2236;
+  --bg-card: #122A40;
+  --bg-card-hover: #163350;
+  --text-primary: #F0F4F8;
+  --text-secondary: #8EA4BC;
+  --text-muted: #5A7A99;
+  --border: rgba(122, 182, 72, 0.12);
+  --border-hover: rgba(43, 188, 179, 0.3);
+  --glow-green: rgba(122, 182, 72, 0.4);
+  --glow-teal: rgba(43, 188, 179, 0.4);
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --radius-xl: 32px;
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --color-green: #7AB648;
+  --color-teal: #2BBCB3;
+  --color-bg-primary: #0B1A2B;
+  --color-bg-secondary: #0F2236;
+  --color-bg-card: #122A40;
+  --color-text-primary: #F0F4F8;
+  --color-text-secondary: #8EA4BC;
+  --color-text-muted: #5A7A99;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body), sans-serif;
 }
+
+/* ═══════════ Gradient Text ═══════════ */
+
+.text-gradient {
+  background: linear-gradient(135deg, var(--green), var(--teal));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ═══════════ Gradient Backgrounds ═══════════ */
+
+.bg-gradient-brand {
+  background: linear-gradient(135deg, var(--green), var(--teal));
+}
+
+.bg-gradient-brand-subtle {
+  background: linear-gradient(160deg, rgba(122, 182, 72, 0.06), rgba(43, 188, 179, 0.04));
+}
+
+/* ═══════════ Glow Shadows ═══════════ */
+
+.glow-green {
+  box-shadow: 0 4px 20px rgba(122, 182, 72, 0.3);
+}
+
+.glow-green-hover:hover {
+  box-shadow: 0 8px 30px rgba(122, 182, 72, 0.45);
+}
+
+/* ═══════════ Card Utility ═══════════ */
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  transition: var(--transition);
+}
+
+.card:hover {
+  border-color: var(--border-hover);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* ═══════════ Animations ═══════════ */
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes glowPulse {
+  0% { opacity: 0.15; transform: scale(1); }
+  100% { opacity: 0.3; transform: scale(1.15); }
+}
+
+@keyframes ringRotate {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes orbitDot {
+  to { transform: rotate(360deg) translateX(var(--orbit-radius)) rotate(-360deg); }
+}
+
+@keyframes whatsappBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.animate-fade-in-up-delay {
+  animation: fadeInUp 0.8s ease-out 0.2s both;
+}
+
+/* ═══════════ Reveal on Scroll ═══════════ */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ═══════════ Service List Dot ═══════════ */
+
+.service-dot::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 7px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--green), var(--teal));
+}
+
+/* ═══════════ Form Inputs ═══════════ */
+
+.form-input {
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-family: var(--font-body), sans-serif;
+  font-size: 0.92rem;
+  transition: var(--transition);
+  outline: none;
+}
+
+.form-input::placeholder {
+  color: var(--text-muted);
+}
+
+.form-input:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(43, 188, 179, 0.1);
+}
+
+/* ═══════════ Custom Scrollbar ═══════════ */
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--bg-card); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
