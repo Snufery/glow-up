@@ -55,12 +55,26 @@ export default function Navbar() {
         <ul className="hidden md:flex items-center gap-2">
           {navLinks.map((link) => (
             <li key={link.href}>
-              <a
-                href={link.href}
-                className="px-4 py-2 text-sm font-medium text-[var(--text-secondary)] rounded-lg transition-all hover:text-[var(--text-primary)] hover:bg-[rgba(122,182,72,0.08)]"
-              >
-                {link.label}
-              </a>
+              {link.href === "#catalogo" ? (
+                <a
+                  href={link.href}
+                  className="px-4 py-2 text-sm font-semibold text-[#92bc51] rounded-lg border border-[#92bc51]/40 transition-all hover:bg-[#92bc51]/10 hover:border-[#92bc51]/70 hover:shadow-[0_0_12px_rgba(146,188,81,0.2)] flex items-center gap-1.5"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+                    <line x1="3" y1="6" x2="21" y2="6"/>
+                    <path d="M16 10a4 4 0 01-8 0"/>
+                  </svg>
+                  {link.label}
+                </a>
+              ) : (
+                <a
+                  href={link.href}
+                  className="px-4 py-2 text-sm font-medium text-[var(--text-secondary)] rounded-lg transition-all hover:text-[var(--text-primary)] hover:bg-[rgba(122,182,72,0.08)]"
+                >
+                  {link.label}
+                </a>
+              )}
             </li>
           ))}
           <li>
@@ -105,8 +119,19 @@ export default function Navbar() {
               key={link.href}
               href={link.href}
               onClick={() => setMenuOpen(false)}
-              className="px-4 py-2 text-sm font-medium text-[var(--text-secondary)] rounded-lg transition-all hover:text-[var(--text-primary)]"
+              className={
+                link.href === "#catalogo"
+                  ? "px-4 py-2 text-sm font-semibold text-[#92bc51] rounded-lg border border-[#92bc51]/40 transition-all hover:bg-[#92bc51]/10 flex items-center gap-1.5"
+                  : "px-4 py-2 text-sm font-medium text-[var(--text-secondary)] rounded-lg transition-all hover:text-[var(--text-primary)]"
+              }
             >
+              {link.href === "#catalogo" && (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+                  <line x1="3" y1="6" x2="21" y2="6"/>
+                  <path d="M16 10a4 4 0 01-8 0"/>
+                </svg>
+              )}
               {link.label}
             </a>
           ))}
