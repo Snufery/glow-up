@@ -32,15 +32,23 @@ export default function Navbar() {
       }`}
     >
       <div className="max-w-[1200px] mx-auto px-6 flex items-center justify-between">
-        <a href="#hero">
+        <a href="#hero" className="flex items-center gap-3">
           <Image
             src="/logo.png"
             alt="Glow Up"
-            width={140}
-            height={44}
-            className="h-11 w-auto"
+            width={48}
+            height={48}
+            className="h-12 w-12 object-contain"
             priority
           />
+          <div className="hidden sm:flex flex-col leading-tight">
+            <span className="text-base font-bold text-white tracking-wide" style={{ fontFamily: 'var(--font-display)' }}>
+              Glow Up
+            </span>
+            <span className="text-[11px] font-medium text-[var(--teal)] tracking-widest uppercase">
+              Entornos Inteligentes
+            </span>
+          </div>
         </a>
 
         {/* Desktop links */}
