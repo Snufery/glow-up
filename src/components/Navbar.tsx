@@ -34,7 +34,7 @@ export default function Navbar() {
       <div className="max-w-[1200px] mx-auto px-6 flex items-center justify-between">
         <a href="#hero">
           <Image
-            src="/logo.jpg"
+            src="/logo.png"
             alt="Glow Up"
             width={140}
             height={44}
