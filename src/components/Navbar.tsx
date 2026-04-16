@@ -58,7 +58,7 @@ export default function Navbar() {
               {link.href === "#catalogo" ? (
                 <a
                   href={link.href}
-                  className="px-4 py-2 text-sm font-semibold text-[#92bc51] rounded-lg border border-[#92bc51]/40 transition-all hover:bg-[#92bc51]/10 hover:border-[#92bc51]/70 hover:shadow-[0_0_12px_rgba(146,188,81,0.2)] flex items-center gap-1.5"
+                  className="px-4 py-2 text-sm font-semibold text-[#92bc51] rounded-lg border border-[#92bc51]/40 transition-all hover:bg-[#92bc51]/10 hover:border-[#92bc51]/70 hover:shadow-[0_0_12px_rgba(146,188,81,0.2)] flex items-center gap-1.5 animate-[catalogPulse_2.5s_ease-in-out_infinite]"
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
