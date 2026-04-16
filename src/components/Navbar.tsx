@@ -43,9 +43,9 @@ export default function Navbar() {
           />
           <div className="hidden sm:flex flex-col leading-tight">
             <span className="text-base font-bold tracking-wide" style={{ fontFamily: 'var(--font-display)' }}>
-              <span className="text-[#7AB648]">Glow</span> <span className="text-[#2BBCB3]">Up</span>
+              <span className="text-[#92bc51]">Glow</span> <span className="text-[#048f8c]">Up</span>
             </span>
-            <span className="text-[11px] font-medium text-[var(--teal)] tracking-widest uppercase">
+            <span className="text-[11px] font-medium text-white tracking-widest uppercase">
               Entornos Inteligentes
             </span>
           </div>
