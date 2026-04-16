@@ -87,9 +87,21 @@ export default function Navbar() {
           </li>
         </ul>
 
-        {/* Mobile toggle */}
+        {/* Mobile: Catalogo + toggle */}
+        <div className="md:hidden flex items-center gap-3">
+          <a
+            href="#catalogo"
+            className="px-3 py-1.5 text-xs font-semibold text-[#92bc51] rounded-lg border border-[#92bc51]/40 flex items-center gap-1.5 animate-[catalogPulse_2.5s_ease-in-out_infinite]"
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <path d="M16 10a4 4 0 01-8 0"/>
+            </svg>
+            Catalogo
+          </a>
         <button
-          className="md:hidden flex flex-col gap-[5px] p-1.5"
+          className="flex flex-col gap-[5px] p-1.5"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Menu"
         >
@@ -109,6 +121,7 @@ export default function Navbar() {
             }`}
           />
         </button>
+        </div>
       </div>
 
       {/* Mobile menu */}
