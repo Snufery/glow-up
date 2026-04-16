@@ -42,8 +42,8 @@ export default function Navbar() {
             priority
           />
           <div className="hidden sm:flex flex-col leading-tight">
-            <span className="text-base font-bold text-white tracking-wide" style={{ fontFamily: 'var(--font-display)' }}>
-              Glow Up
+            <span className="text-base font-bold tracking-wide" style={{ fontFamily: 'var(--font-display)' }}>
+              <span className="text-[#7AB648]">Glow</span> <span className="text-[#2BBCB3]">Up</span>
             </span>
             <span className="text-[11px] font-medium text-[var(--teal)] tracking-widest uppercase">
               Entornos Inteligentes

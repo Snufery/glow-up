@@ -9,7 +9,7 @@ export default function Footer() {
             <div className="flex items-center gap-3 mb-4">
               <Image src="/logo.png" alt="Glow Up" width={48} height={48} className="h-12 w-12 object-contain" />
               <div className="flex flex-col leading-tight">
-                <span className="text-base font-bold text-white tracking-wide">Glow Up</span>
+                <span className="text-base font-bold tracking-wide"><span className="text-[#7AB648]">Glow</span> <span className="text-[#2BBCB3]">Up</span></span>
                 <span className="text-[11px] font-medium text-[var(--teal)] tracking-widest uppercase">Entornos Inteligentes</span>
               </div>
             </div>
