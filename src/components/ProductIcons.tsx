@@ -18,12 +18,44 @@ export const productIcons: Record<string, React.ReactNode> = {
       <rect x="22" y="44" width="20" height="12" rx="4" stroke="var(--teal)" strokeWidth="2" />
     </svg>
   ),
-  "interruptor-inteligente-wifi": (
+  "interruptor-1-canal": (
     <svg viewBox="0 0 64 64" fill="none">
       <rect x="12" y="12" width="40" height="40" rx="8" stroke="var(--green)" strokeWidth="2" />
-      <circle cx="26" cy="32" r="4" stroke="var(--teal)" strokeWidth="2" />
-      <circle cx="38" cy="32" r="4" stroke="var(--teal)" strokeWidth="2" />
-      <path d="M30 32h4" stroke="var(--teal)" strokeWidth="2" />
+      <circle cx="32" cy="32" r="5" stroke="var(--teal)" strokeWidth="2" />
+      <circle cx="32" cy="32" r="2" fill="var(--teal)" />
+    </svg>
+  ),
+  "interruptor-2-canales": (
+    <svg viewBox="0 0 64 64" fill="none">
+      <rect x="12" y="12" width="40" height="40" rx="8" stroke="var(--green)" strokeWidth="2" />
+      <circle cx="26" cy="32" r="5" stroke="var(--teal)" strokeWidth="2" />
+      <circle cx="26" cy="32" r="2" fill="var(--teal)" />
+      <circle cx="38" cy="32" r="5" stroke="var(--teal)" strokeWidth="2" />
+      <circle cx="38" cy="32" r="2" fill="var(--teal)" />
+    </svg>
+  ),
+  "interruptor-3-canales": (
+    <svg viewBox="0 0 64 64" fill="none">
+      <rect x="12" y="12" width="40" height="40" rx="8" stroke="var(--green)" strokeWidth="2" />
+      <circle cx="22" cy="32" r="4.5" stroke="var(--teal)" strokeWidth="2" />
+      <circle cx="22" cy="32" r="2" fill="var(--teal)" />
+      <circle cx="32" cy="32" r="4.5" stroke="var(--teal)" strokeWidth="2" />
+      <circle cx="32" cy="32" r="2" fill="var(--teal)" />
+      <circle cx="42" cy="32" r="4.5" stroke="var(--teal)" strokeWidth="2" />
+      <circle cx="42" cy="32" r="2" fill="var(--teal)" />
+    </svg>
+  ),
+  "interruptor-4-canales": (
+    <svg viewBox="0 0 64 64" fill="none">
+      <rect x="12" y="12" width="40" height="40" rx="8" stroke="var(--green)" strokeWidth="2" />
+      <circle cx="24" cy="26" r="4" stroke="var(--teal)" strokeWidth="2" />
+      <circle cx="24" cy="26" r="1.5" fill="var(--teal)" />
+      <circle cx="40" cy="26" r="4" stroke="var(--teal)" strokeWidth="2" />
+      <circle cx="40" cy="26" r="1.5" fill="var(--teal)" />
+      <circle cx="24" cy="38" r="4" stroke="var(--teal)" strokeWidth="2" />
+      <circle cx="24" cy="38" r="1.5" fill="var(--teal)" />
+      <circle cx="40" cy="38" r="4" stroke="var(--teal)" strokeWidth="2" />
+      <circle cx="40" cy="38" r="1.5" fill="var(--teal)" />
     </svg>
   ),
   "sensor-de-movimiento-pir": (

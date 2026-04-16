@@ -6,14 +6,22 @@ import { productIcons } from "./ProductIcons";
 
 export default function Catalog() {
   const [activeFilter, setActiveFilter] = useState("all");
+  const [selectedColors, setSelectedColors] = useState<Record<string, string>>({});
 
   const filtered = activeFilter === "all" ? products : products.filter((p) => p.category === activeFilter);
 
-  const scrollToContact = (productName: string) => {
+  const getSelectedColor = (productId: string) => selectedColors[productId] || "";
+
+  const setColor = (productId: string, colorId: string) => {
+    setSelectedColors((prev) => ({ ...prev, [productId]: colorId }));
+  };
+
+  const scrollToContact = (productName: string, colorLabel?: string) => {
     const servicio = document.getElementById("servicio") as HTMLSelectElement | null;
     const mensaje = document.getElementById("mensaje") as HTMLTextAreaElement | null;
     if (servicio) servicio.value = "producto";
-    if (mensaje) mensaje.value = `Me interesa el producto: ${productName}`;
+    const colorText = colorLabel ? ` en color ${colorLabel}` : "";
+    if (mensaje) mensaje.value = `Me interesa el producto: ${productName}${colorText}`;
     document.getElementById("contacto")?.scrollIntoView({ behavior: "smooth" });
   };
 
@@ -74,14 +82,46 @@ export default function Catalog() {
                   {product.category}
                 </span>
                 <h3 className="font-[var(--font-display)] text-base font-bold mt-2 mb-2">{product.name}</h3>
-                <p className="text-sm text-[var(--text-secondary)] leading-relaxed mb-5">{product.description}</p>
+                <p className="text-sm text-[var(--text-secondary)] leading-relaxed mb-4">{product.description}</p>
+
+                {/* Color variants */}
+                {product.colorVariants && product.colorVariants.length > 0 && (
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="text-xs text-[var(--text-muted)] font-medium">Color:</span>
+                    <div className="flex items-center gap-2">
+                      {product.colorVariants.map((variant) => (
+                        <button
+                          key={variant.id}
+                          onClick={() => setColor(product.id, variant.id)}
+                          title={variant.label}
+                          className={`w-7 h-7 rounded-full border-2 transition-all cursor-pointer ${
+                            getSelectedColor(product.id) === variant.id
+                              ? "border-[var(--green)] scale-110 shadow-[0_0_8px_rgba(122,182,72,0.4)]"
+                              : "border-[var(--border)] hover:border-[var(--text-muted)]"
+                          }`}
+                          style={{ backgroundColor: variant.hex }}
+                        />
+                      ))}
+                    </div>
+                    {getSelectedColor(product.id) && (
+                      <span className="text-xs text-[var(--text-secondary)]">
+                        {product.colorVariants.find((v) => v.id === getSelectedColor(product.id))?.label}
+                      </span>
+                    )}
+                  </div>
+                )}
 
                 <div className="flex items-center justify-between">
                   <span className="font-[var(--font-display)] text-xl font-bold text-gradient">
                     {product.priceFormatted}
                   </span>
                   <button
-                    onClick={() => scrollToContact(product.name)}
+                    onClick={() => {
+                      const selectedVariant = product.colorVariants?.find(
+                        (v) => v.id === getSelectedColor(product.id)
+                      );
+                      scrollToContact(product.name, selectedVariant?.label);
+                    }}
                     className="px-4 py-2 rounded-lg text-xs font-semibold text-white bg-gradient-brand glow-green transition-all hover:-translate-y-0.5 cursor-pointer"
                   >
                     Consultar

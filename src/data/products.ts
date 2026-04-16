@@ -1,3 +1,9 @@
+export interface ColorVariant {
+  id: string;
+  label: string;
+  hex: string;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -8,6 +14,7 @@ export interface Product {
   priceFormatted: string;
   badge?: string;
   features?: string[];
+  colorVariants?: ColorVariant[];
 }
 
 export const products: Product[] = [
@@ -62,19 +69,85 @@ export const products: Product[] = [
     ],
   },
   {
-    id: "4",
-    name: "Interruptor Inteligente WiFi",
-    slug: "interruptor-inteligente-wifi",
+    id: "4a",
+    name: "Interruptor Inteligente 1 Canal",
+    slug: "interruptor-1-canal",
     category: "control",
-    description: "Touch panel, control remoto, temporizador, compatible con asistentes de voz",
-    price: 55000,
-    priceFormatted: "$55.000",
+    description: "Panel tactil de vidrio, control por app y voz, compatible con Alexa y Google Home",
+    price: 68000,
+    priceFormatted: "$68.000",
     features: [
       "Panel tactil de vidrio templado",
       "Control remoto desde app",
+      "Compatible con Alexa y Google Home",
       "Temporizador y escenas",
-      "No requiere cable neutro",
       "Facil instalacion",
+    ],
+    colorVariants: [
+      { id: "blanco", label: "Blanco", hex: "#FFFFFF" },
+      { id: "negro", label: "Negro", hex: "#1A1A1A" },
+    ],
+  },
+  {
+    id: "4b",
+    name: "Interruptor Inteligente 2 Canales",
+    slug: "interruptor-2-canales",
+    category: "control",
+    description: "Controla 2 luces independientes desde un solo panel tactil inteligente",
+    price: 70000,
+    priceFormatted: "$70.000",
+    badge: "Popular",
+    features: [
+      "2 canales independientes",
+      "Panel tactil de vidrio templado",
+      "Control remoto desde app",
+      "Compatible con Alexa y Google Home",
+      "Temporizador y escenas",
+    ],
+    colorVariants: [
+      { id: "blanco", label: "Blanco", hex: "#FFFFFF" },
+      { id: "negro", label: "Negro", hex: "#1A1A1A" },
+    ],
+  },
+  {
+    id: "4c",
+    name: "Interruptor Inteligente 3 Canales",
+    slug: "interruptor-3-canales",
+    category: "control",
+    description: "Controla 3 luces o circuitos desde un elegante panel tactil de vidrio",
+    price: 75000,
+    priceFormatted: "$75.000",
+    features: [
+      "3 canales independientes",
+      "Panel tactil de vidrio templado",
+      "Control remoto desde app",
+      "Compatible con Alexa y Google Home",
+      "Temporizador y escenas",
+    ],
+    colorVariants: [
+      { id: "blanco", label: "Blanco", hex: "#FFFFFF" },
+      { id: "negro", label: "Negro", hex: "#1A1A1A" },
+    ],
+  },
+  {
+    id: "4d",
+    name: "Interruptor Inteligente 4 Canales",
+    slug: "interruptor-4-canales",
+    category: "control",
+    description: "Maximo control: 4 luces o circuitos desde un solo panel tactil inteligente",
+    price: 85000,
+    priceFormatted: "$85.000",
+    badge: "Nuevo",
+    features: [
+      "4 canales independientes",
+      "Panel tactil de vidrio templado",
+      "Control remoto desde app",
+      "Compatible con Alexa y Google Home",
+      "Temporizador y escenas",
+    ],
+    colorVariants: [
+      { id: "blanco", label: "Blanco", hex: "#FFFFFF" },
+      { id: "negro", label: "Negro", hex: "#1A1A1A" },
     ],
   },
   {
