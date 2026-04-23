@@ -78,7 +78,7 @@ export const products: Product[] = [
     description: "Panel tactil de vidrio, control por app y voz, compatible con Alexa y Google Home",
     price: 68000,
     priceFormatted: "$68.000",
-    image: "/images/productos/interruptor-1-canal-negro.webp",
+    image: "/images/productos/interruptor-1-canal-negro.jpg",
     features: [
       "Panel tactil de vidrio templado",
       "Control remoto desde app",
@@ -87,8 +87,8 @@ export const products: Product[] = [
       "Facil instalacion",
     ],
     colorVariants: [
-      { id: "blanco", label: "Blanco", hex: "#FFFFFF", image: "/images/productos/interruptor-1-canal-blanco.webp" },
-      { id: "negro", label: "Negro", hex: "#1A1A1A", image: "/images/productos/interruptor-1-canal-negro.webp" },
+      { id: "blanco", label: "Blanco", hex: "#FFFFFF", image: "/images/productos/interruptor-1-canal-blanco.jpg" },
+      { id: "negro", label: "Negro", hex: "#1A1A1A", image: "/images/productos/interruptor-1-canal-negro.jpg" },
     ],
   },
   {
