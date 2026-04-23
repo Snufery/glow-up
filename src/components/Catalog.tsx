@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { products, categories } from "@/data/products";
 import { productIcons } from "./ProductIcons";
 
@@ -71,10 +72,29 @@ export default function Catalog() {
                 </div>
               )}
 
-              <div className="h-[200px] flex items-center justify-center bg-[rgba(122,182,72,0.03)] border-b border-[var(--border)]">
-                <div className="w-20 h-20 opacity-70">
-                  {productIcons[product.slug] || productIcons["default"]}
-                </div>
+              <div className="h-[240px] flex items-center justify-center bg-white border-b border-[var(--border)] relative overflow-hidden">
+                {(() => {
+                  const selectedVariant = product.colorVariants?.find(
+                    (v) => v.id === getSelectedColor(product.id)
+                  );
+                  const displayImage = selectedVariant?.image || product.image;
+                  if (displayImage) {
+                    return (
+                      <Image
+                        src={displayImage}
+                        alt={product.name}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="object-contain p-6"
+                      />
+                    );
+                  }
+                  return (
+                    <div className="w-20 h-20 opacity-70">
+                      {productIcons[product.slug] || productIcons["default"]}
+                    </div>
+                  );
+                })()}
               </div>
 
               <div className="p-6">

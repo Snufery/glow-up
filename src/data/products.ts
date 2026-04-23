@@ -2,6 +2,7 @@ export interface ColorVariant {
   id: string;
   label: string;
   hex: string;
+  image?: string; // Ruta opcional a imagen especifica del color
 }
 
 export interface Product {
@@ -14,6 +15,7 @@ export interface Product {
   priceFormatted: string;
   badge?: string;
   features?: string[];
+  image?: string; // Ruta a imagen principal del producto
   colorVariants?: ColorVariant[];
 }
 
@@ -76,6 +78,7 @@ export const products: Product[] = [
     description: "Panel tactil de vidrio, control por app y voz, compatible con Alexa y Google Home",
     price: 68000,
     priceFormatted: "$68.000",
+    image: "/images/productos/interruptor-1-canal-negro.webp",
     features: [
       "Panel tactil de vidrio templado",
       "Control remoto desde app",
@@ -84,8 +87,8 @@ export const products: Product[] = [
       "Facil instalacion",
     ],
     colorVariants: [
-      { id: "blanco", label: "Blanco", hex: "#FFFFFF" },
-      { id: "negro", label: "Negro", hex: "#1A1A1A" },
+      { id: "blanco", label: "Blanco", hex: "#FFFFFF", image: "/images/productos/interruptor-1-canal-blanco.webp" },
+      { id: "negro", label: "Negro", hex: "#1A1A1A", image: "/images/productos/interruptor-1-canal-negro.webp" },
     ],
   },
   {
