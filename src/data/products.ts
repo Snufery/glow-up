@@ -1,8 +1,15 @@
+export interface ChannelOption {
+  channels: number;
+  price: number;
+  priceFormatted: string;
+}
+
 export interface ColorVariant {
   id: string;
   label: string;
   hex: string;
-  image?: string; // Ruta opcional a imagen especifica del color
+  image?: string;                    // imagen simple (productos normales)
+  images?: Record<number, string>;   // imagen por canal (interruptores): { 1: "...", 2: "...", etc }
 }
 
 export interface Product {
@@ -15,8 +22,9 @@ export interface Product {
   priceFormatted: string;
   badge?: string;
   features?: string[];
-  image?: string; // Ruta a imagen principal del producto
+  image?: string;
   colorVariants?: ColorVariant[];
+  channelOptions?: ChannelOption[];  // si existe, muestra selector de canales
 }
 
 export const products: Product[] = [
@@ -71,14 +79,14 @@ export const products: Product[] = [
     ],
   },
   {
-    id: "4a",
-    name: "Interruptor Inteligente 1 Canal",
-    slug: "interruptor-1-canal",
+    id: "4",
+    name: "Interruptor Inteligente WiFi",
+    slug: "interruptor-inteligente-wifi",
     category: "control",
-    description: "Panel tactil de vidrio, control por app y voz, compatible con Alexa y Google Home",
+    description: "Panel tactil de vidrio templado, control por app y voz, compatible con Alexa y Google Home",
     price: 68000,
     priceFormatted: "$68.000",
-    image: "/images/productos/interruptor-1-canal-negro.jpg",
+    badge: "Popular",
     features: [
       "Panel tactil de vidrio templado",
       "Control remoto desde app",
@@ -86,71 +94,35 @@ export const products: Product[] = [
       "Temporizador y escenas",
       "Facil instalacion",
     ],
-    colorVariants: [
-      { id: "blanco", label: "Blanco", hex: "#FFFFFF", image: "/images/productos/interruptor-1-canal-blanco.jpg" },
-      { id: "negro", label: "Negro", hex: "#1A1A1A", image: "/images/productos/interruptor-1-canal-negro.jpg" },
-    ],
-  },
-  {
-    id: "4b",
-    name: "Interruptor Inteligente 2 Canales",
-    slug: "interruptor-2-canales",
-    category: "control",
-    description: "Controla 2 luces independientes desde un solo panel tactil inteligente",
-    price: 70000,
-    priceFormatted: "$70.000",
-    badge: "Popular",
-    features: [
-      "2 canales independientes",
-      "Panel tactil de vidrio templado",
-      "Control remoto desde app",
-      "Compatible con Alexa y Google Home",
-      "Temporizador y escenas",
+    channelOptions: [
+      { channels: 1, price: 68000, priceFormatted: "$68.000" },
+      { channels: 2, price: 70000, priceFormatted: "$70.000" },
+      { channels: 3, price: 75000, priceFormatted: "$75.000" },
+      { channels: 4, price: 85000, priceFormatted: "$85.000" },
     ],
     colorVariants: [
-      { id: "blanco", label: "Blanco", hex: "#FFFFFF" },
-      { id: "negro", label: "Negro", hex: "#1A1A1A" },
-    ],
-  },
-  {
-    id: "4c",
-    name: "Interruptor Inteligente 3 Canales",
-    slug: "interruptor-3-canales",
-    category: "control",
-    description: "Controla 3 luces o circuitos desde un elegante panel tactil de vidrio",
-    price: 75000,
-    priceFormatted: "$75.000",
-    features: [
-      "3 canales independientes",
-      "Panel tactil de vidrio templado",
-      "Control remoto desde app",
-      "Compatible con Alexa y Google Home",
-      "Temporizador y escenas",
-    ],
-    colorVariants: [
-      { id: "blanco", label: "Blanco", hex: "#FFFFFF" },
-      { id: "negro", label: "Negro", hex: "#1A1A1A" },
-    ],
-  },
-  {
-    id: "4d",
-    name: "Interruptor Inteligente 4 Canales",
-    slug: "interruptor-4-canales",
-    category: "control",
-    description: "Maximo control: 4 luces o circuitos desde un solo panel tactil inteligente",
-    price: 85000,
-    priceFormatted: "$85.000",
-    badge: "Nuevo",
-    features: [
-      "4 canales independientes",
-      "Panel tactil de vidrio templado",
-      "Control remoto desde app",
-      "Compatible con Alexa y Google Home",
-      "Temporizador y escenas",
-    ],
-    colorVariants: [
-      { id: "blanco", label: "Blanco", hex: "#FFFFFF" },
-      { id: "negro", label: "Negro", hex: "#1A1A1A" },
+      {
+        id: "negro",
+        label: "Negro",
+        hex: "#1A1A1A",
+        images: {
+          1: "/images/productos/interruptor-1-canal-negro.jpg",
+          2: "/images/productos/interruptor-2-canales-negro.jpg",
+          3: "/images/productos/interruptor-3-canales-negro.jpg",
+          4: "/images/productos/interruptor-4-canales-negro.jpg",
+        },
+      },
+      {
+        id: "blanco",
+        label: "Blanco",
+        hex: "#FFFFFF",
+        images: {
+          1: "/images/productos/interruptor-1-canal-blanco.jpg",
+          2: "/images/productos/interruptor-2-canales-blanco.jpg",
+          3: "/images/productos/interruptor-3-canales-blanco.jpg",
+          4: "/images/productos/interruptor-4-canales-blanco.jpg",
+        },
+      },
     ],
   },
   {

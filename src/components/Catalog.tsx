@@ -2,27 +2,48 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { products, categories } from "@/data/products";
+import { products, categories, type Product } from "@/data/products";
 import { productIcons } from "./ProductIcons";
 
 export default function Catalog() {
   const [activeFilter, setActiveFilter] = useState("all");
   const [selectedColors, setSelectedColors] = useState<Record<string, string>>({});
+  const [selectedChannels, setSelectedChannels] = useState<Record<string, number>>({});
 
   const filtered = activeFilter === "all" ? products : products.filter((p) => p.category === activeFilter);
 
-  const getSelectedColor = (productId: string) => selectedColors[productId] || "";
+  const getSelectedColor = (p: Product) =>
+    selectedColors[p.id] || p.colorVariants?.[0]?.id || "";
 
-  const setColor = (productId: string, colorId: string) => {
-    setSelectedColors((prev) => ({ ...prev, [productId]: colorId }));
+  const getSelectedChannels = (p: Product) =>
+    selectedChannels[p.id] || p.channelOptions?.[0]?.channels || 1;
+
+  const getDisplayImage = (p: Product): string | null => {
+    const colorId = getSelectedColor(p);
+    const channels = getSelectedChannels(p);
+    const variant = p.colorVariants?.find((v) => v.id === colorId);
+    return variant?.images?.[channels] ?? variant?.image ?? p.image ?? null;
   };
 
-  const scrollToContact = (productName: string, colorLabel?: string) => {
+  const getCurrentPrice = (p: Product) => {
+    if (!p.channelOptions) return p.priceFormatted;
+    const ch = getSelectedChannels(p);
+    return p.channelOptions.find((o) => o.channels === ch)?.priceFormatted ?? p.priceFormatted;
+  };
+
+  const scrollToContact = (p: Product) => {
+    const colorLabel = p.colorVariants?.find((v) => v.id === getSelectedColor(p))?.label;
+    const channels = p.channelOptions ? getSelectedChannels(p) : null;
+
+    let msg = `Hola, me interesa el producto: ${p.name}`;
+    if (channels) msg += ` de ${channels} canal${channels > 1 ? "es" : ""}`;
+    if (colorLabel) msg += ` en color ${colorLabel}`;
+    msg += `. Precio: ${getCurrentPrice(p)}`;
+
     const servicio = document.getElementById("servicio") as HTMLSelectElement | null;
     const mensaje = document.getElementById("mensaje") as HTMLTextAreaElement | null;
     if (servicio) servicio.value = "producto";
-    const colorText = colorLabel ? ` en color ${colorLabel}` : "";
-    if (mensaje) mensaje.value = `Me interesa el producto: ${productName}${colorText}`;
+    if (mensaje) mensaje.value = msg;
     document.getElementById("contacto")?.scrollIntoView({ behavior: "smooth" });
   };
 
@@ -60,96 +81,114 @@ export default function Catalog() {
 
         {/* Product grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filtered.map((product) => (
-            <div
-              key={product.id}
-              className="relative rounded-[var(--radius-lg)] bg-[var(--bg-card)] border border-[var(--border)] overflow-hidden transition-all hover:border-[var(--border-hover)] hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(0,0,0,0.3)]"
-              style={{ animation: "fadeInUp 0.4s ease-out forwards" }}
-            >
-              {product.badge && (
-                <div className="absolute top-4 left-4 px-3.5 py-1 rounded-full text-[0.72rem] font-semibold bg-gradient-brand text-white z-[2] tracking-wide">
-                  {product.badge}
-                </div>
-              )}
+          {filtered.map((product) => {
+            const displayImage = getDisplayImage(product);
+            const currentPrice = getCurrentPrice(product);
+            const selectedColor = getSelectedColor(product);
+            const selectedCh = getSelectedChannels(product);
 
-              <div className="h-[240px] flex items-center justify-center bg-white border-b border-[var(--border)] relative overflow-hidden">
-                {(() => {
-                  const selectedVariant = product.colorVariants?.find(
-                    (v) => v.id === getSelectedColor(product.id)
-                  );
-                  const displayImage = selectedVariant?.image || product.image;
-                  if (displayImage) {
-                    return (
-                      <Image
-                        src={displayImage}
-                        alt={product.name}
-                        fill
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        className="object-contain p-6"
-                      />
-                    );
-                  }
-                  return (
-                    <div className="w-20 h-20 opacity-70">
-                      {productIcons[product.slug] || productIcons["default"]}
-                    </div>
-                  );
-                })()}
-              </div>
-
-              <div className="p-6">
-                <span className="text-[0.72rem] font-semibold uppercase tracking-widest text-[var(--teal)]">
-                  {product.category}
-                </span>
-                <h3 className="font-[var(--font-display)] text-base font-bold mt-2 mb-2">{product.name}</h3>
-                <p className="text-sm text-[var(--text-secondary)] leading-relaxed mb-4">{product.description}</p>
-
-                {/* Color variants */}
-                {product.colorVariants && product.colorVariants.length > 0 && (
-                  <div className="flex items-center gap-3 mb-4">
-                    <span className="text-xs text-[var(--text-muted)] font-medium">Color:</span>
-                    <div className="flex items-center gap-2">
-                      {product.colorVariants.map((variant) => (
-                        <button
-                          key={variant.id}
-                          onClick={() => setColor(product.id, variant.id)}
-                          title={variant.label}
-                          className={`w-7 h-7 rounded-full border-2 transition-all cursor-pointer ${
-                            getSelectedColor(product.id) === variant.id
-                              ? "border-[var(--green)] scale-110 shadow-[0_0_8px_rgba(122,182,72,0.4)]"
-                              : "border-[var(--border)] hover:border-[var(--text-muted)]"
-                          }`}
-                          style={{ backgroundColor: variant.hex }}
-                        />
-                      ))}
-                    </div>
-                    {getSelectedColor(product.id) && (
-                      <span className="text-xs text-[var(--text-secondary)]">
-                        {product.colorVariants.find((v) => v.id === getSelectedColor(product.id))?.label}
-                      </span>
-                    )}
+            return (
+              <div
+                key={product.id}
+                className="relative rounded-[var(--radius-lg)] bg-[var(--bg-card)] border border-[var(--border)] overflow-hidden transition-all hover:border-[var(--border-hover)] hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(0,0,0,0.3)]"
+                style={{ animation: "fadeInUp 0.4s ease-out forwards" }}
+              >
+                {product.badge && (
+                  <div className="absolute top-4 left-4 px-3.5 py-1 rounded-full text-[0.72rem] font-semibold bg-gradient-brand text-white z-[2] tracking-wide">
+                    {product.badge}
                   </div>
                 )}
 
-                <div className="flex items-center justify-between">
-                  <span className="font-[var(--font-display)] text-xl font-bold text-gradient">
-                    {product.priceFormatted}
+                {/* Imagen */}
+                <div className="h-[240px] flex items-center justify-center bg-white border-b border-[var(--border)] relative overflow-hidden">
+                  {displayImage ? (
+                    <Image
+                      src={displayImage}
+                      alt={product.name}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      className="object-contain p-6"
+                    />
+                  ) : (
+                    <div className="w-20 h-20 opacity-70">
+                      {productIcons[product.slug] || productIcons["default"]}
+                    </div>
+                  )}
+                </div>
+
+                <div className="p-6">
+                  <span className="text-[0.72rem] font-semibold uppercase tracking-widest text-[var(--teal)]">
+                    {product.category}
                   </span>
-                  <button
-                    onClick={() => {
-                      const selectedVariant = product.colorVariants?.find(
-                        (v) => v.id === getSelectedColor(product.id)
-                      );
-                      scrollToContact(product.name, selectedVariant?.label);
-                    }}
-                    className="px-4 py-2 rounded-lg text-xs font-semibold text-white bg-gradient-brand glow-green transition-all hover:-translate-y-0.5 cursor-pointer"
-                  >
-                    Consultar
-                  </button>
+                  <h3 className="font-[var(--font-display)] text-base font-bold mt-2 mb-2">{product.name}</h3>
+                  <p className="text-sm text-[var(--text-secondary)] leading-relaxed mb-4">{product.description}</p>
+
+                  {/* Selector de canales */}
+                  {product.channelOptions && (
+                    <div className="mb-4">
+                      <span className="text-xs text-[var(--text-muted)] font-medium block mb-2">Canales:</span>
+                      <div className="flex gap-2">
+                        {product.channelOptions.map((opt) => (
+                          <button
+                            key={opt.channels}
+                            onClick={() =>
+                              setSelectedChannels((prev) => ({ ...prev, [product.id]: opt.channels }))
+                            }
+                            className={`w-9 h-9 rounded-lg text-sm font-bold border-2 transition-all cursor-pointer ${
+                              selectedCh === opt.channels
+                                ? "bg-[var(--green)] border-[var(--green)] text-white shadow-[0_0_10px_rgba(122,182,72,0.4)]"
+                                : "bg-transparent border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--green)] hover:text-[var(--green)]"
+                            }`}
+                          >
+                            {opt.channels}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Selector de color */}
+                  {product.colorVariants && product.colorVariants.length > 0 && (
+                    <div className="flex items-center gap-3 mb-5">
+                      <span className="text-xs text-[var(--text-muted)] font-medium">Color:</span>
+                      <div className="flex items-center gap-2">
+                        {product.colorVariants.map((variant) => (
+                          <button
+                            key={variant.id}
+                            onClick={() =>
+                              setSelectedColors((prev) => ({ ...prev, [product.id]: variant.id }))
+                            }
+                            title={variant.label}
+                            className={`w-7 h-7 rounded-full border-2 transition-all cursor-pointer ${
+                              selectedColor === variant.id
+                                ? "border-[var(--green)] scale-110 shadow-[0_0_8px_rgba(122,182,72,0.4)]"
+                                : "border-[var(--border)] hover:border-[var(--text-muted)]"
+                            }`}
+                            style={{ backgroundColor: variant.hex }}
+                          />
+                        ))}
+                      </div>
+                      <span className="text-xs text-[var(--text-secondary)]">
+                        {product.colorVariants.find((v) => v.id === selectedColor)?.label}
+                      </span>
+                    </div>
+                  )}
+
+                  <div className="flex items-center justify-between">
+                    <span className="font-[var(--font-display)] text-xl font-bold text-gradient">
+                      {currentPrice}
+                    </span>
+                    <button
+                      onClick={() => scrollToContact(product)}
+                      className="px-4 py-2 rounded-lg text-xs font-semibold text-white bg-gradient-brand glow-green transition-all hover:-translate-y-0.5 cursor-pointer"
+                    >
+                      Consultar
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
