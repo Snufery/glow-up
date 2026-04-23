@@ -29,6 +29,53 @@ export interface Product {
 
 export const products: Product[] = [
   {
+    id: "4",
+    name: "Interruptor Inteligente WiFi",
+    slug: "interruptor-inteligente-wifi",
+    category: "control",
+    description: "Panel tactil de vidrio templado, control por app y voz, compatible con Alexa y Google Home",
+    price: 68000,
+    priceFormatted: "$68.000",
+    badge: "Popular",
+    features: [
+      "Panel tactil de vidrio templado",
+      "Control remoto desde app",
+      "Compatible con Alexa y Google Home",
+      "Temporizador y escenas",
+      "Facil instalacion",
+    ],
+    channelOptions: [
+      { channels: 1, price: 68000, priceFormatted: "$68.000" },
+      { channels: 2, price: 70000, priceFormatted: "$70.000" },
+      { channels: 3, price: 75000, priceFormatted: "$75.000" },
+      { channels: 4, price: 85000, priceFormatted: "$85.000" },
+    ],
+    colorVariants: [
+      {
+        id: "negro",
+        label: "Negro",
+        hex: "#1A1A1A",
+        images: {
+          1: "/images/productos/interruptor-1-canal-negro.jpg",
+          2: "/images/productos/interruptor-2-canales-negro.jpg",
+          3: "/images/productos/interruptor-3-canales-negro.jpg",
+          4: "/images/productos/interruptor-4-canales-negro.jpg",
+        },
+      },
+      {
+        id: "blanco",
+        label: "Blanco",
+        hex: "#FFFFFF",
+        images: {
+          1: "/images/productos/interruptor-1-canal-blanco.jpg",
+          2: "/images/productos/interruptor-2-canales-blanco.jpg",
+          3: "/images/productos/interruptor-3-canales-blanco.jpg",
+          4: "/images/productos/interruptor-4-canales-blanco.jpg",
+        },
+      },
+    ],
+  },
+  {
     id: "1",
     name: "Foco LED Inteligente RGB",
     slug: "foco-led-inteligente-rgb",
@@ -76,53 +123,6 @@ export const products: Product[] = [
       "Deteccion de movimiento con alertas",
       "Audio bidireccional",
       "Almacenamiento en nube o micro SD",
-    ],
-  },
-  {
-    id: "4",
-    name: "Interruptor Inteligente WiFi",
-    slug: "interruptor-inteligente-wifi",
-    category: "control",
-    description: "Panel tactil de vidrio templado, control por app y voz, compatible con Alexa y Google Home",
-    price: 68000,
-    priceFormatted: "$68.000",
-    badge: "Popular",
-    features: [
-      "Panel tactil de vidrio templado",
-      "Control remoto desde app",
-      "Compatible con Alexa y Google Home",
-      "Temporizador y escenas",
-      "Facil instalacion",
-    ],
-    channelOptions: [
-      { channels: 1, price: 68000, priceFormatted: "$68.000" },
-      { channels: 2, price: 70000, priceFormatted: "$70.000" },
-      { channels: 3, price: 75000, priceFormatted: "$75.000" },
-      { channels: 4, price: 85000, priceFormatted: "$85.000" },
-    ],
-    colorVariants: [
-      {
-        id: "negro",
-        label: "Negro",
-        hex: "#1A1A1A",
-        images: {
-          1: "/images/productos/interruptor-1-canal-negro.jpg",
-          2: "/images/productos/interruptor-2-canales-negro.jpg",
-          3: "/images/productos/interruptor-3-canales-negro.jpg",
-          4: "/images/productos/interruptor-4-canales-negro.jpg",
-        },
-      },
-      {
-        id: "blanco",
-        label: "Blanco",
-        hex: "#FFFFFF",
-        images: {
-          1: "/images/productos/interruptor-1-canal-blanco.jpg",
-          2: "/images/productos/interruptor-2-canales-blanco.jpg",
-          3: "/images/productos/interruptor-3-canales-blanco.jpg",
-          4: "/images/productos/interruptor-4-canales-blanco.jpg",
-        },
-      },
     ],
   },
   {
