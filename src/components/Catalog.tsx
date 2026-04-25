@@ -100,7 +100,10 @@ export default function Catalog() {
                 )}
 
                 {/* Imagen */}
-                <div className="h-[240px] flex items-center justify-center bg-white border-b border-[var(--border)] relative overflow-hidden">
+                <div
+                  className="h-[240px] flex items-center justify-center border-b border-[var(--border)] relative overflow-hidden transition-colors duration-300"
+                  style={{ backgroundColor: selectedColor === "blanco" ? "#000" : "#fff" }}
+                >
                   {displayImage ? (
                     <Image
                       src={displayImage}
