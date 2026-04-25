@@ -9,6 +9,7 @@ export default function Catalog() {
   const [activeFilter, setActiveFilter] = useState("all");
   const [selectedColors, setSelectedColors] = useState<Record<string, string>>({});
   const [selectedChannels, setSelectedChannels] = useState<Record<string, number>>({});
+  const [modalProduct, setModalProduct] = useState<Product | null>(null);
 
   const filtered = activeFilter === "all" ? products : products.filter((p) => p.category === activeFilter);
 
@@ -44,6 +45,7 @@ export default function Catalog() {
     const mensaje = document.getElementById("mensaje") as HTMLTextAreaElement | null;
     if (servicio) servicio.value = "producto";
     if (mensaje) mensaje.value = msg;
+    setModalProduct(null);
     document.getElementById("contacto")?.scrollIntoView({ behavior: "smooth" });
   };
 
@@ -90,7 +92,8 @@ export default function Catalog() {
             return (
               <div
                 key={product.id}
-                className="relative rounded-[var(--radius-lg)] bg-[var(--bg-card)] border border-[var(--border)] overflow-hidden transition-all hover:border-[var(--border-hover)] hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(0,0,0,0.3)]"
+                onClick={() => setModalProduct(product)}
+                className="relative rounded-[var(--radius-lg)] bg-[var(--bg-card)] border border-[var(--border)] overflow-hidden transition-all hover:border-[var(--border-hover)] hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(0,0,0,0.3)] cursor-pointer"
                 style={{ animation: "fadeInUp 0.4s ease-out forwards" }}
               >
                 {product.badge && (
@@ -128,7 +131,7 @@ export default function Catalog() {
 
                   {/* Selector de canales */}
                   {product.channelOptions && (
-                    <div className="mb-4">
+                    <div className="mb-4" onClick={(e) => e.stopPropagation()}>
                       <span className="text-xs text-[var(--text-muted)] font-medium block mb-2">Canales:</span>
                       <div className="flex gap-2">
                         {product.channelOptions.map((opt) => (
@@ -152,7 +155,7 @@ export default function Catalog() {
 
                   {/* Selector de color */}
                   {product.colorVariants && product.colorVariants.length > 0 && (
-                    <div className="flex items-center gap-3 mb-5">
+                    <div className="flex items-center gap-3 mb-5" onClick={(e) => e.stopPropagation()}>
                       <span className="text-xs text-[var(--text-muted)] font-medium">Color:</span>
                       <div className="flex items-center gap-2">
                         {product.colorVariants.map((variant) => (
@@ -182,7 +185,7 @@ export default function Catalog() {
                       {currentPrice}
                     </span>
                     <button
-                      onClick={() => scrollToContact(product)}
+                      onClick={(e) => { e.stopPropagation(); scrollToContact(product); }}
                       className="px-4 py-2 rounded-lg text-xs font-semibold text-white bg-gradient-brand glow-green transition-all hover:-translate-y-0.5 cursor-pointer"
                     >
                       Consultar
@@ -194,6 +197,134 @@ export default function Catalog() {
           })}
         </div>
       </div>
+
+      {/* Modal */}
+      {modalProduct && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center pt-[72px] p-4 bg-black/70 backdrop-blur-sm"
+          onClick={() => setModalProduct(null)}
+        >
+          <div
+            className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto bg-[var(--bg-card)] border border-[var(--border)] rounded-[var(--radius-lg)] shadow-[0_24px_80px_rgba(0,0,0,0.6)]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Botón cerrar */}
+            <button
+              onClick={() => setModalProduct(null)}
+              className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-[var(--bg-secondary)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-hover)] transition-all cursor-pointer"
+            >
+              ✕
+            </button>
+
+            {modalProduct.badge && (
+              <div className="absolute top-4 left-4 px-3.5 py-1 rounded-full text-[0.72rem] font-semibold bg-gradient-brand text-white z-10 tracking-wide">
+                {modalProduct.badge}
+              </div>
+            )}
+
+            {/* Imagen */}
+            <div
+              className="h-[280px] relative transition-colors duration-300"
+              style={{ backgroundColor: getSelectedColor(modalProduct) === "blanco" ? "#000" : "#fff" }}
+            >
+              {getDisplayImage(modalProduct) ? (
+                <Image
+                  src={getDisplayImage(modalProduct)!}
+                  alt={modalProduct.name}
+                  fill
+                  sizes="512px"
+                  className="object-contain p-8"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <div className="w-24 h-24 opacity-70">
+                    {productIcons[modalProduct.slug] || productIcons["default"]}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="p-6">
+              <span className="text-[0.72rem] font-semibold uppercase tracking-widest text-[var(--teal)]">
+                {modalProduct.category}
+              </span>
+              <h3 className="font-[var(--font-display)] text-xl font-bold mt-2 mb-2">{modalProduct.name}</h3>
+              <p className="text-sm text-[var(--text-secondary)] leading-relaxed mb-5">{modalProduct.description}</p>
+
+              {/* Features */}
+              {modalProduct.features && modalProduct.features.length > 0 && (
+                <ul className="mb-5 space-y-2">
+                  {modalProduct.features.map((f, i) => (
+                    <li key={i} className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
+                      <span className="text-[var(--green)] font-bold">✓</span>
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              {/* Selector de canales */}
+              {modalProduct.channelOptions && (
+                <div className="mb-4">
+                  <span className="text-xs text-[var(--text-muted)] font-medium block mb-2">Canales:</span>
+                  <div className="flex gap-2">
+                    {modalProduct.channelOptions.map((opt) => (
+                      <button
+                        key={opt.channels}
+                        onClick={() => setSelectedChannels((prev) => ({ ...prev, [modalProduct.id]: opt.channels }))}
+                        className={`w-9 h-9 rounded-lg text-sm font-bold border-2 transition-all cursor-pointer ${
+                          getSelectedChannels(modalProduct) === opt.channels
+                            ? "bg-[var(--green)] border-[var(--green)] text-white shadow-[0_0_10px_rgba(122,182,72,0.4)]"
+                            : "bg-transparent border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--green)] hover:text-[var(--green)]"
+                        }`}
+                      >
+                        {opt.channels}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Selector de color */}
+              {modalProduct.colorVariants && modalProduct.colorVariants.length > 0 && (
+                <div className="flex items-center gap-3 mb-5">
+                  <span className="text-xs text-[var(--text-muted)] font-medium">Color:</span>
+                  <div className="flex items-center gap-2">
+                    {modalProduct.colorVariants.map((variant) => (
+                      <button
+                        key={variant.id}
+                        onClick={() => setSelectedColors((prev) => ({ ...prev, [modalProduct.id]: variant.id }))}
+                        title={variant.label}
+                        className={`w-7 h-7 rounded-full border-2 transition-all cursor-pointer ${
+                          getSelectedColor(modalProduct) === variant.id
+                            ? "border-[var(--green)] scale-110 shadow-[0_0_8px_rgba(122,182,72,0.4)]"
+                            : "border-[var(--border)] hover:border-[var(--text-muted)]"
+                        }`}
+                        style={{ backgroundColor: variant.hex }}
+                      />
+                    ))}
+                  </div>
+                  <span className="text-xs text-[var(--text-secondary)]">
+                    {modalProduct.colorVariants.find((v) => v.id === getSelectedColor(modalProduct))?.label}
+                  </span>
+                </div>
+              )}
+
+              <div className="flex items-center justify-between pt-2 border-t border-[var(--border)]">
+                <span className="font-[var(--font-display)] text-2xl font-bold text-gradient">
+                  {getCurrentPrice(modalProduct)}
+                </span>
+                <button
+                  onClick={() => scrollToContact(modalProduct)}
+                  className="px-5 py-2.5 rounded-lg text-sm font-semibold text-white bg-gradient-brand glow-green transition-all hover:-translate-y-0.5 cursor-pointer"
+                >
+                  Consultar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
