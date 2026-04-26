@@ -16,7 +16,7 @@ export interface Product {
   id: string;
   name: string;
   slug: string;
-  category: "iluminacion" | "seguridad" | "control" | "sensores" | "energia";
+  category: "iluminacion" | "control" | "seguridad" | "sensores" | "energia";
   description: string;
   price: number;
   priceFormatted: string;
@@ -33,7 +33,7 @@ export const products: Product[] = [
     name: "Interruptor Inteligente WiFi",
     slug: "interruptor-inteligente-wifi",
     category: "control",
-    description: "Panel tactil de vidrio templado, control por app y voz, compatible con Alexa y Google Home",
+    description: "Panel tactil de vidrio templado, control por app y voz. Compatible con Siri, Alexa y Google Home",
     price: 68000,
     priceFormatted: "$68.000",
     badge: "Popular",
