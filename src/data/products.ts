@@ -23,6 +23,7 @@ export interface Product {
   badge?: string;
   features?: string[];
   image?: string;
+  imageFit?: "cover" | "contain";
   colorVariants?: ColorVariant[];
   channelOptions?: ChannelOption[];  // si existe, muestra selector de canales
 }
@@ -84,6 +85,7 @@ export const products: Product[] = [
     price: 45000,
     priceFormatted: "$45.000",
     badge: "Popular",
+    image: "/images/productos/led-wifi.jpg",
     features: [
       "16 millones de colores",
       "Compatible con Alexa y Google Home",
