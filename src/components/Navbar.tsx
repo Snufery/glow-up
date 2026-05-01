@@ -27,8 +27,8 @@ export default function Navbar() {
     <nav
       className={`fixed top-0 left-0 right-0 z-[1000] transition-all duration-300 ${
         scrolled
-          ? "bg-[#0B1A2B]/92 backdrop-blur-xl border-b border-[var(--border)] py-2.5"
-          : "bg-transparent py-4"
+          ? "bg-[#0B1A2B]/92 backdrop-blur-xl border-b border-[var(--border)] py-1"
+          : "bg-transparent py-2"
       }`}
     >
       <div className="max-w-[1200px] mx-auto px-6 flex items-center justify-between">
@@ -36,9 +36,9 @@ export default function Navbar() {
           <Image
             src="/logo.png"
             alt="Glow Up"
-            width={48}
-            height={48}
-            className="h-12 w-12 object-contain"
+            width={64}
+            height={64}
+            className="h-16 w-16 object-contain"
             priority
           />
           <div className="hidden sm:flex flex-col leading-tight">
