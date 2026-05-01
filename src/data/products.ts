@@ -16,13 +16,14 @@ export interface Product {
   id: string;
   name: string;
   slug: string;
-  category: "iluminacion" | "seguridad" | "control" | "sensores" | "energia";
+  category: "iluminacion" | "control" | "seguridad" | "sensores" | "energia";
   description: string;
   price: number;
   priceFormatted: string;
   badge?: string;
   features?: string[];
   image?: string;
+  imageFit?: "cover" | "contain";
   colorVariants?: ColorVariant[];
   channelOptions?: ChannelOption[];  // si existe, muestra selector de canales
 }
@@ -33,7 +34,7 @@ export const products: Product[] = [
     name: "Interruptor Inteligente WiFi",
     slug: "interruptor-inteligente-wifi",
     category: "control",
-    description: "Panel tactil de vidrio templado, control por app y voz, compatible con Alexa y Google Home",
+    description: "Panel tactil de vidrio templado, control por app y voz. Compatible con Siri, Alexa y Google Home",
     price: 68000,
     priceFormatted: "$68.000",
     badge: "Popular",
@@ -81,9 +82,11 @@ export const products: Product[] = [
     slug: "foco-led-inteligente-rgb",
     category: "iluminacion",
     description: "Control por voz y app, 16 millones de colores, compatible con Alexa y Google Home",
-    price: 45000,
-    priceFormatted: "$45.000",
+    price: 40000,
+    priceFormatted: "$40.000",
     badge: "Popular",
+    image: "/images/productos/led-wifi.jpg",
+    imageFit: "cover",
     features: [
       "16 millones de colores",
       "Compatible con Alexa y Google Home",
@@ -117,6 +120,7 @@ export const products: Product[] = [
     price: 120000,
     priceFormatted: "$120.000",
     badge: "Nuevo",
+    image: "/images/productos/dahua-int-5mp.jpg",
     features: [
       "Resolucion Full HD 1080p",
       "Vision nocturna infrarroja",
@@ -150,6 +154,7 @@ export const products: Product[] = [
     price: 38000,
     priceFormatted: "$38.000",
     badge: "Top Ventas",
+    image: "/images/productos/socket-wifi.jpg",
     features: [
       "Monitoreo de consumo en watts",
       "Temporizador y horarios",

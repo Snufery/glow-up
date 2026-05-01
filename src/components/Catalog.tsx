@@ -104,7 +104,7 @@ export default function Catalog() {
 
                 {/* Imagen */}
                 <div
-                  className="h-[240px] flex items-center justify-center border-b border-[var(--border)] relative overflow-hidden transition-colors duration-300"
+                  className="h-[240px] flex items-center justify-center relative overflow-hidden transition-colors duration-300"
                   style={{ backgroundColor: selectedColor === "blanco" ? "#000" : "#fff" }}
                 >
                   {displayImage ? (
@@ -113,7 +113,7 @@ export default function Catalog() {
                       alt={product.name}
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      className="object-contain p-6"
+                      className={product.imageFit === "cover" ? "object-cover" : "object-contain p-6"}
                     />
                   ) : (
                     <div className="w-20 h-20 opacity-70">
@@ -233,7 +233,7 @@ export default function Catalog() {
                   alt={modalProduct.name}
                   fill
                   sizes="512px"
-                  className="object-contain p-8"
+                  className={modalProduct.imageFit === "cover" ? "object-cover" : "object-contain p-8"}
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
