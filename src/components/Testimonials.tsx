@@ -1,22 +1,24 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { ChevronLeft, ChevronRight, Quote, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, Quote, Plus, Star, Play } from "lucide-react";
 import { testimonials } from "@/data/testimonials";
 
 function StarRating({ rating }: { rating: number }) {
   return (
-    <div className="flex gap-0.5">
-      {[1, 2, 3, 4, 5].map((star) => (
-        <svg
-          key={star}
-          viewBox="0 0 20 20"
-          fill={star <= rating ? "#22d3ee" : "#27272a"}
-          className="w-4 h-4"
-        >
-          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-        </svg>
-      ))}
+    <div className="flex items-center gap-2">
+      <div className="flex gap-0.5">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <Star
+            key={star}
+            size={14}
+            fill={star <= rating ? "currentColor" : "none"}
+            className={star <= rating ? "text-[var(--accent)]" : "text-zinc-700"}
+            strokeWidth={star <= rating ? 0 : 1.5}
+          />
+        ))}
+      </div>
+      <span className="text-[11px] font-semibold text-zinc-500">{rating}.0</span>
     </div>
   );
 }
@@ -40,9 +42,11 @@ function TestimonialCard({ testimonial }: { testimonial: (typeof testimonials)[0
     .join("");
 
   return (
-    <div className="premium-card overflow-hidden group h-full flex flex-col">
+    <div className="premium-card overflow-hidden group h-full flex flex-col min-h-[360px]">
+      <div className="h-1 bg-gradient-to-r from-[var(--accent-dark)] via-[var(--accent)] to-transparent opacity-60 group-hover:opacity-100 transition-opacity" />
+
       {hasVideo ? (
-        <div className="relative aspect-[9/14] max-h-[280px] bg-zinc-900 overflow-hidden">
+        <div className="relative aspect-[9/14] max-h-[240px] bg-zinc-900 overflow-hidden">
           <video
             ref={videoRef}
             src={testimonial.videoSrc}
@@ -54,54 +58,41 @@ function TestimonialCard({ testimonial }: { testimonial: (typeof testimonials)[0
           />
           <button
             onClick={togglePlay}
-            className="absolute inset-0 flex items-center justify-center bg-black/20 transition-all hover:bg-black/30 cursor-pointer"
+            className="absolute inset-0 flex items-center justify-center bg-black/25 transition-all hover:bg-black/35 cursor-pointer"
+            aria-label={isPlaying ? "Pausar video" : "Reproducir video"}
           >
             {!isPlaying && (
               <div className="w-14 h-14 rounded-full bg-gradient-brand flex items-center justify-center glow-cyan transition-transform group-hover:scale-110">
-                <svg viewBox="0 0 24 24" fill="white" className="w-6 h-6 ml-0.5">
-                  <path d="M8 5v14l11-7z" />
-                </svg>
+                <Play size={22} fill="white" className="text-white ml-0.5" />
               </div>
             )}
           </button>
         </div>
-      ) : (
-        <div className="relative px-6 pt-6 pb-2">
-          <Quote size={28} className="text-[var(--accent)]/20 absolute top-4 right-5" />
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--accent)]/20 to-[var(--accent-dark)]/10 border border-[var(--accent)]/20 flex items-center justify-center text-sm font-bold text-[var(--accent-bright)] font-[var(--font-display)]">
-              {initials}
-            </div>
-            <div>
-              <h4 className="text-sm font-semibold">{testimonial.clientName}</h4>
-              <p className="text-xs text-zinc-500">
-                {testimonial.clientRole && `${testimonial.clientRole} · `}
-                {testimonial.location}
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
+      ) : null}
 
       <div className="p-6 flex-1 flex flex-col">
+        <div className="flex items-start gap-3 mb-5">
+          <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[var(--accent)]/20 to-[var(--accent-dark)]/10 border border-[var(--accent)]/25 flex items-center justify-center text-xs font-bold text-[var(--accent-bright)] font-[var(--font-display)] flex-shrink-0">
+            {initials}
+          </div>
+          <div className="min-w-0 flex-1">
+            <h4 className="text-sm font-semibold truncate">{testimonial.clientName}</h4>
+            <p className="text-xs text-zinc-500 mt-0.5">
+              {testimonial.clientRole && `${testimonial.clientRole} · `}
+              {testimonial.location}
+            </p>
+          </div>
+          <Quote size={22} className="text-[var(--accent)]/15 flex-shrink-0" />
+        </div>
+
         <StarRating rating={testimonial.rating} />
 
-        <p className="text-sm text-zinc-400 leading-relaxed mt-4 mb-5 flex-1">
+        <p className="text-sm text-zinc-300/90 leading-relaxed mt-4 mb-6 flex-1 italic">
           &ldquo;{testimonial.quote}&rdquo;
         </p>
 
-        <div className="flex items-center justify-between pt-4 border-t border-white/[0.06]">
-          {hasVideo && (
-            <div>
-              <h4 className="text-sm font-semibold">{testimonial.clientName}</h4>
-              <p className="text-xs text-zinc-500">
-                {testimonial.clientRole && `${testimonial.clientRole} · `}
-                {testimonial.location}
-              </p>
-            </div>
-          )}
-          {!hasVideo && <div />}
-          <span className="text-[0.65rem] font-medium px-3 py-1 rounded-full border border-[var(--accent)]/20 bg-[var(--accent)]/5 text-[var(--accent)]">
+        <div className="flex items-center justify-end pt-4 border-t border-white/[0.06]">
+          <span className="text-[0.65rem] font-semibold px-3 py-1.5 rounded-full border border-[var(--accent)]/25 bg-[var(--accent)]/8 text-[var(--accent-bright)]">
             {testimonial.serviceType}
           </span>
         </div>
@@ -123,7 +114,8 @@ export default function Testimonials() {
 
   return (
     <section id="testimonios" className="py-28 relative">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_50%_100%,rgba(34,211,238,0.04),transparent)]" />
+      <div className="absolute inset-0 bg-zinc-950" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_100%,rgba(34,211,238,0.06),transparent)]" />
 
       <div className="relative max-w-[1200px] mx-auto px-6">
         <div className="text-center mb-16">
@@ -165,7 +157,7 @@ export default function Testimonials() {
           ))}
 
           <div className="flex-shrink-0 w-[320px] snap-start">
-            <div className="glass-card h-full flex flex-col items-center justify-center gap-4 p-8 text-center min-h-[340px] border-dashed border-white/[0.1]">
+            <div className="glass-card h-full flex flex-col items-center justify-center gap-4 p-8 text-center min-h-[360px] border-dashed border-[var(--accent)]/15 hover:border-[var(--accent)]/30 transition-colors">
               <div className="w-14 h-14 rounded-full bg-[var(--accent)]/8 border border-[var(--accent)]/20 flex items-center justify-center text-[var(--accent)]">
                 <Plus size={24} />
               </div>

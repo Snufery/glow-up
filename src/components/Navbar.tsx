@@ -13,15 +13,39 @@ const navLinks = [
   { href: "#testimonios", label: "Testimonios" },
 ];
 
+const sectionIds = navLinks.map((l) => l.href.slice(1));
+
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("hero");
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
+    const onScroll = () => setScrolled(window.scrollY > 16);
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    const sections = sectionIds
+      .map((id) => document.getElementById(id))
+      .filter(Boolean) as HTMLElement[];
+
+    if (!sections.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        if (visible[0]?.target.id) setActiveSection(visible[0].target.id);
+      },
+      { rootMargin: "-30% 0px -55% 0px", threshold: [0.1, 0.25, 0.5] }
+    );
+
+    sections.forEach((s) => observer.observe(s));
+    return () => observer.disconnect();
   }, []);
 
   useEffect(() => {
@@ -29,13 +53,21 @@ export default function Navbar() {
     return () => { document.body.style.overflow = ""; };
   }, [menuOpen]);
 
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
+
   return (
     <>
       <nav
         className={`fixed top-0 left-0 right-0 z-[1000] transition-all duration-500 ${
           scrolled
-            ? "glass border-b border-white/[0.06] shadow-[0_8px_32px_rgba(0,0,0,0.5)] py-2"
-            : "bg-zinc-950/20 backdrop-blur-md border-b border-transparent py-4"
+            ? "glass border-b border-white/[0.08] shadow-[0_8px_40px_rgba(0,0,0,0.55)] py-2.5"
+            : "bg-zinc-950/55 backdrop-blur-xl border-b border-white/[0.04] py-4"
         }`}
       >
         <div className="max-w-[1200px] mx-auto px-5 sm:px-6 flex items-center justify-between">
@@ -64,21 +96,27 @@ export default function Navbar() {
 
           {/* Desktop links */}
           <ul className="hidden lg:flex items-center gap-1">
-            {navLinks.map((link) => (
+            {navLinks.map((link) => {
+              const isActive = activeSection === link.href.slice(1);
+              const isCatalog = link.href === "#catalogo";
+              return (
               <li key={link.href}>
                 <a
                   href={link.href}
-                  className={`px-3.5 py-2 text-sm font-medium rounded-lg transition-all ${
-                    link.href === "#catalogo"
-                      ? "text-[var(--accent-bright)] hover:bg-[var(--accent)]/10 flex items-center gap-1.5"
-                      : "text-zinc-400 hover:text-white hover:bg-white/[0.04]"
+                  className={`px-3.5 py-2 text-sm font-medium rounded-lg transition-all flex items-center gap-1.5 ${
+                    isActive
+                      ? "text-white bg-white/[0.06] border border-white/[0.08]"
+                      : isCatalog
+                        ? "text-[var(--accent-bright)] hover:bg-[var(--accent)]/10"
+                        : "text-zinc-400 hover:text-white hover:bg-white/[0.04]"
                   }`}
                 >
-                  {link.href === "#catalogo" && <ShoppingBag size={14} />}
+                  {isCatalog && <ShoppingBag size={14} />}
                   {link.label}
                 </a>
               </li>
-            ))}
+            );
+            })}
             <li>
               <a
                 href="#contacto"
@@ -127,22 +165,31 @@ export default function Navbar() {
               </div>
             </div>
 
-            <nav className="flex flex-col gap-1 flex-1">
-              {navLinks.map((link) => (
+            <nav className="flex flex-col gap-1.5 flex-1">
+              {navLinks.map((link, i) => {
+                const isActive = activeSection === link.href.slice(1);
+                const isCatalog = link.href === "#catalogo";
+                return (
                 <a
                   key={link.href}
                   href={link.href}
                   onClick={() => setMenuOpen(false)}
-                  className={`px-4 py-3.5 text-sm font-medium rounded-xl transition-all ${
-                    link.href === "#catalogo"
-                      ? "text-[var(--accent-bright)] bg-[var(--accent)]/8 border border-[var(--accent)]/20 flex items-center gap-2"
-                      : "text-zinc-400 hover:text-white hover:bg-white/[0.04]"
+                  style={{ transitionDelay: menuOpen ? `${i * 40}ms` : "0ms" }}
+                  className={`px-4 py-3.5 text-sm font-medium rounded-xl transition-all flex items-center gap-2 ${
+                    menuOpen ? "translate-x-0 opacity-100" : "translate-x-4 opacity-0"
+                  } ${
+                    isActive
+                      ? "text-white bg-white/[0.06] border border-white/[0.08]"
+                      : isCatalog
+                        ? "text-[var(--accent-bright)] bg-[var(--accent)]/8 border border-[var(--accent)]/20"
+                        : "text-zinc-400 hover:text-white hover:bg-white/[0.04] border border-transparent"
                   }`}
                 >
-                  {link.href === "#catalogo" && <ShoppingBag size={16} />}
+                  {isCatalog && <ShoppingBag size={16} />}
                   {link.label}
                 </a>
-              ))}
+              );
+              })}
             </nav>
 
             <a
