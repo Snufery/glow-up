@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { ArrowRight, Sparkles, ChevronDown, LayoutGrid } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, Sparkles, ChevronDown, LayoutGrid, Calculator } from "lucide-react";
 import HeroVisual from "./HeroVisual";
 
 export default function Hero() {
@@ -94,7 +95,11 @@ export default function Hero() {
               Solicitar Cotizacion
               <ArrowRight size={17} className="relative z-[1] transition-transform group-hover:translate-x-1" />
             </a>
-            <a href="#catalogo" className="btn-secondary group">
+            <Link href="/cotizador" className="btn-secondary group">
+              <Calculator size={16} className="transition-transform group-hover:scale-110" />
+              Simular Cotizacion
+            </Link>
+            <a href="#catalogo" className="btn-secondary group opacity-80 hover:opacity-100">
               <LayoutGrid size={16} className="transition-transform group-hover:scale-110" />
               Ver Catalogo
             </a>
