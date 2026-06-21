@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { ArrowRight, Sparkles, ChevronDown } from "lucide-react";
+import { ArrowRight, Sparkles, ChevronDown, LayoutGrid } from "lucide-react";
 import HeroVisual from "./HeroVisual";
 
 export default function Hero() {
@@ -46,9 +46,17 @@ export default function Hero() {
       className="relative min-h-[100dvh] flex items-center overflow-hidden noise-overlay"
     >
       <div className="absolute inset-0 bg-zinc-950" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_90%_70%_at_50%_-20%,rgba(34,211,238,0.18),transparent)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_100%_50%,rgba(8,145,178,0.12),transparent)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_30%_at_0%_80%,rgba(103,246,255,0.06),transparent)]" />
+      <div
+        className="absolute inset-0 opacity-[0.14]"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle at 20% 50%, rgba(34,211,238,0.15) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(8,145,178,0.12) 0%, transparent 40%)",
+        }}
+      />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_90%_70%_at_50%_-20%,rgba(34,211,238,0.22),transparent)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_100%_50%,rgba(8,145,178,0.14),transparent)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_30%_at_0%_80%,rgba(103,246,255,0.08),transparent)]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/0 via-zinc-950/20 to-zinc-950" />
 
       <div
         className="absolute inset-0 opacity-40"
@@ -82,12 +90,13 @@ export default function Hero() {
           </p>
 
           <div className="flex gap-4 flex-wrap justify-center lg:justify-start mb-14">
-            <a href="#catalogo" className="btn-primary group">
-              Ver Catalogo
+            <a href="#contacto" className="btn-primary group">
+              Solicitar Cotizacion
               <ArrowRight size={17} className="relative z-[1] transition-transform group-hover:translate-x-1" />
             </a>
-            <a href="#contacto" className="btn-secondary">
-              Solicitar Cotizacion
+            <a href="#catalogo" className="btn-secondary group">
+              <LayoutGrid size={16} className="transition-transform group-hover:scale-110" />
+              Ver Catalogo
             </a>
           </div>
 

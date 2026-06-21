@@ -12,6 +12,7 @@ import {
   SlidersHorizontal,
   Radio,
   Zap,
+  Check,
   type LucideIcon,
 } from "lucide-react";
 
@@ -109,7 +110,7 @@ export default function Catalog() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-7">
           {filtered.map((product) => {
             const displayImage = getDisplayImage(product);
             const currentPrice = getCurrentPrice(product);
@@ -120,16 +121,16 @@ export default function Catalog() {
               <div
                 key={product.id}
                 onClick={() => setModalProduct(product)}
-                className="premium-card group cursor-pointer"
+                className="premium-card group cursor-pointer flex flex-col"
               >
                 {product.badge && (
-                  <div className="absolute top-4 left-4 px-3 py-1 rounded-lg text-[0.65rem] font-bold uppercase tracking-wider bg-zinc-950/80 backdrop-blur-sm text-[var(--accent-bright)] border border-[var(--accent)]/30 z-[2]">
+                  <div className="absolute top-4 left-4 px-3 py-1 rounded-lg text-[0.65rem] font-bold uppercase tracking-wider bg-zinc-950/90 backdrop-blur-md text-[var(--accent-bright)] border border-[var(--accent)]/35 z-[2] shadow-[0_4px_16px_rgba(0,0,0,0.4)]">
                     {product.badge}
                   </div>
                 )}
 
                 <div
-                  className="h-[240px] flex items-center justify-center relative overflow-hidden"
+                  className="aspect-[4/3] flex items-center justify-center relative overflow-hidden"
                   style={{ backgroundColor: selectedColor === "blanco" ? "#09090b" : "#18181b" }}
                 >
                   {displayImage ? (
@@ -152,14 +153,14 @@ export default function Catalog() {
                   )}
                 </div>
 
-                <div className="p-6">
+                <div className="p-6 flex flex-col flex-1">
                   <span className="text-[0.68rem] font-semibold uppercase tracking-[0.15em] text-[var(--accent)]">
                     {product.category}
                   </span>
-                  <h3 className="font-[var(--font-display)] text-base font-bold mt-2 mb-2 group-hover:text-[var(--accent-bright)] transition-colors">
+                  <h3 className="font-[var(--font-display)] text-base font-bold mt-2 mb-2 group-hover:text-[var(--accent-bright)] transition-colors line-clamp-2">
                     {product.name}
                   </h3>
-                  <p className="text-sm text-zinc-500 leading-relaxed mb-4 line-clamp-2">
+                  <p className="text-sm text-zinc-500 leading-relaxed mb-4 line-clamp-2 flex-1">
                     {product.description}
                   </p>
 
@@ -212,13 +213,13 @@ export default function Catalog() {
                     </div>
                   )}
 
-                  <div className="flex items-center justify-between pt-4 border-t border-white/[0.06]">
+                  <div className="flex items-center justify-between pt-4 mt-auto border-t border-white/[0.06]">
                     <span className="font-[var(--font-display)] text-xl font-bold text-gradient">
                       {currentPrice}
                     </span>
                     <button
                       onClick={(e) => { e.stopPropagation(); scrollToContact(product); }}
-                      className="btn-consultar cursor-pointer"
+                      className="btn-consultar cursor-pointer opacity-90 group-hover:opacity-100"
                     >
                       <MessageCircle size={14} />
                       Consultar
@@ -285,7 +286,7 @@ export default function Catalog() {
                 <ul className="mb-5 space-y-2">
                   {modalProduct.features.map((f, i) => (
                     <li key={i} className="flex items-center gap-2 text-sm text-zinc-400">
-                      <span className="text-[var(--accent)] font-bold">✓</span>
+                      <Check size={14} className="text-[var(--accent)] flex-shrink-0" strokeWidth={2.5} />
                       {f}
                     </li>
                   ))}
