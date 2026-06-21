@@ -113,59 +113,67 @@ export default function ProductPicker() {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {filtered.map((product) => {
           const installAvailable = hasInstallationOption(product);
           const isFlashing = addedFlash === product.id;
+          const thumbSrc =
+            product.image ??
+            product.colorVariants?.[0]?.images?.[1] ??
+            product.colorVariants?.[0]?.image;
 
           return (
             <div
               key={product.id}
-              className={`premium-card p-4 flex gap-3.5 transition-all ${
+              className={`premium-card flex flex-col overflow-hidden transition-all ${
                 isFlashing ? "ring-2 ring-[var(--accent)]/40" : ""
               }`}
             >
-              <div className="relative w-16 h-16 rounded-xl bg-zinc-900 border border-white/[0.06] overflow-hidden flex-shrink-0">
-                {product.image || product.colorVariants?.[0]?.images?.[1] || product.colorVariants?.[0]?.image ? (
-                  <Image
-                    src={
-                      product.image ??
-                      product.colorVariants?.[0]?.images?.[1] ??
-                      product.colorVariants?.[0]?.image!
-                    }
-                    alt={product.name}
-                    fill
-                    sizes="64px"
-                    className="object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-[var(--accent)]/40 text-xs">
-                    IoT
+              <div className="relative h-32 w-full bg-zinc-900/80 border-b border-white/[0.04] flex items-center justify-center">
+                {thumbSrc ? (
+                  <div className="relative w-full h-full flex items-center justify-center p-4">
+                    <Image
+                      src={thumbSrc}
+                      alt={product.name}
+                      width={120}
+                      height={120}
+                      className="max-h-[88px] w-auto h-auto object-contain"
+                    />
                   </div>
+                ) : (
+                  <span className="text-xs text-[var(--accent)]/40 font-medium">IoT</span>
                 )}
               </div>
 
-              <div className="flex-1 min-w-0">
-                <h4 className="text-sm font-semibold leading-snug line-clamp-2">{product.name}</h4>
-                <p className="text-xs text-zinc-500 mt-1">{formatCOP(product.price)}</p>
+              <div className="p-4 flex flex-col flex-1">
+                <h4 className="text-sm font-semibold leading-snug line-clamp-2 text-left">
+                  {product.name}
+                </h4>
+
+                <p className="text-base font-bold font-[var(--font-display)] text-gradient mt-2 text-left">
+                  {formatCOP(product.price)}
+                </p>
+
                 {installAvailable && (
-                  <span className="inline-block mt-1.5 text-[10px] font-medium text-[var(--accent)]/80 bg-[var(--accent)]/8 px-2 py-0.5 rounded-md border border-[var(--accent)]/15">
+                  <span className="inline-flex self-start mt-2 text-[10px] font-medium text-[var(--accent)]/80 bg-[var(--accent)]/8 px-2 py-0.5 rounded-md border border-[var(--accent)]/15">
                     Instalacion disponible
                   </span>
                 )}
-              </div>
 
-              <button
-                onClick={() =>
-                  product.channelOptions || product.colorVariants
-                    ? openConfig(product)
-                    : handleAdd(product)
-                }
-                className="flex-shrink-0 w-9 h-9 rounded-xl bg-gradient-brand text-zinc-950 flex items-center justify-center transition-all hover:scale-105 hover:shadow-[0_0_20px_rgba(34,211,238,0.35)] cursor-pointer"
-                aria-label={`Agregar ${product.name}`}
-              >
-                {isFlashing ? <Check size={16} /> : <Plus size={16} />}
-              </button>
+                <div className="mt-auto pt-4 flex justify-end">
+                  <button
+                    onClick={() =>
+                      product.channelOptions || product.colorVariants
+                        ? openConfig(product)
+                        : handleAdd(product)
+                    }
+                    className="w-10 h-10 rounded-xl bg-gradient-brand text-zinc-950 flex items-center justify-center transition-all hover:scale-105 hover:shadow-[0_0_20px_rgba(34,211,238,0.35)] cursor-pointer"
+                    aria-label={`Agregar ${product.name}`}
+                  >
+                    {isFlashing ? <Check size={16} /> : <Plus size={16} />}
+                  </button>
+                </div>
+              </div>
             </div>
           );
         })}
