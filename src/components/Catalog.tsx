@@ -2,7 +2,27 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { X, ShoppingBag, MessageCircle } from "lucide-react";
+import {
+  X,
+  ShoppingBag,
+  MessageCircle,
+  LayoutGrid,
+  Lightbulb,
+  Shield,
+  SlidersHorizontal,
+  Radio,
+  Zap,
+  type LucideIcon,
+} from "lucide-react";
+
+const categoryIcons: Record<string, LucideIcon> = {
+  all: LayoutGrid,
+  iluminacion: Lightbulb,
+  seguridad: Shield,
+  control: SlidersHorizontal,
+  sensores: Radio,
+  energia: Zap,
+};
 import { products, categories, type Product } from "@/data/products";
 import { productIcons } from "./ProductIcons";
 
@@ -66,20 +86,27 @@ export default function Catalog() {
           </p>
         </div>
 
-        <div className="flex justify-center gap-2 mb-12 flex-wrap">
-          {categories.map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => setActiveFilter(cat.id)}
-              className={`px-5 py-2.5 rounded-full text-sm font-medium border transition-all cursor-pointer ${
-                activeFilter === cat.id
-                  ? "bg-gradient-brand text-zinc-950 border-transparent shadow-[0_0_20px_rgba(34,211,238,0.25)]"
-                  : "bg-zinc-900/50 text-zinc-400 border-white/[0.06] hover:border-[var(--accent)]/25 hover:text-white"
-              }`}
-            >
-              {cat.label}
-            </button>
-          ))}
+        <div className="glass rounded-2xl p-3 mb-12 max-w-3xl mx-auto">
+          <div className="flex justify-center gap-2 flex-wrap">
+            {categories.map((cat) => {
+              const Icon = categoryIcons[cat.id];
+              const isActive = activeFilter === cat.id;
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => setActiveFilter(cat.id)}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium border transition-all cursor-pointer ${
+                    isActive
+                      ? "bg-gradient-brand text-zinc-950 border-transparent shadow-[0_0_20px_rgba(34,211,238,0.25)]"
+                      : "bg-transparent text-zinc-400 border-transparent hover:bg-white/[0.04] hover:text-white"
+                  }`}
+                >
+                  {Icon && <Icon size={15} strokeWidth={isActive ? 2.5 : 2} />}
+                  {cat.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -93,16 +120,16 @@ export default function Catalog() {
               <div
                 key={product.id}
                 onClick={() => setModalProduct(product)}
-                className="group relative rounded-[var(--radius-lg)] bg-zinc-900/50 border border-white/[0.06] overflow-hidden transition-all duration-300 hover:border-[var(--accent)]/25 hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(0,0,0,0.4),0_0_0_1px_rgba(34,211,238,0.05)] cursor-pointer"
+                className="premium-card group cursor-pointer"
               >
                 {product.badge && (
-                  <div className="absolute top-4 left-4 px-3 py-1 rounded-full text-[0.7rem] font-semibold bg-[var(--accent)]/90 text-zinc-950 z-[2] tracking-wide">
+                  <div className="absolute top-4 left-4 px-3 py-1 rounded-lg text-[0.65rem] font-bold uppercase tracking-wider bg-zinc-950/80 backdrop-blur-sm text-[var(--accent-bright)] border border-[var(--accent)]/30 z-[2]">
                     {product.badge}
                   </div>
                 )}
 
                 <div
-                  className="h-[220px] flex items-center justify-center relative overflow-hidden"
+                  className="h-[240px] flex items-center justify-center relative overflow-hidden"
                   style={{ backgroundColor: selectedColor === "blanco" ? "#09090b" : "#18181b" }}
                 >
                   {displayImage ? (
@@ -116,7 +143,7 @@ export default function Catalog() {
                           product.imageFit === "cover" ? "object-cover" : "object-contain p-6"
                         }`}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-zinc-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/90 via-zinc-950/20 to-transparent opacity-60 group-hover:opacity-100 transition-opacity" />
                     </>
                   ) : (
                     <div className="w-20 h-20 opacity-50 text-[var(--accent)] transition-transform group-hover:scale-110">
@@ -191,7 +218,7 @@ export default function Catalog() {
                     </span>
                     <button
                       onClick={(e) => { e.stopPropagation(); scrollToContact(product); }}
-                      className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold text-zinc-950 bg-gradient-brand transition-all hover:-translate-y-0.5 cursor-pointer"
+                      className="btn-consultar cursor-pointer"
                     >
                       <MessageCircle size={14} />
                       Consultar

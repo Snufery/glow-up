@@ -38,8 +38,8 @@ export default function About() {
   ];
 
   return (
-    <section id="nosotros" className="py-28 lg:py-36 relative">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_0%_50%,rgba(34,211,238,0.04),transparent)]" />
+    <section id="nosotros" className="py-32 relative">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_0%_50%,rgba(34,211,238,0.05),transparent)]" />
 
       <div className="relative max-w-[1200px] mx-auto px-6">
         <div className="text-center mb-20">
@@ -65,10 +65,10 @@ export default function About() {
               soluciones integrales que se adaptan a tu estilo de vida.
             </p>
 
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-5">
               {features.map((f) => (
                 <div key={f.title} className="flex gap-5 items-start group">
-                  <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-[var(--accent)]/8 border border-[var(--accent)]/15 flex items-center justify-center text-[var(--accent)] group-hover:bg-[var(--accent)]/12 transition-colors">
+                  <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-[var(--accent)]/8 border border-[var(--accent)]/15 flex items-center justify-center text-[var(--accent)] group-hover:bg-[var(--accent)]/12 group-hover:shadow-[0_0_20px_rgba(34,211,238,0.1)] transition-all">
                     <f.icon size={22} strokeWidth={1.75} />
                   </div>
                   <div>
@@ -84,9 +84,9 @@ export default function About() {
             {cards.map((card) => (
               <div
                 key={card.label}
-                className="glass-card w-full p-6 flex items-center gap-5 cursor-default group hover:-translate-y-0.5"
+                className="premium-card w-full p-6 flex items-center gap-5 cursor-default group"
               >
-                <div className="flex-shrink-0 w-14 h-14 rounded-xl bg-zinc-900 border border-white/[0.06] flex items-center justify-center text-[var(--accent)] group-hover:border-[var(--accent)]/20 group-hover:shadow-[0_0_20px_rgba(34,211,238,0.1)] transition-all">
+                <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-zinc-900/80 border border-white/[0.06] flex items-center justify-center text-[var(--accent)] group-hover:border-[var(--accent)]/25 group-hover:shadow-[0_0_24px_rgba(34,211,238,0.12)] transition-all">
                   <card.icon size={26} strokeWidth={1.5} />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -108,7 +108,7 @@ export default function About() {
               ].map((stat) => (
                 <div
                   key={stat.label}
-                  className="text-center p-5 rounded-xl bg-zinc-900/60 border border-white/[0.06]"
+                  className="text-center p-5 rounded-xl bg-zinc-900/50 border border-white/[0.06] hover:border-[var(--accent)]/15 transition-colors"
                 >
                   <div className="text-xl sm:text-2xl font-bold font-[var(--font-display)] text-gradient mb-1">
                     {stat.value}
