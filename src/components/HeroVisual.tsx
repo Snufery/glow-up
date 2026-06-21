@@ -27,10 +27,10 @@ export default function HeroVisual() {
     const cy = H / 2 + 20;
 
     // Colors
-    const GREEN = "#7AB648";
-    const TEAL = "#2BBCB3";
-    const GG = "rgba(122,182,72,";  // green glow prefix
-    const TG = "rgba(43,188,179,";  // teal glow prefix
+    const GREEN = "#67f6ff";
+    const TEAL = "#22d3ee";
+    const GG = "rgba(103,246,255,";
+    const TG = "rgba(34,211,238,";
 
     // ═══════ Particles ═══════
     const particles: { x: number; y: number; vx: number; vy: number; size: number; alpha: number; color: string }[] = [];
@@ -432,7 +432,7 @@ export default function HeroVisual() {
         // Icon bg circle
         ctx.save();
         ctx.beginPath(); ctx.arc(ix, iy, icon.size * 0.8, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(11,26,43,0.75)"; ctx.fill();
+        ctx.fillStyle = "rgba(10,10,10,0.85)"; ctx.fill();
         ctx.strokeStyle = TG + "0.25)"; ctx.lineWidth = 1; ctx.stroke();
         ctx.restore();
 
