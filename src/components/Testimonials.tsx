@@ -40,7 +40,7 @@ function TestimonialCard({ testimonial }: { testimonial: (typeof testimonials)[0
     .join("");
 
   return (
-    <div className="glass-card overflow-hidden group h-full flex flex-col">
+    <div className="premium-card overflow-hidden group h-full flex flex-col">
       {hasVideo ? (
         <div className="relative aspect-[9/14] max-h-[280px] bg-zinc-900 overflow-hidden">
           <video
