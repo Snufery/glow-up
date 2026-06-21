@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { Menu, X, ShoppingBag } from "lucide-react";
+import Link from "next/link";
+import { Menu, X, ShoppingBag, Calculator } from "lucide-react";
 
 const navLinks = [
   { href: "#hero", label: "Inicio" },
@@ -118,6 +119,15 @@ export default function Navbar() {
             );
             })}
             <li>
+              <Link
+                href="/cotizador"
+                className="ml-1 px-3.5 py-2 text-sm font-medium rounded-lg text-[var(--accent-bright)] hover:bg-[var(--accent)]/10 transition-all flex items-center gap-1.5"
+              >
+                <Calculator size={14} />
+                Cotizador
+              </Link>
+            </li>
+            <li>
               <a
                 href="#contacto"
                 className="ml-2 px-5 py-2.5 text-sm font-semibold text-zinc-950 rounded-xl bg-gradient-brand glow-cyan glow-cyan-hover transition-all hover:-translate-y-0.5"
@@ -192,10 +202,19 @@ export default function Navbar() {
               })}
             </nav>
 
+            <Link
+              href="/cotizador"
+              onClick={() => setMenuOpen(false)}
+              className="mt-6 px-5 py-3.5 text-sm font-semibold text-center rounded-xl border border-[var(--accent)]/25 bg-[var(--accent)]/8 text-[var(--accent-bright)] flex items-center justify-center gap-2"
+            >
+              <Calculator size={16} />
+              Simulador de Cotizacion
+            </Link>
+
             <a
               href="#contacto"
               onClick={() => setMenuOpen(false)}
-              className="mt-6 px-5 py-3.5 text-sm font-semibold text-zinc-950 text-center rounded-xl bg-gradient-brand glow-cyan"
+              className="mt-3 px-5 py-3.5 text-sm font-semibold text-zinc-950 text-center rounded-xl bg-gradient-brand glow-cyan"
             >
               Solicitar Cotizacion
             </a>

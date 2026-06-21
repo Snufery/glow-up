@@ -1,0 +1,15 @@
+import type { Product } from "./products";
+
+/** Tarifas de instalación por producto (COP). null = sin instalación disponible. */
+const INSTALLATION_BY_SLUG: Record<string, number> = {
+  "interruptor-inteligente-wifi": 15000,
+  "camara-wifi-360": 50000,
+};
+
+export function getInstallationPrice(product: Product): number | null {
+  return INSTALLATION_BY_SLUG[product.slug] ?? null;
+}
+
+export function hasInstallationOption(product: Product): boolean {
+  return getInstallationPrice(product) !== null;
+}
