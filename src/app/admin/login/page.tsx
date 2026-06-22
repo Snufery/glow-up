@@ -28,8 +28,12 @@ function AdminLoginForm() {
       });
 
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
+        const data = (await res.json().catch(() => ({}))) as {
+          error?: string;
+          locked?: boolean;
+        };
         setError(data.error || "No se pudo iniciar sesion");
+        if (data.locked) setPassword("");
         return;
       }
 
