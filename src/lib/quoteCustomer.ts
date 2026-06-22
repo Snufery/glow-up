@@ -58,7 +58,7 @@ function shortDateFromQuoteRef(quoteRef: string): string {
   return `${match[1].slice(2)}${match[2]}${match[3]}`;
 }
 
-/** Ej: GlowUp-Maria-250621.pdf */
+/** Ej: GlowUp-Maria-250621.pdf — solo ASCII, corto para Android */
 export function buildQuoteFilename(quoteRef: string, customer: QuoteCustomerInfo): string {
   const name = slugifyFirstName(customer.name);
   const date = shortDateFromQuoteRef(quoteRef);
