@@ -13,7 +13,11 @@ export const runtime = "nodejs";
 export async function POST(request: Request) {
   const configError = getAdminConfigError();
   if (configError) {
-    return NextResponse.json({ error: configError }, { status: 500 });
+    console.error("Admin config:", configError);
+    return NextResponse.json(
+      { error: "El panel de administracion no esta configurado. Contacta al desarrollador." },
+      { status: 500 }
+    );
   }
 
   try {
@@ -21,7 +25,7 @@ export async function POST(request: Request) {
     const password = body.password ?? "";
 
     if (!safeEqual(password, getAdminPassword())) {
-      return NextResponse.json({ error: "Contrasena incorrecta" }, { status: 401 });
+      return NextResponse.json({ error: "Credenciales invalidas" }, { status: 401 });
     }
 
     const token = await createAdminSessionToken();
@@ -30,7 +34,7 @@ export async function POST(request: Request) {
     response.cookies.set(ADMIN_COOKIE, token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      sameSite: "strict",
       path: "/",
       maxAge: SESSION_MAX_AGE,
     });

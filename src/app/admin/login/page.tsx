@@ -4,11 +4,12 @@ import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { Lock, Loader2 } from "lucide-react";
+import { safeAdminRedirect } from "@/lib/adminRedirect";
 
 function AdminLoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const next = searchParams.get("next") || "/admin";
+  const next = safeAdminRedirect(searchParams.get("next"));
 
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
