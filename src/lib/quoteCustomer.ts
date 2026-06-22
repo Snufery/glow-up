@@ -41,28 +41,30 @@ export function buildCustomerInfo(info: QuoteCustomerInfo): QuoteCustomerInfo {
   };
 }
 
-function slugifyName(name: string): string {
-  const slug = name
+function slugifyFirstName(name: string): string {
+  const first = name
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .trim()
-    .split(/\s+/)
-    .slice(0, 2)
-    .join("")
+    .split(/\s+/)[0]
     .replace(/[^a-zA-Z0-9]/g, "");
 
-  return slug.slice(0, 20) || "Cliente";
+  return first.slice(0, 10) || "Cliente";
 }
 
 function shortDateFromQuoteRef(quoteRef: string): string {
   const match = quoteRef.match(/^GU-(\d{4})(\d{2})(\d{2})/);
-  if (!match) return "cotizacion";
+  if (!match) return "000000";
   return `${match[1].slice(2)}${match[2]}${match[3]}`;
 }
 
-/** Ej: GlowUp-MariaLopez-250621.pdf */
+/** Ej: GlowUp-Maria-250621.pdf */
 export function buildQuoteFilename(quoteRef: string, customer: QuoteCustomerInfo): string {
-  const name = slugifyName(customer.name);
+  const name = slugifyFirstName(customer.name);
   const date = shortDateFromQuoteRef(quoteRef);
   return `GlowUp-${name}-${date}.pdf`;
+}
+
+export function buildQuotePdfTitle(filename: string): string {
+  return filename.replace(/\.pdf$/i, "");
 }

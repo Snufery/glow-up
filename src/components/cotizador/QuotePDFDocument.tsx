@@ -299,6 +299,7 @@ interface QuotePDFDocumentProps {
   quoteRef: string;
   logoUrl: string;
   customer: QuoteCustomerInfo;
+  pdfTitle: string;
 }
 
 export default function QuotePDFDocument({
@@ -306,6 +307,7 @@ export default function QuotePDFDocument({
   quoteRef,
   logoUrl,
   customer,
+  pdfTitle,
 }: QuotePDFDocumentProps) {
   const totals = calcQuoteTotals(items);
   const issuedAt = new Date();
@@ -313,7 +315,7 @@ export default function QuotePDFDocument({
   validUntil.setDate(validUntil.getDate() + 15);
 
   return (
-    <Document title={`Cotizacion ${quoteRef} - Glow Up`}>
+    <Document title={pdfTitle}>
       <Page size="A4" style={styles.page}>
         <BrandGradientBar />
 
