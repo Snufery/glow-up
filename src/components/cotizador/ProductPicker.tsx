@@ -167,7 +167,7 @@ export default function ProductPicker() {
                         ? openConfig(product)
                         : handleAdd(product)
                     }
-                    className="w-10 h-10 rounded-xl bg-gradient-brand text-zinc-950 flex items-center justify-center transition-all hover:scale-105 hover:shadow-[0_0_20px_rgba(34,211,238,0.35)] cursor-pointer"
+                    className="w-10 h-10 rounded-xl bg-gradient-brand text-zinc-950 flex items-center justify-center transition-all hover:scale-105 hover:shadow-[0_0_20px_rgba(43,188,179,0.35)] cursor-pointer"
                     aria-label={`Agregar ${product.name}`}
                   >
                     {isFlashing ? <Check size={16} /> : <Plus size={16} />}

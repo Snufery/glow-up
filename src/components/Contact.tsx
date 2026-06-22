@@ -40,7 +40,7 @@ export default function Contact() {
   return (
     <section id="contacto" className="py-32 relative">
       <div className="absolute inset-0 bg-zinc-950" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_100%,rgba(34,211,238,0.07),transparent)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_100%,rgba(43,188,179,0.07),transparent)]" />
 
       <div className="relative max-w-[1200px] mx-auto px-6">
         <div className="text-center mb-20">

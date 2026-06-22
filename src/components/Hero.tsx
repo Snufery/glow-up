@@ -51,11 +51,11 @@ export default function Hero() {
         className="absolute inset-0 opacity-[0.14]"
         style={{
           backgroundImage:
-            "radial-gradient(circle at 20% 50%, rgba(34,211,238,0.15) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(8,145,178,0.12) 0%, transparent 40%)",
+            "radial-gradient(circle at 20% 50%, rgba(122,182,72,0.15) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(43,188,179,0.12) 0%, transparent 40%)",
         }}
       />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_90%_70%_at_50%_-20%,rgba(34,211,238,0.22),transparent)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_100%_50%,rgba(8,145,178,0.14),transparent)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_90%_70%_at_50%_-20%,rgba(43,188,179,0.22),transparent)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_100%_50%,rgba(43,188,179,0.14),transparent)]" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_30%_at_0%_80%,rgba(103,246,255,0.08),transparent)]" />
       <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/0 via-zinc-950/20 to-zinc-950" />
 
@@ -75,7 +75,7 @@ export default function Hero() {
 
       <div className="relative z-[1] max-w-[1340px] mx-auto px-6 pt-32 pb-28 w-full flex gap-16 flex-col lg:flex-row items-center">
         <div className="flex-1 animate-fade-in-up text-center lg:text-left">
-          <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full text-xs font-semibold tracking-wider text-[var(--accent-bright)] border border-[var(--accent)]/25 bg-[var(--accent)]/8 backdrop-blur-sm mb-10 shadow-[0_0_30px_rgba(34,211,238,0.08)]">
+          <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full text-xs font-semibold tracking-wider text-[var(--accent-bright)] border border-[var(--accent)]/25 bg-[var(--accent)]/8 backdrop-blur-sm mb-10 shadow-[0_0_30px_rgba(43,188,179,0.08)]">
             <Sparkles size={15} className="text-[var(--accent)]" />
             Domotica &bull; Automatizacion &bull; Instalaciones Electricas
           </div>

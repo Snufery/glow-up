@@ -23,7 +23,7 @@ const serviceIcons: Record<string, LucideIcon> = {
 export default function Services() {
   return (
     <section id="servicios" className="py-32 relative">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_100%_0%,rgba(34,211,238,0.06),transparent)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_100%_0%,rgba(43,188,179,0.06),transparent)]" />
 
       <div className="relative max-w-[1200px] mx-auto px-6">
         <div className="text-center mb-20">
@@ -45,7 +45,7 @@ export default function Services() {
               >
                 {service.featured && (
                   <>
-                    <div className="absolute -top-16 -right-16 w-44 h-44 bg-[radial-gradient(circle,rgba(34,211,238,0.12),transparent_70%)] pointer-events-none" />
+                    <div className="absolute -top-16 -right-16 w-44 h-44 bg-[radial-gradient(circle,rgba(43,188,179,0.12),transparent_70%)] pointer-events-none" />
                     <div className="absolute top-4 right-4 flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold text-[var(--accent)] bg-[var(--accent)]/10 border border-[var(--accent)]/20">
                       <Star size={10} fill="currentColor" />
                       Destacado
@@ -53,7 +53,7 @@ export default function Services() {
                   </>
                 )}
 
-                <div className="mb-6 w-14 h-14 rounded-2xl bg-zinc-900/80 border border-white/[0.06] flex items-center justify-center text-[var(--accent)] group-hover:border-[var(--accent)]/30 group-hover:shadow-[0_0_30px_rgba(34,211,238,0.15)] transition-all">
+                <div className="mb-6 w-14 h-14 rounded-2xl bg-zinc-900/80 border border-white/[0.06] flex items-center justify-center text-[var(--accent)] group-hover:border-[var(--accent)]/30 group-hover:shadow-[0_0_30px_rgba(43,188,179,0.15)] transition-all">
                   {Icon && <Icon size={26} strokeWidth={1.5} />}
                 </div>
 

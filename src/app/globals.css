@@ -2,13 +2,24 @@
 
 /* ═══════════════════════════════════════════
    GLOW UP — Premium Design System
-   Dark zinc + cyan/teal accents
+   Marca: Glow #7AB648 (verde) · Up #2BBCB3 (teal)
    ═══════════════════════════════════════════ */
 
 :root {
-  --accent: #22d3ee;
-  --accent-bright: #67f6ff;
-  --accent-dark: #0891b2;
+  --brand-glow: #7ab648;
+  --brand-glow-dark: #5e9a2f;
+  --brand-up: #2bbcb3;
+  --brand-up-dark: #1f9a92;
+
+  --accent: var(--brand-up);
+  --accent-bright: var(--brand-glow);
+  --accent-dark: var(--brand-up-dark);
+
+  --green: var(--brand-glow);
+  --green-dark: var(--brand-glow-dark);
+  --teal: var(--brand-up);
+  --teal-dark: var(--brand-up-dark);
+
   --bg-primary: #0a0a0a;
   --bg-secondary: #111111;
   --bg-card: rgba(24, 24, 27, 0.6);
@@ -18,9 +29,11 @@
   --text-secondary: #a1a1aa;
   --text-muted: #71717a;
   --border: rgba(255, 255, 255, 0.06);
-  --border-hover: rgba(34, 211, 238, 0.25);
-  --glow-cyan: rgba(34, 211, 238, 0.35);
-  --glow-cyan-soft: rgba(103, 246, 255, 0.15);
+  --border-hover: rgba(43, 188, 179, 0.25);
+  --glow-brand: rgba(43, 188, 179, 0.35);
+  --glow-glow: rgba(122, 182, 72, 0.35);
+  --glow-cyan: var(--glow-brand);
+  --glow-cyan-soft: rgba(122, 182, 72, 0.15);
   --glass-bg: rgba(10, 10, 10, 0.72);
   --glass-border: rgba(255, 255, 255, 0.08);
   --radius-sm: 8px;
@@ -28,21 +41,13 @@
   --radius-lg: 20px;
   --radius-xl: 28px;
   --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
-  /* Legacy aliases for gradual migration */
-  --green: var(--accent);
-  --teal: var(--accent);
-  --green-dark: var(--accent-dark);
-  --teal-dark: var(--accent-dark);
-  --glow-green: var(--glow-cyan);
-  --glow-teal: var(--glow-cyan);
 }
 
 @theme inline {
   --font-display: var(--font-display);
   --font-body: var(--font-body);
-  --color-accent: #22d3ee;
-  --color-accent-bright: #67f6ff;
+  --color-accent: #2bbcb3;
+  --color-accent-bright: #7ab648;
   --color-bg-primary: #0a0a0a;
   --color-bg-secondary: #111111;
   --color-bg-card: #18181b;
@@ -62,10 +67,20 @@ body {
   font-family: var(--font-body), sans-serif;
 }
 
+/* ═══════════ Marca Glow Up ═══════════ */
+
+.text-brand-glow {
+  color: var(--brand-glow);
+}
+
+.text-brand-up {
+  color: var(--brand-up);
+}
+
 /* ═══════════ Gradient Text ═══════════ */
 
 .text-gradient {
-  background: linear-gradient(135deg, var(--accent-bright), var(--accent));
+  background: linear-gradient(135deg, var(--brand-glow), var(--brand-up));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -74,11 +89,11 @@ body {
 /* ═══════════ Gradient Backgrounds ═══════════ */
 
 .bg-gradient-brand {
-  background: linear-gradient(135deg, var(--accent-dark), var(--accent));
+  background: linear-gradient(135deg, var(--brand-glow), var(--brand-up));
 }
 
 .bg-gradient-brand-subtle {
-  background: linear-gradient(160deg, rgba(34, 211, 238, 0.08), rgba(103, 246, 255, 0.03));
+  background: linear-gradient(160deg, rgba(122, 182, 72, 0.08), rgba(43, 188, 179, 0.04));
 }
 
 /* ═══════════ Glassmorphism ═══════════ */
@@ -102,25 +117,19 @@ body {
 .glass-card:hover {
   border-color: var(--border-hover);
   background: var(--bg-card-hover);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(34, 211, 238, 0.05);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(43, 188, 179, 0.05);
 }
 
 /* ═══════════ Glow Shadows ═══════════ */
 
-.glow-cyan {
-  box-shadow: 0 4px 24px var(--glow-cyan);
-}
-
-.glow-cyan-hover:hover {
-  box-shadow: 0 8px 32px rgba(34, 211, 238, 0.45);
-}
-
+.glow-cyan,
 .glow-green {
-  box-shadow: 0 4px 24px var(--glow-cyan);
+  box-shadow: 0 4px 24px var(--glow-brand);
 }
 
+.glow-cyan-hover:hover,
 .glow-green-hover:hover {
-  box-shadow: 0 8px 32px rgba(34, 211, 238, 0.45);
+  box-shadow: 0 8px 32px rgba(43, 188, 179, 0.45);
 }
 
 /* ═══════════ Card Utility ═══════════ */
@@ -148,9 +157,9 @@ body {
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--accent);
-  border: 1px solid rgba(34, 211, 238, 0.2);
-  background: rgba(34, 211, 238, 0.06);
+  color: var(--brand-up);
+  border: 1px solid rgba(43, 188, 179, 0.2);
+  background: rgba(43, 188, 179, 0.06);
 }
 
 /* ═══════════ Animations ═══════════ */
@@ -189,8 +198,8 @@ body {
 }
 
 @keyframes hotspotPulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.35); }
-  50% { box-shadow: 0 0 0 8px rgba(34, 211, 238, 0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(43, 188, 179, 0.35); }
+  50% { box-shadow: 0 0 0 8px rgba(43, 188, 179, 0); }
 }
 
 .hero-hotspot-pulse {
@@ -220,8 +229,8 @@ body {
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 6px var(--glow-cyan);
+  background: linear-gradient(135deg, var(--brand-glow), var(--brand-up));
+  box-shadow: 0 0 6px var(--glow-brand);
 }
 
 /* ═══════════ Form Inputs ═══════════ */
@@ -244,8 +253,8 @@ body {
 }
 
 .form-input:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.1);
+  border-color: var(--brand-up);
+  box-shadow: 0 0 0 3px rgba(43, 188, 179, 0.1);
 }
 
 /* ═══════════ Premium Buttons ═══════════ */
@@ -260,8 +269,8 @@ body {
   font-size: 0.875rem;
   font-weight: 600;
   color: #09090b;
-  background: linear-gradient(135deg, var(--accent-dark), var(--accent));
-  box-shadow: 0 4px 24px var(--glow-cyan);
+  background: linear-gradient(135deg, var(--brand-glow), var(--brand-up));
+  box-shadow: 0 4px 24px var(--glow-glow);
   transition: var(--transition);
   position: relative;
   overflow: hidden;
@@ -279,7 +288,7 @@ body {
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 36px rgba(34, 211, 238, 0.5);
+  box-shadow: 0 8px 36px rgba(122, 182, 72, 0.45);
 }
 
 .btn-primary:hover::after {
@@ -305,9 +314,9 @@ body {
 
 .btn-secondary:hover {
   background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(34, 211, 238, 0.35);
+  border-color: rgba(43, 188, 179, 0.35);
   transform: translateY(-2px);
-  box-shadow: 0 0 24px rgba(34, 211, 238, 0.1);
+  box-shadow: 0 0 24px rgba(43, 188, 179, 0.1);
 }
 
 .btn-consultar {
@@ -319,13 +328,13 @@ body {
   font-size: 0.75rem;
   font-weight: 600;
   color: #09090b;
-  background: linear-gradient(135deg, var(--accent-dark), var(--accent));
+  background: linear-gradient(135deg, var(--brand-glow), var(--brand-up));
   transition: var(--transition);
 }
 
 .btn-consultar:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 20px rgba(34, 211, 238, 0.4);
+  box-shadow: 0 4px 20px rgba(43, 188, 179, 0.4);
 }
 
 /* ═══════════ Premium Card ═══════════ */
@@ -348,15 +357,15 @@ body {
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  background: linear-gradient(90deg, transparent, var(--brand-glow), var(--brand-up), transparent);
   opacity: 0;
   transition: opacity 0.3s;
 }
 
 .premium-card:hover {
-  border-color: rgba(34, 211, 238, 0.2);
+  border-color: rgba(43, 188, 179, 0.2);
   transform: translateY(-4px);
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(34, 211, 238, 0.06);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(43, 188, 179, 0.06);
 }
 
 .premium-card:hover::before {

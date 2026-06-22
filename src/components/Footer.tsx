@@ -23,8 +23,8 @@ export default function Footer() {
               <Image src="/logo.png" alt="Glow Up" width={44} height={44} className="h-11 w-11 object-contain" />
               <div className="flex flex-col leading-tight">
                 <span className="text-[15px] font-bold tracking-wide font-[var(--font-display)]">
-                  <span className="text-[var(--accent-bright)]">Glow</span>{" "}
-                  <span className="text-[var(--accent)]">Up</span>
+                  <span className="text-brand-glow">Glow</span>{" "}
+                  <span className="text-brand-up">Up</span>
                 </span>
                 <span className="text-[10px] font-medium text-zinc-500 tracking-[0.2em] uppercase">
                   Entornos Inteligentes

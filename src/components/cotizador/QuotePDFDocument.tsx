@@ -15,6 +15,9 @@ import {
 } from "@/lib/quote";
 import { contactInfo } from "@/data/contact";
 
+const BRAND_GLOW = "#7ab648";
+const BRAND_UP = "#2bbcb3";
+
 const styles = StyleSheet.create({
   page: {
     padding: 40,
@@ -30,7 +33,7 @@ const styles = StyleSheet.create({
     marginBottom: 28,
     paddingBottom: 18,
     borderBottomWidth: 2,
-    borderBottomColor: "#0891b2",
+    borderBottomColor: BRAND_UP,
   },
   logo: {
     width: 52,
@@ -40,8 +43,13 @@ const styles = StyleSheet.create({
   brandTitle: {
     fontSize: 16,
     fontFamily: "Helvetica-Bold",
-    color: "#0891b2",
     marginBottom: 4,
+  },
+  brandGlow: {
+    color: BRAND_GLOW,
+  },
+  brandUp: {
+    color: BRAND_UP,
   },
   brandSub: {
     fontSize: 8,
@@ -78,12 +86,12 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 12,
     fontFamily: "Helvetica-Bold",
-    color: "#0891b2",
+    color: BRAND_UP,
     marginBottom: 10,
   },
   tableHeader: {
     flexDirection: "row",
-    backgroundColor: "#0891b2",
+    backgroundColor: BRAND_UP,
     paddingVertical: 8,
     paddingHorizontal: 8,
     borderTopLeftRadius: 4,
@@ -142,7 +150,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
     paddingTop: 8,
     borderTopWidth: 2,
-    borderTopColor: "#0891b2",
+    borderTopColor: BRAND_UP,
   },
   grandTotalLabel: {
     fontSize: 11,
@@ -152,15 +160,15 @@ const styles = StyleSheet.create({
   grandTotalValue: {
     fontSize: 14,
     fontFamily: "Helvetica-Bold",
-    color: "#0891b2",
+    color: BRAND_UP,
   },
   disclaimer: {
     marginTop: 24,
     padding: 12,
-    backgroundColor: "#ecfeff",
+    backgroundColor: "#f0fdf9",
     borderRadius: 4,
     borderLeftWidth: 3,
-    borderLeftColor: "#22d3ee",
+    borderLeftColor: BRAND_GLOW,
   },
   disclaimerText: {
     fontSize: 8,
@@ -212,7 +220,10 @@ export default function QuotePDFDocument({
           <View style={{ flexDirection: "row", gap: 12, alignItems: "center" }}>
             <Image src={logoUrl} style={styles.logo} />
             <View>
-              <Text style={styles.brandTitle}>Glow Up</Text>
+              <Text style={styles.brandTitle}>
+                <Text style={styles.brandGlow}>Glow </Text>
+                <Text style={styles.brandUp}>Up</Text>
+              </Text>
               <Text style={styles.brandSub}>Entornos Inteligentes</Text>
             </View>
           </View>
