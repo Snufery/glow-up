@@ -2,7 +2,7 @@ import { pdf } from "@react-pdf/renderer";
 import type { QuoteLineItem } from "@/context/QuoteContext";
 import QuotePDFDocument from "@/components/cotizador/QuotePDFDocument";
 import { buildWhatsAppMessage } from "@/lib/quote";
-import type { QuoteCustomerInfo } from "@/lib/quoteCustomer";
+import { buildQuoteFilename, type QuoteCustomerInfo } from "@/lib/quoteCustomer";
 import { contactInfo } from "@/data/contact";
 
 export function generateQuoteRef(): string {
@@ -53,7 +53,7 @@ export async function generateAndSendQuote(
   customer: QuoteCustomerInfo
 ): Promise<GenerateQuoteResult> {
   const quoteRef = generateQuoteRef();
-  const filename = `Cotizacion-GlowUp-${quoteRef}.pdf`;
+  const filename = buildQuoteFilename(quoteRef, customer);
   const blob = await createQuotePdfBlob(items, quoteRef, customer);
   const file = new File([blob], filename, { type: "application/pdf" });
 
@@ -64,7 +64,7 @@ export async function generateAndSendQuote(
 
   if (typeof navigator !== "undefined" && navigator.share) {
     const shareData: ShareData = {
-      title: `Cotizacion Glow Up ${quoteRef}`,
+      title: filename.replace(/\.pdf$/i, ""),
       text: baseMessage,
       files: [file],
     };
