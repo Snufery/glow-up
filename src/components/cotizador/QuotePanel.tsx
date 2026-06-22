@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -8,19 +9,33 @@ import {
   Plus,
   Wrench,
   ShoppingBag,
-  MessageCircle,
   AlertCircle,
+  FileDown,
+  Loader2,
+  CheckCircle2,
 } from "lucide-react";
 import { useQuote } from "@/context/QuoteContext";
-import { calcLineInstallation, calcLineSubtotal, formatCOP, buildWhatsAppMessage } from "@/lib/quote";
-import { contactInfo } from "@/data/contact";
+import { calcLineInstallation, calcLineSubtotal, formatCOP } from "@/lib/quote";
+import { generateAndSendQuote } from "@/lib/generateQuotePdf";
 
 export default function QuotePanel() {
   const { items, totals, removeItem, updateQuantity, toggleInstallation, clearQuote } = useQuote();
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [lastSentRef, setLastSentRef] = useState<string | null>(null);
 
-  const sendWhatsApp = () => {
-    const msg = encodeURIComponent(buildWhatsAppMessage(items));
-    window.open(`${contactInfo.socialLinks.whatsapp}?text=${msg}`, "_blank");
+  const handleGenerateAndSend = async () => {
+    if (items.length === 0 || isGenerating) return;
+    setIsGenerating(true);
+    setLastSentRef(null);
+    try {
+      const result = await generateAndSendQuote(items);
+      setLastSentRef(result.quoteRef);
+    } catch (err) {
+      console.error("Error generando cotizacion:", err);
+      alert("No se pudo generar el PDF. Intenta de nuevo.");
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   if (items.length === 0) {
@@ -154,12 +169,37 @@ export default function QuotePanel() {
         </div>
 
         <button
-          onClick={sendWhatsApp}
-          className="w-full btn-primary cursor-pointer justify-center"
+          onClick={handleGenerateAndSend}
+          disabled={isGenerating}
+          className={`w-full py-4 rounded-xl font-semibold text-sm transition-all cursor-pointer flex items-center justify-center gap-2 ${
+            isGenerating
+              ? "bg-zinc-800 text-zinc-400 border border-white/[0.08] cursor-wait"
+              : lastSentRef
+                ? "bg-[var(--accent)]/20 text-[var(--accent)] border border-[var(--accent)]/30"
+                : "btn-primary"
+          }`}
         >
-          <MessageCircle size={16} />
-          Enviar cotizacion por WhatsApp
+          {isGenerating ? (
+            <>
+              <Loader2 size={16} className="animate-spin" />
+              Generando PDF...
+            </>
+          ) : lastSentRef ? (
+            <>
+              <CheckCircle2 size={16} />
+              Cotizacion {lastSentRef} enviada
+            </>
+          ) : (
+            <>
+              <FileDown size={16} />
+              Descargar PDF y enviar por WhatsApp
+            </>
+          )}
         </button>
+
+        <p className="text-[10px] text-zinc-500 text-center leading-relaxed">
+          Se descarga el PDF y se abre WhatsApp. En celular puedes adjuntar el archivo directamente.
+        </p>
 
         <Link
           href="/#contacto"
