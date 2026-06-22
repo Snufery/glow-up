@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { ArrowRight, Sparkles, ChevronDown, LayoutGrid, Calculator } from "lucide-react";
-import HeroVisual from "./HeroVisual";
+import HeroExperience from "./HeroExperience";
 
 export default function Hero() {
   const statsRef = useRef<HTMLDivElement>(null);
@@ -127,7 +127,7 @@ export default function Hero() {
           </div>
         </div>
 
-        <HeroVisual />
+        <HeroExperience />
       </div>
 
       <a

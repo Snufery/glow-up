@@ -188,6 +188,15 @@ body {
   animation: fadeInUp 0.8s ease-out 0.2s both;
 }
 
+@keyframes hotspotPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.35); }
+  50% { box-shadow: 0 0 0 8px rgba(34, 211, 238, 0); }
+}
+
+.hero-hotspot-pulse {
+  animation: hotspotPulse 2.8s ease-in-out infinite;
+}
+
 /* ═══════════ Reveal on Scroll ═══════════ */
 
 .reveal {
