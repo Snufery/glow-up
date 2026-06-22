@@ -3,6 +3,7 @@ import QuotePDFDocument from "@/components/cotizador/QuotePDFDocument";
 import type { QuoteLineItem } from "@/context/QuoteContext";
 import type { QuoteCustomerInfo } from "@/lib/quoteCustomer";
 import { getLogoUrlFromRequest } from "@/lib/siteUrl";
+import { checkIpRateLimit, getClientIp } from "@/lib/requestSecurity";
 import {
   MAX_QUOTE_BODY_BYTES,
   parseQuoteCustomer,
@@ -47,6 +48,17 @@ async function parsePayload(request: Request): Promise<PdfPayload | null> {
 
 export async function POST(request: Request) {
   try {
+    const ip = getClientIp(request);
+    const rate = checkIpRateLimit(`quote-pdf:${ip}`, 15, 10 * 60 * 1000);
+    if (!rate.allowed) {
+      return new Response("Demasiadas solicitudes. Intenta mas tarde.", {
+        status: 429,
+        headers: rate.retryAfterSec
+          ? { "Retry-After": String(rate.retryAfterSec) }
+          : undefined,
+      });
+    }
+
     const payload = await parsePayload(request);
     if (!payload?.items?.length || !payload.quoteRef || !payload.customer) {
       return new Response("Datos incompletos", { status: 400 });
