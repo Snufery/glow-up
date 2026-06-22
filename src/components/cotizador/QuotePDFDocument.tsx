@@ -5,6 +5,11 @@ import {
   View,
   Image,
   StyleSheet,
+  Svg,
+  Defs,
+  LinearGradient,
+  Stop,
+  Rect,
 } from "@react-pdf/renderer";
 import type { QuoteLineItem } from "@/context/QuoteContext";
 import {
@@ -18,7 +23,14 @@ import type { QuoteCustomerInfo } from "@/lib/quoteCustomer";
 import { formatPhoneDisplay } from "@/lib/quoteCustomer";
 
 const BRAND_GLOW = "#7ab648";
+const BRAND_GLOW_DARK = "#5e9a2f";
 const BRAND_UP = "#2bbcb3";
+const BRAND_UP_DARK = "#1f9a92";
+const BRAND_GLOW_LIGHT = "#eef6e6";
+const BRAND_UP_LIGHT = "#e6f7f5";
+const BRAND_MIX_LIGHT = "#f0f9f4";
+
+const CONTENT_WIDTH = 515;
 
 const styles = StyleSheet.create({
   page: {
@@ -28,22 +40,23 @@ const styles = StyleSheet.create({
     color: "#18181b",
     backgroundColor: "#ffffff",
   },
+  accentBar: {
+    marginBottom: 22,
+  },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    marginBottom: 28,
-    paddingBottom: 18,
-    borderBottomWidth: 2,
-    borderBottomColor: BRAND_UP,
+    marginBottom: 24,
+    paddingBottom: 16,
   },
   logo: {
-    width: 52,
-    height: 52,
+    width: 56,
+    height: 56,
     objectFit: "contain",
   },
   brandTitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontFamily: "Helvetica-Bold",
     marginBottom: 4,
   },
@@ -55,59 +68,80 @@ const styles = StyleSheet.create({
   },
   brandSub: {
     fontSize: 8,
-    color: "#71717a",
-    letterSpacing: 1.2,
+    color: BRAND_UP_DARK,
+    letterSpacing: 1.4,
     textTransform: "uppercase",
+    fontFamily: "Helvetica-Bold",
   },
   contactBlock: {
     textAlign: "right",
     fontSize: 8,
     color: "#52525b",
-    lineHeight: 1.5,
+    lineHeight: 1.6,
+  },
+  contactHighlight: {
+    color: BRAND_UP_DARK,
+    fontFamily: "Helvetica-Bold",
   },
   metaRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 12,
+    marginBottom: 10,
     padding: 12,
-    backgroundColor: "#f4f4f5",
+    backgroundColor: BRAND_MIX_LIGHT,
     borderRadius: 6,
+    borderWidth: 1,
+    borderColor: BRAND_UP_LIGHT,
   },
   clientRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 22,
     padding: 12,
-    backgroundColor: "#f0fdf9",
+    backgroundColor: BRAND_GLOW_LIGHT,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: "#99f6e4",
+    borderColor: "#c8e4a8",
+    borderLeftWidth: 4,
+    borderLeftColor: BRAND_GLOW,
   },
   metaLabel: {
     fontSize: 7,
-    color: "#71717a",
+    color: BRAND_UP_DARK,
     textTransform: "uppercase",
     letterSpacing: 0.8,
     marginBottom: 3,
+    fontFamily: "Helvetica-Bold",
   },
   metaValue: {
     fontSize: 11,
     fontFamily: "Helvetica-Bold",
     color: "#18181b",
   },
+  metaValueAccent: {
+    fontSize: 11,
+    fontFamily: "Helvetica-Bold",
+    color: BRAND_GLOW_DARK,
+  },
   sectionTitle: {
     fontSize: 12,
     fontFamily: "Helvetica-Bold",
-    color: BRAND_UP,
+    color: BRAND_UP_DARK,
     marginBottom: 10,
+    paddingBottom: 4,
+    borderBottomWidth: 1,
+    borderBottomColor: BRAND_GLOW,
+  },
+  tableWrapper: {
+    borderRadius: 6,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: BRAND_UP_LIGHT,
   },
   tableHeader: {
     flexDirection: "row",
-    backgroundColor: BRAND_UP,
-    paddingVertical: 8,
+    paddingVertical: 9,
     paddingHorizontal: 8,
-    borderTopLeftRadius: 4,
-    borderTopRightRadius: 4,
   },
   tableHeaderCell: {
     color: "#ffffff",
@@ -120,41 +154,47 @@ const styles = StyleSheet.create({
     paddingVertical: 9,
     paddingHorizontal: 8,
     borderBottomWidth: 1,
-    borderBottomColor: "#e4e4e7",
+    borderBottomColor: "#e8f0ec",
   },
   tableRowAlt: {
-    backgroundColor: "#fafafa",
+    backgroundColor: BRAND_MIX_LIGHT,
   },
   cellProduct: { width: "38%" },
   cellQty: { width: "8%", textAlign: "center" },
   cellUnit: { width: "16%", textAlign: "right" },
   cellInstall: { width: "16%", textAlign: "right" },
-  cellSubtotal: { width: "22%", textAlign: "right", fontFamily: "Helvetica-Bold" },
+  cellSubtotal: {
+    width: "22%",
+    textAlign: "right",
+    fontFamily: "Helvetica-Bold",
+    color: BRAND_GLOW_DARK,
+  },
   productName: {
     fontSize: 9,
     fontFamily: "Helvetica-Bold",
     marginBottom: 2,
+    color: "#18181b",
   },
   productDetail: {
     fontSize: 7,
-    color: "#71717a",
+    color: BRAND_UP_DARK,
   },
   totalsBox: {
     marginTop: 16,
     alignSelf: "flex-end",
-    width: 240,
+    width: 250,
     padding: 14,
-    backgroundColor: "#f4f4f5",
+    backgroundColor: BRAND_UP_LIGHT,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: "#e4e4e7",
+    borderColor: "#a8e8e2",
   },
   totalRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 6,
     fontSize: 9,
-    color: "#52525b",
+    color: "#3f5f5c",
   },
   grandTotalRow: {
     flexDirection: "row",
@@ -170,21 +210,23 @@ const styles = StyleSheet.create({
     color: "#18181b",
   },
   grandTotalValue: {
-    fontSize: 14,
+    fontSize: 15,
     fontFamily: "Helvetica-Bold",
-    color: BRAND_UP,
+    color: BRAND_GLOW_DARK,
   },
   disclaimer: {
     marginTop: 24,
     padding: 12,
-    backgroundColor: "#f0fdf9",
+    backgroundColor: BRAND_MIX_LIGHT,
     borderRadius: 4,
-    borderLeftWidth: 3,
+    borderLeftWidth: 4,
     borderLeftColor: BRAND_GLOW,
+    borderWidth: 1,
+    borderColor: BRAND_UP_LIGHT,
   },
   disclaimerText: {
     fontSize: 8,
-    color: "#52525b",
+    color: "#3f5f5c",
     lineHeight: 1.5,
   },
   footer: {
@@ -194,12 +236,55 @@ const styles = StyleSheet.create({
     right: 40,
     textAlign: "center",
     fontSize: 7,
-    color: "#a1a1aa",
-    borderTopWidth: 1,
-    borderTopColor: "#e4e4e7",
+    color: "#71717a",
     paddingTop: 10,
   },
+  footerBrand: {
+    fontFamily: "Helvetica-Bold",
+  },
 });
+
+function BrandGradientBar({
+  height = 5,
+  compact = false,
+}: {
+  height?: number;
+  compact?: boolean;
+}) {
+  return (
+    <Svg
+      width={CONTENT_WIDTH}
+      height={height}
+      style={compact ? { marginBottom: 8 } : styles.accentBar}
+    >
+      <Defs>
+        <LinearGradient id="brandGradient" x1="0" y1="0" x2="1" y2="0">
+          <Stop offset="0%" stopColor={BRAND_GLOW} />
+          <Stop offset="100%" stopColor={BRAND_UP} />
+        </LinearGradient>
+      </Defs>
+      <Rect width={CONTENT_WIDTH} height={height} fill="url(#brandGradient)" rx={3} />
+    </Svg>
+  );
+}
+
+function TableHeaderGradient() {
+  return (
+    <Svg
+      width={CONTENT_WIDTH}
+      height={32}
+      style={{ position: "absolute", top: 0, left: 0 }}
+    >
+      <Defs>
+        <LinearGradient id="tableHeaderGrad" x1="0" y1="0" x2="1" y2="0">
+          <Stop offset="0%" stopColor={BRAND_GLOW} />
+          <Stop offset="100%" stopColor={BRAND_UP} />
+        </LinearGradient>
+      </Defs>
+      <Rect width={CONTENT_WIDTH} height={32} fill="url(#tableHeaderGrad)" />
+    </Svg>
+  );
+}
 
 function formatDate(date: Date): string {
   return date.toLocaleDateString("es-CO", {
@@ -230,6 +315,8 @@ export default function QuotePDFDocument({
   return (
     <Document title={`Cotizacion ${quoteRef} - Glow Up`}>
       <Page size="A4" style={styles.page}>
+        <BrandGradientBar />
+
         <View style={styles.header}>
           <View style={{ flexDirection: "row", gap: 12, alignItems: "center" }}>
             <Image src={logoUrl} style={styles.logo} />
@@ -242,7 +329,7 @@ export default function QuotePDFDocument({
             </View>
           </View>
           <View style={styles.contactBlock}>
-            <Text>{contactInfo.phone}</Text>
+            <Text style={styles.contactHighlight}>{contactInfo.phone}</Text>
             <Text>{contactInfo.email}</Text>
             <Text>{contactInfo.location}</Text>
           </View>
@@ -255,7 +342,7 @@ export default function QuotePDFDocument({
           </View>
           <View>
             <Text style={styles.metaLabel}>Referencia</Text>
-            <Text style={styles.metaValue}>{quoteRef}</Text>
+            <Text style={styles.metaValueAccent}>{quoteRef}</Text>
           </View>
           <View>
             <Text style={styles.metaLabel}>Fecha</Text>
@@ -274,19 +361,22 @@ export default function QuotePDFDocument({
           </View>
           <View>
             <Text style={styles.metaLabel}>Celular</Text>
-            <Text style={styles.metaValue}>{formatPhoneDisplay(customer.phone)}</Text>
+            <Text style={styles.metaValueAccent}>{formatPhoneDisplay(customer.phone)}</Text>
           </View>
         </View>
 
         <Text style={styles.sectionTitle}>Detalle de productos y servicios</Text>
 
-        <View>
-          <View style={styles.tableHeader}>
-            <Text style={[styles.tableHeaderCell, styles.cellProduct]}>Producto</Text>
-            <Text style={[styles.tableHeaderCell, styles.cellQty]}>Cant.</Text>
-            <Text style={[styles.tableHeaderCell, styles.cellUnit]}>P. unit.</Text>
-            <Text style={[styles.tableHeaderCell, styles.cellInstall]}>Instal.</Text>
-            <Text style={[styles.tableHeaderCell, styles.cellSubtotal]}>Subtotal</Text>
+        <View style={styles.tableWrapper}>
+          <View style={{ position: "relative" }}>
+            <TableHeaderGradient />
+            <View style={styles.tableHeader}>
+              <Text style={[styles.tableHeaderCell, styles.cellProduct]}>Producto</Text>
+              <Text style={[styles.tableHeaderCell, styles.cellQty]}>Cant.</Text>
+              <Text style={[styles.tableHeaderCell, styles.cellUnit]}>P. unit.</Text>
+              <Text style={[styles.tableHeaderCell, styles.cellInstall]}>Instal.</Text>
+              <Text style={[styles.tableHeaderCell, styles.cellSubtotal]}>Subtotal</Text>
+            </View>
           </View>
 
           {items.map((item, index) => {
@@ -340,14 +430,21 @@ export default function QuotePDFDocument({
           <Text style={styles.disclaimerText}>
             Esta cotizacion es estimada y no constituye una factura ni compromiso comercial.
             El valor final puede variar segun evaluacion en sitio, cableado, obra civil y
-            condiciones tecnicas del inmueble. Glow Up confirmara disponibilidad y tiempos
+            condiciones tecnicas del inmueble.{" "}
+            <Text style={styles.brandGlow}>Glow </Text>
+            <Text style={styles.brandUp}>Up</Text> confirmara disponibilidad y tiempos
             de instalacion al recibir esta solicitud.
           </Text>
         </View>
 
-        <Text style={styles.footer}>
-          Glow Up Entornos Inteligentes · Popayan, Cauca, Colombia · {contactInfo.phone}
-        </Text>
+        <View style={styles.footer}>
+          <BrandGradientBar height={2} compact />
+          <Text>
+            <Text style={[styles.brandGlow, styles.footerBrand]}>Glow </Text>
+            <Text style={[styles.brandUp, styles.footerBrand]}>Up</Text>
+            <Text> Entornos Inteligentes · Popayan, Cauca, Colombia · {contactInfo.phone}</Text>
+          </Text>
+        </View>
       </Page>
     </Document>
   );
