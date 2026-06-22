@@ -28,10 +28,12 @@ export function calcQuoteTotals(items: QuoteLineItem[]) {
   };
 }
 
-export function buildWhatsAppMessage(items: QuoteLineItem[]): string {
+export function buildWhatsAppMessage(items: QuoteLineItem[], quoteRef?: string): string {
   const { productsSubtotal, installationSubtotal, grandTotal } = calcQuoteTotals(items);
 
-  let msg = "Hola Glow Up! Quiero una cotizacion estimada:\n\nPRODUCTOS:\n";
+  let msg = "Hola Glow Up! Quiero una cotizacion estimada:";
+  if (quoteRef) msg += `\nRef: ${quoteRef}`;
+  msg += "\n\nPRODUCTOS:\n";
 
   items.forEach((item) => {
     let line = `• ${item.quantity}x ${item.name}`;
