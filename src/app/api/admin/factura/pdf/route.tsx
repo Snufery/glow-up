@@ -2,16 +2,9 @@ import { renderToBuffer } from "@react-pdf/renderer";
 import InvoicePDFDocument from "@/components/admin/InvoicePDFDocument";
 import type { InvoiceData } from "@/lib/invoice";
 import { buildInvoiceFilename } from "@/lib/invoice";
+import { getLogoUrlFromRequest } from "@/lib/siteUrl";
 
 export const runtime = "nodejs";
-
-function getLogoUrl(request: Request): string {
-  const origin = request.headers.get("origin");
-  if (origin) return `${origin}/logo.png`;
-  const host = request.headers.get("host");
-  if (host) return `https://${host}/logo.png`;
-  return "https://glow-up-seven-psi.vercel.app/logo.png";
-}
 
 function sanitizeFilename(filename: string): string {
   const safe = filename.replace(/[^a-zA-Z0-9._-]/g, "");
@@ -48,7 +41,7 @@ export async function POST(request: Request) {
     );
 
     const buffer = await renderToBuffer(
-      <InvoicePDFDocument invoice={invoice} logoUrl={getLogoUrl(request)} />
+      <InvoicePDFDocument invoice={invoice} logoUrl={getLogoUrlFromRequest(request)} />
     );
 
     return new Response(new Uint8Array(buffer), {

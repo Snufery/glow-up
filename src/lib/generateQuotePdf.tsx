@@ -8,6 +8,7 @@ import {
   type QuoteCustomerInfo,
 } from "@/lib/quoteCustomer";
 import { contactInfo } from "@/data/contact";
+import { getSiteUrl } from "@/lib/siteUrl";
 
 export function generateQuoteRef(): string {
   const d = new Date();
@@ -19,7 +20,7 @@ function getLogoUrl(): string {
   if (typeof window !== "undefined") {
     return `${window.location.origin}/logo.png`;
   }
-  return "https://glow-up-seven-psi.vercel.app/logo.png";
+  return `${getSiteUrl()}/logo.png`;
 }
 
 function isAndroid(): boolean {
