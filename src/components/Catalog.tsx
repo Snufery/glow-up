@@ -74,7 +74,7 @@ export default function Catalog() {
   return (
     <section id="catalogo" className="py-28 relative">
       <div className="absolute inset-0 bg-zinc-950" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_0%,rgba(34,211,238,0.06),transparent)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_0%,rgba(43,188,179,0.06),transparent)]" />
 
       <div className="relative max-w-[1200px] mx-auto px-6">
         <div className="text-center mb-16">
@@ -98,7 +98,7 @@ export default function Catalog() {
                   onClick={() => setActiveFilter(cat.id)}
                   className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium border transition-all cursor-pointer ${
                     isActive
-                      ? "bg-gradient-brand text-zinc-950 border-transparent shadow-[0_0_20px_rgba(34,211,238,0.25)]"
+                      ? "bg-gradient-brand text-zinc-950 border-transparent shadow-[0_0_20px_rgba(43,188,179,0.25)]"
                       : "bg-transparent text-zinc-400 border-transparent hover:bg-white/[0.04] hover:text-white"
                   }`}
                 >
@@ -176,7 +176,7 @@ export default function Catalog() {
                             }
                             className={`w-9 h-9 rounded-lg text-sm font-bold border transition-all cursor-pointer ${
                               selectedCh === opt.channels
-                                ? "bg-[var(--accent)] border-[var(--accent)] text-zinc-950 shadow-[0_0_16px_rgba(34,211,238,0.3)]"
+                                ? "bg-[var(--accent)] border-[var(--accent)] text-zinc-950 shadow-[0_0_16px_rgba(43,188,179,0.3)]"
                                 : "bg-transparent border-white/[0.08] text-zinc-400 hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
                             }`}
                           >
@@ -200,7 +200,7 @@ export default function Catalog() {
                             title={variant.label}
                             className={`w-7 h-7 rounded-full border-2 transition-all cursor-pointer ${
                               selectedColor === variant.id
-                                ? "border-[var(--accent)] scale-110 shadow-[0_0_10px_rgba(34,211,238,0.4)]"
+                                ? "border-[var(--accent)] scale-110 shadow-[0_0_10px_rgba(43,188,179,0.4)]"
                                 : "border-white/[0.1] hover:border-zinc-500"
                             }`}
                             style={{ backgroundColor: variant.hex }}

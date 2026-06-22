@@ -86,8 +86,8 @@ export default function Navbar() {
             </div>
             <div className="hidden sm:flex flex-col leading-tight">
               <span className="text-[15px] font-bold tracking-wide font-[var(--font-display)]">
-                <span className="text-[var(--accent-bright)]">Glow</span>{" "}
-                <span className="text-[var(--accent)]">Up</span>
+                <span className="text-brand-glow">Glow</span>{" "}
+                <span className="text-brand-up">Up</span>
               </span>
               <span className="text-[10px] font-medium text-zinc-400 tracking-[0.2em] uppercase">
                 Entornos Inteligentes
@@ -168,8 +168,8 @@ export default function Navbar() {
               <Image src="/logo.png" alt="Glow Up" width={40} height={40} className="h-10 w-10 object-contain" />
               <div>
                 <p className="text-sm font-bold font-[var(--font-display)]">
-                  <span className="text-[var(--accent-bright)]">Glow</span>{" "}
-                  <span className="text-[var(--accent)]">Up</span>
+                  <span className="text-brand-glow">Glow</span>{" "}
+                  <span className="text-brand-up">Up</span>
                 </p>
                 <p className="text-[10px] text-zinc-500 tracking-widest uppercase">Entornos Inteligentes</p>
               </div>

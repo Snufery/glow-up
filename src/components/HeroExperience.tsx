@@ -74,7 +74,7 @@ export default function HeroExperience() {
         {/* Capa 3 — Gradiente cinematico */}
         <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/30 to-zinc-950/10" />
         <div className="absolute inset-0 bg-gradient-to-r from-zinc-950/50 via-transparent to-zinc-950/30" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_40%,rgba(34,211,238,0.12),transparent_65%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_40%,rgba(43,188,179,0.12),transparent_65%)]" />
 
         {/* Vignette */}
         <div className="absolute inset-0 ring-1 ring-inset ring-white/[0.06] rounded-[var(--radius-xl)] pointer-events-none" />
@@ -96,7 +96,7 @@ export default function HeroExperience() {
             >
               <button
                 type="button"
-                className="relative flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-zinc-950/70 backdrop-blur-md border border-[var(--accent)]/40 text-[var(--accent-bright)] shadow-[0_0_24px_rgba(34,211,238,0.25)] transition-transform hover:scale-110 cursor-pointer hero-hotspot-pulse"
+                className="relative flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-zinc-950/70 backdrop-blur-md border border-[var(--accent)]/40 text-[var(--accent-bright)] shadow-[0_0_24px_rgba(43,188,179,0.25)] transition-transform hover:scale-110 cursor-pointer hero-hotspot-pulse"
                 aria-label={spot.label}
               >
                 <span className="absolute inset-0 rounded-full border border-[var(--accent)]/30 animate-ping opacity-40" />
@@ -122,7 +122,8 @@ export default function HeroExperience() {
           <div className="flex items-center justify-between mb-3">
             <div>
               <p className="text-[10px] uppercase tracking-[0.15em] text-zinc-500 font-medium">
-                Glow Up Command
+                <span className="text-brand-glow">Glow</span>{" "}
+                <span className="text-brand-up">Up</span> Command
               </p>
               <p className="text-sm font-semibold text-white mt-0.5">Sala principal</p>
             </div>

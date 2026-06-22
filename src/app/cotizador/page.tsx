@@ -30,7 +30,7 @@ function MobileQuoteBar() {
 export default function CotizadorPage() {
   return (
     <div className="min-h-screen bg-zinc-950">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(34,211,238,0.1),transparent)] pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(43,188,179,0.1),transparent)] pointer-events-none" />
       <div className="absolute inset-0 opacity-20 pointer-events-none noise-overlay" />
 
       <CotizadorNav />

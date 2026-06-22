@@ -115,7 +115,7 @@ export default function Testimonials() {
   return (
     <section id="testimonios" className="py-28 relative">
       <div className="absolute inset-0 bg-zinc-950" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_100%,rgba(34,211,238,0.06),transparent)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_100%,rgba(43,188,179,0.06),transparent)]" />
 
       <div className="relative max-w-[1200px] mx-auto px-6">
         <div className="text-center mb-16">

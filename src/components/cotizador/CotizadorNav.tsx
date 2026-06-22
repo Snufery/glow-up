@@ -15,8 +15,8 @@ export default function CotizadorNav() {
           <ArrowLeft size={18} className="group-hover:-translate-x-0.5 transition-transform" />
           <Image src="/logo.png" alt="Glow Up" width={36} height={36} className="h-9 w-9 object-contain" />
           <span className="hidden sm:block text-sm font-semibold font-[var(--font-display)]">
-            <span className="text-[var(--accent-bright)]">Glow</span>{" "}
-            <span className="text-[var(--accent)]">Up</span>
+            <span className="text-brand-glow">Glow</span>{" "}
+            <span className="text-brand-up">Up</span>
           </span>
         </Link>
 
