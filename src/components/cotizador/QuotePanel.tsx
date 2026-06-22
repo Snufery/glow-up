@@ -17,6 +17,8 @@ import {
 import { useQuote } from "@/context/QuoteContext";
 import { calcLineInstallation, calcLineSubtotal, formatCOP } from "@/lib/quote";
 import { generateAndSendQuote } from "@/lib/generateQuotePdf";
+import type { QuoteCustomerInfo } from "@/lib/quoteCustomer";
+import QuoteCustomerModal from "./QuoteCustomerModal";
 
 interface QuotePanelProps {
   variant?: "sidebar" | "sheet";
@@ -27,14 +29,21 @@ export default function QuotePanel({ variant = "sidebar" }: QuotePanelProps) {
   const { items, totals, removeItem, updateQuantity, toggleInstallation, clearQuote } = useQuote();
   const [isGenerating, setIsGenerating] = useState(false);
   const [lastSentRef, setLastSentRef] = useState<string | null>(null);
+  const [showCustomerModal, setShowCustomerModal] = useState(false);
 
-  const handleGenerateAndSend = async () => {
+  const handleOpenCustomerModal = () => {
+    if (items.length === 0 || isGenerating) return;
+    setShowCustomerModal(true);
+  };
+
+  const handleGenerateAndSend = async (customer: QuoteCustomerInfo) => {
     if (items.length === 0 || isGenerating) return;
     setIsGenerating(true);
     setLastSentRef(null);
     try {
-      const result = await generateAndSendQuote(items);
+      const result = await generateAndSendQuote(items, customer);
       setLastSentRef(result.quoteRef);
+      setShowCustomerModal(false);
     } catch (err) {
       console.error("Error generando cotizacion:", err);
       alert("No se pudo generar el PDF. Intenta de nuevo.");
@@ -194,7 +203,7 @@ export default function QuotePanel({ variant = "sidebar" }: QuotePanelProps) {
         </div>
 
         <button
-          onClick={handleGenerateAndSend}
+          onClick={handleOpenCustomerModal}
           disabled={isGenerating}
           className={`w-full py-4 rounded-xl font-semibold text-sm transition-all cursor-pointer flex items-center justify-center gap-2 ${
             isGenerating
@@ -236,13 +245,30 @@ export default function QuotePanel({ variant = "sidebar" }: QuotePanelProps) {
     </>
   );
 
+  const customerModal = (
+    <QuoteCustomerModal
+      open={showCustomerModal}
+      onClose={() => !isGenerating && setShowCustomerModal(false)}
+      onConfirm={handleGenerateAndSend}
+      isSubmitting={isGenerating}
+    />
+  );
+
   if (isSheet) {
-    return <div className="flex flex-col">{panelContent}</div>;
+    return (
+      <>
+        <div className="flex flex-col">{panelContent}</div>
+        {customerModal}
+      </>
+    );
   }
 
   return (
-    <div className="glass rounded-[var(--radius-xl)] flex flex-col h-full min-h-[400px] overflow-hidden">
-      {panelContent}
-    </div>
+    <>
+      <div className="glass rounded-[var(--radius-xl)] flex flex-col h-full min-h-[400px] overflow-hidden">
+        {panelContent}
+      </div>
+      {customerModal}
+    </>
   );
 }

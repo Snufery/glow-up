@@ -1,4 +1,6 @@
 import type { QuoteLineItem } from "@/context/QuoteContext";
+import type { QuoteCustomerInfo } from "@/lib/quoteCustomer";
+import { formatPhoneDisplay } from "@/lib/quoteCustomer";
 
 export function formatCOP(amount: number): string {
   return `$${amount.toLocaleString("es-CO")}`;
@@ -28,10 +30,16 @@ export function calcQuoteTotals(items: QuoteLineItem[]) {
   };
 }
 
-export function buildWhatsAppMessage(items: QuoteLineItem[], quoteRef?: string): string {
+export function buildWhatsAppMessage(
+  items: QuoteLineItem[],
+  quoteRef?: string,
+  customer?: QuoteCustomerInfo
+): string {
   const { productsSubtotal, installationSubtotal, grandTotal } = calcQuoteTotals(items);
 
-  let msg = "Hola Glow Up! Quiero una cotizacion estimada:";
+  let msg = customer
+    ? `Hola Glow Up! Soy ${customer.name}.\nCelular: ${formatPhoneDisplay(customer.phone)}\n\nQuiero una cotizacion estimada:`
+    : "Hola Glow Up! Quiero una cotizacion estimada:";
   if (quoteRef) msg += `\nRef: ${quoteRef}`;
   msg += "\n\nPRODUCTOS:\n";
 

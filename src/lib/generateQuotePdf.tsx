@@ -2,6 +2,7 @@ import { pdf } from "@react-pdf/renderer";
 import type { QuoteLineItem } from "@/context/QuoteContext";
 import QuotePDFDocument from "@/components/cotizador/QuotePDFDocument";
 import { buildWhatsAppMessage } from "@/lib/quote";
+import type { QuoteCustomerInfo } from "@/lib/quoteCustomer";
 import { contactInfo } from "@/data/contact";
 
 export function generateQuoteRef(): string {
@@ -26,9 +27,18 @@ function downloadBlob(blob: Blob, filename: string) {
   URL.revokeObjectURL(url);
 }
 
-async function createQuotePdfBlob(items: QuoteLineItem[], quoteRef: string): Promise<Blob> {
+async function createQuotePdfBlob(
+  items: QuoteLineItem[],
+  quoteRef: string,
+  customer: QuoteCustomerInfo
+): Promise<Blob> {
   return pdf(
-    <QuotePDFDocument items={items} quoteRef={quoteRef} logoUrl={getLogoUrl()} />
+    <QuotePDFDocument
+      items={items}
+      quoteRef={quoteRef}
+      logoUrl={getLogoUrl()}
+      customer={customer}
+    />
   ).toBlob();
 }
 
@@ -38,15 +48,18 @@ export interface GenerateQuoteResult {
   sharedWithFile: boolean;
 }
 
-export async function generateAndSendQuote(items: QuoteLineItem[]): Promise<GenerateQuoteResult> {
+export async function generateAndSendQuote(
+  items: QuoteLineItem[],
+  customer: QuoteCustomerInfo
+): Promise<GenerateQuoteResult> {
   const quoteRef = generateQuoteRef();
   const filename = `Cotizacion-GlowUp-${quoteRef}.pdf`;
-  const blob = await createQuotePdfBlob(items, quoteRef);
+  const blob = await createQuotePdfBlob(items, quoteRef, customer);
   const file = new File([blob], filename, { type: "application/pdf" });
 
   downloadBlob(blob, filename);
 
-  const baseMessage = buildWhatsAppMessage(items, quoteRef);
+  const baseMessage = buildWhatsAppMessage(items, quoteRef, customer);
   let sharedWithFile = false;
 
   if (typeof navigator !== "undefined" && navigator.share) {

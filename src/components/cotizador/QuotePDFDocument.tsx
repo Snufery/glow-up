@@ -14,6 +14,8 @@ import {
   formatCOP,
 } from "@/lib/quote";
 import { contactInfo } from "@/data/contact";
+import type { QuoteCustomerInfo } from "@/lib/quoteCustomer";
+import { formatPhoneDisplay } from "@/lib/quoteCustomer";
 
 const BRAND_GLOW = "#7ab648";
 const BRAND_UP = "#2bbcb3";
@@ -66,10 +68,20 @@ const styles = StyleSheet.create({
   metaRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 22,
+    marginBottom: 12,
     padding: 12,
     backgroundColor: "#f4f4f5",
     borderRadius: 6,
+  },
+  clientRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 22,
+    padding: 12,
+    backgroundColor: "#f0fdf9",
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: "#99f6e4",
   },
   metaLabel: {
     fontSize: 7,
@@ -201,12 +213,14 @@ interface QuotePDFDocumentProps {
   items: QuoteLineItem[];
   quoteRef: string;
   logoUrl: string;
+  customer: QuoteCustomerInfo;
 }
 
 export default function QuotePDFDocument({
   items,
   quoteRef,
   logoUrl,
+  customer,
 }: QuotePDFDocumentProps) {
   const totals = calcQuoteTotals(items);
   const issuedAt = new Date();
@@ -250,6 +264,17 @@ export default function QuotePDFDocument({
           <View>
             <Text style={styles.metaLabel}>Valida hasta</Text>
             <Text style={styles.metaValue}>{formatDate(validUntil)}</Text>
+          </View>
+        </View>
+
+        <View style={styles.clientRow}>
+          <View>
+            <Text style={styles.metaLabel}>Cliente</Text>
+            <Text style={styles.metaValue}>{customer.name}</Text>
+          </View>
+          <View>
+            <Text style={styles.metaLabel}>Celular</Text>
+            <Text style={styles.metaValue}>{formatPhoneDisplay(customer.phone)}</Text>
           </View>
         </View>
 
