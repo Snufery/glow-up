@@ -40,6 +40,9 @@ interface AddProductOptions {
 interface QuoteContextValue {
   items: QuoteLineItem[];
   totals: ReturnType<typeof calcQuoteTotals>;
+  mobileCartOpen: boolean;
+  setMobileCartOpen: (open: boolean) => void;
+  openMobileCart: () => void;
   addProduct: (product: Product, options: AddProductOptions) => void;
   removeItem: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
@@ -63,6 +66,9 @@ function loadStoredItems(): QuoteLineItem[] {
 export function QuoteProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<QuoteLineItem[]>([]);
   const [hydrated, setHydrated] = useState(false);
+  const [mobileCartOpen, setMobileCartOpen] = useState(false);
+
+  const openMobileCart = useCallback(() => setMobileCartOpen(true), []);
 
   useEffect(() => {
     setItems(loadStoredItems());
@@ -148,13 +154,26 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
     () => ({
       items,
       totals,
+      mobileCartOpen,
+      setMobileCartOpen,
+      openMobileCart,
       addProduct,
       removeItem,
       updateQuantity,
       toggleInstallation,
       clearQuote,
     }),
-    [items, totals, addProduct, removeItem, updateQuantity, toggleInstallation, clearQuote]
+    [
+      items,
+      totals,
+      mobileCartOpen,
+      openMobileCart,
+      addProduct,
+      removeItem,
+      updateQuantity,
+      toggleInstallation,
+      clearQuote,
+    ]
   );
 
   return <QuoteContext.Provider value={value}>{children}</QuoteContext.Provider>;
