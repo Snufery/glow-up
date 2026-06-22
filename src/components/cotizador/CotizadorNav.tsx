@@ -2,11 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, Calculator } from "lucide-react";
+import { ArrowLeft, Calculator, ShoppingBag } from "lucide-react";
 import { useQuote } from "@/context/QuoteContext";
 
 export default function CotizadorNav() {
-  const { totals } = useQuote();
+  const { totals, openMobileCart } = useQuote();
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-[1000] glass border-b border-white/[0.08]">
@@ -25,11 +25,24 @@ export default function CotizadorNav() {
           <span className="text-sm font-semibold font-[var(--font-display)]">Simulador de Cotizacion</span>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           {totals.itemCount > 0 && (
-            <span className="hidden sm:inline text-xs text-zinc-500">
-              {totals.itemCount} producto{totals.itemCount !== 1 ? "s" : ""}
-            </span>
+            <>
+              <button
+                type="button"
+                onClick={openMobileCart}
+                className="xl:hidden relative w-10 h-10 rounded-xl border border-white/[0.08] bg-white/[0.04] flex items-center justify-center text-[var(--accent-bright)] hover:border-[var(--accent)]/30 transition-all cursor-pointer"
+                aria-label={`Ver carrito, ${totals.itemCount} productos`}
+              >
+                <ShoppingBag size={18} />
+                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-gradient-brand text-[9px] font-bold text-zinc-950 flex items-center justify-center">
+                  {totals.itemCount}
+                </span>
+              </button>
+              <span className="hidden sm:inline text-xs text-zinc-500">
+                {totals.itemCount} producto{totals.itemCount !== 1 ? "s" : ""}
+              </span>
+            </>
           )}
           <Link
             href="/#contacto"

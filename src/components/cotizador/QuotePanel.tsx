@@ -18,7 +18,12 @@ import { useQuote } from "@/context/QuoteContext";
 import { calcLineInstallation, calcLineSubtotal, formatCOP } from "@/lib/quote";
 import { generateAndSendQuote } from "@/lib/generateQuotePdf";
 
-export default function QuotePanel() {
+interface QuotePanelProps {
+  variant?: "sidebar" | "sheet";
+}
+
+export default function QuotePanel({ variant = "sidebar" }: QuotePanelProps) {
+  const isSheet = variant === "sheet";
   const { items, totals, removeItem, updateQuantity, toggleInstallation, clearQuote } = useQuote();
   const [isGenerating, setIsGenerating] = useState(false);
   const [lastSentRef, setLastSentRef] = useState<string | null>(null);
@@ -39,8 +44,8 @@ export default function QuotePanel() {
   };
 
   if (items.length === 0) {
-    return (
-      <div className="glass rounded-[var(--radius-xl)] p-8 h-full flex flex-col items-center justify-center text-center min-h-[400px]">
+    const emptyState = (
+      <div className={`p-8 h-full flex flex-col items-center justify-center text-center ${isSheet ? "" : "min-h-[400px]"}`}>
         <div className="w-16 h-16 rounded-2xl bg-[var(--accent)]/8 border border-[var(--accent)]/20 flex items-center justify-center text-[var(--accent)] mb-5">
           <ShoppingBag size={28} />
         </div>
@@ -50,26 +55,46 @@ export default function QuotePanel() {
         </p>
       </div>
     );
+
+    if (isSheet) return emptyState;
+    return (
+      <div className="glass rounded-[var(--radius-xl)] h-full">
+        {emptyState}
+      </div>
+    );
   }
 
-  return (
-    <div className="glass rounded-[var(--radius-xl)] flex flex-col h-full min-h-[400px] overflow-hidden">
-      <div className="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between">
-        <div>
-          <h3 className="font-[var(--font-display)] text-base font-bold">Tu cotizacion</h3>
-          <p className="text-xs text-zinc-500 mt-0.5">
-            {totals.itemCount} producto{totals.itemCount !== 1 ? "s" : ""} seleccionado{totals.itemCount !== 1 ? "s" : ""}
-          </p>
+  const panelContent = (
+    <>
+      {!isSheet && (
+        <div className="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between">
+          <div>
+            <h3 className="font-[var(--font-display)] text-base font-bold">Tu cotizacion</h3>
+            <p className="text-xs text-zinc-500 mt-0.5">
+              {totals.itemCount} producto{totals.itemCount !== 1 ? "s" : ""} seleccionado{totals.itemCount !== 1 ? "s" : ""}
+            </p>
+          </div>
+          <button
+            onClick={clearQuote}
+            className="text-xs text-zinc-500 hover:text-red-400 transition-colors cursor-pointer"
+          >
+            Vaciar
+          </button>
         </div>
-        <button
-          onClick={clearQuote}
-          className="text-xs text-zinc-500 hover:text-red-400 transition-colors cursor-pointer"
-        >
-          Vaciar
-        </button>
-      </div>
+      )}
 
-      <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3 max-h-[420px] lg:max-h-none">
+      {isSheet && (
+        <div className="px-5 pt-3 pb-1 flex justify-end">
+          <button
+            onClick={clearQuote}
+            className="text-xs text-zinc-500 hover:text-red-400 transition-colors cursor-pointer"
+          >
+            Vaciar carrito
+          </button>
+        </div>
+      )}
+
+      <div className={`flex-1 px-5 py-4 space-y-3 ${isSheet ? "" : "overflow-y-auto max-h-[420px] lg:max-h-none"}`}>
         {items.map((item) => {
           const lineTotal = calcLineSubtotal(item);
           const lineInstall = calcLineInstallation(item);
@@ -103,7 +128,7 @@ export default function QuotePanel() {
                 </button>
               </div>
 
-              <div className="flex items-center justify-between">
+              <div className={`flex gap-3 ${isSheet ? "flex-col sm:flex-row sm:items-center sm:justify-between" : "items-center justify-between"}`}>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => updateQuantity(item.id, item.quantity - 1)}
@@ -143,7 +168,7 @@ export default function QuotePanel() {
         })}
       </div>
 
-      <div className="px-5 py-5 border-t border-white/[0.06] bg-zinc-950/40 space-y-3">
+      <div className={`px-5 py-5 border-t border-white/[0.06] space-y-3 ${isSheet ? "bg-zinc-950/60" : "bg-zinc-950/40"}`}>
         <div className="space-y-1.5 text-sm">
           <div className="flex justify-between text-zinc-400">
             <span>Subtotal productos</span>
@@ -208,6 +233,16 @@ export default function QuotePanel() {
           O contactanos desde el formulario
         </Link>
       </div>
+    </>
+  );
+
+  if (isSheet) {
+    return <div className="flex flex-col">{panelContent}</div>;
+  }
+
+  return (
+    <div className="glass rounded-[var(--radius-xl)] flex flex-col h-full min-h-[400px] overflow-hidden">
+      {panelContent}
     </div>
   );
 }

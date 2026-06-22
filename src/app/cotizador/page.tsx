@@ -4,28 +4,7 @@ import CotizadorNav from "@/components/cotizador/CotizadorNav";
 import HouseVisual from "@/components/cotizador/HouseVisual";
 import ProductPicker from "@/components/cotizador/ProductPicker";
 import QuotePanel from "@/components/cotizador/QuotePanel";
-import { useQuote } from "@/context/QuoteContext";
-import { formatCOP } from "@/lib/quote";
-
-function MobileQuoteBar() {
-  const { totals } = useQuote();
-
-  if (totals.itemCount === 0) return null;
-
-  return (
-    <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[900] glass border-t border-white/[0.08] px-5 py-3 flex items-center justify-between">
-      <div>
-        <p className="text-[10px] text-zinc-500 uppercase tracking-wider">Total estimado</p>
-        <p className="text-lg font-bold font-[var(--font-display)] text-gradient">
-          {formatCOP(totals.grandTotal)}
-        </p>
-      </div>
-      <p className="text-xs text-zinc-400">
-        {totals.itemCount} producto{totals.itemCount !== 1 ? "s" : ""}
-      </p>
-    </div>
-  );
-}
+import MobileCartSheet from "@/components/cotizador/MobileCartSheet";
 
 export default function CotizadorPage() {
   return (
@@ -35,7 +14,7 @@ export default function CotizadorPage() {
 
       <CotizadorNav />
 
-      <main className="relative max-w-[1440px] mx-auto px-5 sm:px-8 pt-[88px] pb-24 lg:pb-10">
+      <main className="relative max-w-[1440px] mx-auto px-5 sm:px-8 pt-[88px] pb-28 xl:pb-10">
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] gap-6 lg:gap-8 min-h-[calc(100dvh-120px)]">
           <div className="lg:sticky lg:top-[88px] lg:self-start lg:h-[calc(100dvh-108px)]">
             <HouseVisual />
@@ -47,7 +26,7 @@ export default function CotizadorPage() {
                 <ProductPicker />
               </div>
 
-              <div className="xl:sticky xl:top-[88px] xl:self-start">
+              <div className="hidden xl:block xl:sticky xl:top-[88px] xl:self-start">
                 <QuotePanel />
               </div>
             </div>
@@ -55,7 +34,7 @@ export default function CotizadorPage() {
         </div>
       </main>
 
-      <MobileQuoteBar />
+      <MobileCartSheet />
     </div>
   );
 }
