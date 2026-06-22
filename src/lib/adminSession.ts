@@ -90,3 +90,16 @@ export function getAdminPassword(): string {
   }
   return password;
 }
+
+export function getAdminConfigError(): string | null {
+  const missing: string[] = [];
+  const password = process.env.ADMIN_PASSWORD;
+  const secret = process.env.ADMIN_SESSION_SECRET;
+
+  if (!password || password.length < 8) missing.push("ADMIN_PASSWORD");
+  if (!secret || secret.length < 16) missing.push("ADMIN_SESSION_SECRET");
+
+  if (!missing.length) return null;
+
+  return `Faltan variables en Vercel: ${missing.join(", ")}. Agregalas en Settings → Environment Variables y redeploya.`;
+}

@@ -3,6 +3,7 @@ import {
   ADMIN_COOKIE,
   SESSION_MAX_AGE,
   createAdminSessionToken,
+  getAdminConfigError,
   getAdminPassword,
   safeEqual,
 } from "@/lib/adminSession";
@@ -10,6 +11,11 @@ import {
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
+  const configError = getAdminConfigError();
+  if (configError) {
+    return NextResponse.json({ error: configError }, { status: 500 });
+  }
+
   try {
     const body = (await request.json()) as { password?: string };
     const password = body.password ?? "";
@@ -32,9 +38,6 @@ export async function POST(request: Request) {
     return response;
   } catch (error) {
     console.error("Admin login error:", error);
-    return NextResponse.json(
-      { error: "Configuracion de admin incompleta en el servidor" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Error interno al iniciar sesion" }, { status: 500 });
   }
 }
