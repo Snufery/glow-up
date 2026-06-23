@@ -1,8 +1,15 @@
 import { renderToBuffer } from "@react-pdf/renderer";
 import InvoicePDFDocument from "@/components/admin/InvoicePDFDocument";
 import type { InvoiceData } from "@/lib/invoice";
-import { buildInvoiceFilename } from "@/lib/invoice";
-import { getLogoUrlFromRequest } from "@/lib/siteUrl";
+import { saveInvoice } from "@/lib/db/invoices";
+import { markQuoteConverted } from "@/lib/db/quotes";
+import {
+  buildInvoiceFilename,
+  calcInvoiceSubtotal,
+  calcInvoiceTax,
+  calcInvoiceTotal,
+} from "@/lib/invoice";
+
 
 export const runtime = "nodejs";
 
@@ -41,8 +48,27 @@ export async function POST(request: Request) {
     );
 
     const buffer = await renderToBuffer(
-      <InvoicePDFDocument invoice={invoice} logoUrl={getLogoUrlFromRequest(request)} />
+      <InvoicePDFDocument invoice={invoice} />
     );
+
+    const subtotal = calcInvoiceSubtotal(invoice.items);
+    const tax = calcInvoiceTax(subtotal, invoice.includeTax);
+    const total = calcInvoiceTotal(invoice.items, invoice.includeTax);
+
+    void saveInvoice({
+      invoice,
+      subtotal,
+      tax,
+      total,
+      pdfFilename: safeFilename,
+      sourceQuoteId: invoice.sourceQuoteId,
+      engineer: invoice.engineer,
+      materials: invoice.materials,
+    });
+
+    if (invoice.sourceQuoteId) {
+      void markQuoteConverted(invoice.sourceQuoteId);
+    }
 
     return new Response(new Uint8Array(buffer), {
       headers: {

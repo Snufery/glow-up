@@ -1,6 +1,14 @@
 export interface QuoteCustomerInfo {
   name: string;
   phone: string;
+  address?: string;
+}
+
+export interface QuoteDocumentExtras {
+  engineer?: string;
+  materials?: string;
+  notes?: string;
+  customerAddress?: string;
 }
 
 export function normalizePhone(phone: string): string {

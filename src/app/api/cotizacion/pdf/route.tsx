@@ -1,9 +1,11 @@
 import { renderToBuffer } from "@react-pdf/renderer";
 import QuotePDFDocument from "@/components/cotizador/QuotePDFDocument";
 import type { QuoteLineItem } from "@/context/QuoteContext";
-import type { QuoteCustomerInfo } from "@/lib/quoteCustomer";
-import { getLogoUrlFromRequest } from "@/lib/siteUrl";
+import type { QuoteCustomerInfo, QuoteDocumentExtras } from "@/lib/quoteCustomer";
+
 import { checkIpRateLimit, getClientIp } from "@/lib/requestSecurity";
+import { saveQuoteFromPayload } from "@/lib/db/saveQuoteFromPayload";
+import type { QuoteSource } from "@/lib/db/types";
 import {
   MAX_QUOTE_BODY_BYTES,
   parseQuoteCustomer,
@@ -18,6 +20,8 @@ interface PdfPayload {
   customer: QuoteCustomerInfo;
   filename: string;
   pdfTitle: string;
+  extras?: QuoteDocumentExtras;
+  source?: QuoteSource;
 }
 
 function sanitizeFilename(filename: string): string {
@@ -79,11 +83,22 @@ export async function POST(request: Request) {
       <QuotePDFDocument
         items={items}
         quoteRef={quoteRef}
-        logoUrl={getLogoUrlFromRequest(request)}
         customer={customer}
         pdfTitle={pdfTitle}
+        engineer={payload.extras?.engineer}
+        materials={payload.extras?.materials}
+        notes={payload.extras?.notes}
       />
     );
+
+    void saveQuoteFromPayload({
+      quoteRef,
+      customer,
+      items,
+      filename,
+      source: payload.source === "admin" ? "admin" : "public",
+      extras: payload.extras,
+    });
 
     return new Response(new Uint8Array(buffer), {
       headers: {

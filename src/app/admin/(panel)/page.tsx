@@ -25,7 +25,7 @@ export default function AdminDashboardPage() {
             Cotizaciones
           </h2>
           <p className="text-xs text-zinc-500 leading-relaxed">
-            Crea cotizaciones internas con catalogo, PDF y envio por WhatsApp.
+            Crea cotizaciones con catalogo, PDF y consulta el historial guardado.
           </p>
         </Link>
 
@@ -38,7 +38,7 @@ export default function AdminDashboardPage() {
             Facturas
           </h2>
           <p className="text-xs text-zinc-500 leading-relaxed">
-            Genera facturas con datos del cliente, items y descarga en PDF.
+            Genera facturas en PDF y revisa las facturas emitidas anteriormente.
           </p>
         </Link>
       </div>
@@ -49,9 +49,10 @@ export default function AdminDashboardPage() {
           <p className="text-sm font-semibold mb-1">Seguridad</p>
           <p className="text-xs text-zinc-500 leading-relaxed">
             Entra desde <code className="text-zinc-400">/admin/login</code>. Configura{" "}
-            <code className="text-zinc-400">ADMIN_PASSWORD</code> y{" "}
-            <code className="text-zinc-400">ADMIN_SESSION_SECRET</code> en las variables de
-            entorno de Vercel. No enlaces esta area desde la web publica.
+            <code className="text-zinc-400">ADMIN_PASSWORD</code>,{" "}
+            <code className="text-zinc-400">ADMIN_SESSION_SECRET</code> y{" "}
+            <code className="text-zinc-400">DATABASE_URL</code> (Neon Postgres) en Vercel.
+            No enlaces esta area desde la web publica.
           </p>
         </div>
       </div>

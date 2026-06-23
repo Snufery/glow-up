@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -17,15 +18,18 @@ import {
 import { useQuote } from "@/context/QuoteContext";
 import { calcLineInstallation, calcLineSubtotal, formatCOP } from "@/lib/quote";
 import { generateAndSendQuote } from "@/lib/generateQuotePdf";
-import type { QuoteCustomerInfo } from "@/lib/quoteCustomer";
+import type { QuoteCustomerInfo, QuoteDocumentExtras } from "@/lib/quoteCustomer";
 import QuoteCustomerModal from "./QuoteCustomerModal";
 
 interface QuotePanelProps {
   variant?: "sidebar" | "sheet";
+  documentExtras?: QuoteDocumentExtras;
 }
 
-export default function QuotePanel({ variant = "sidebar" }: QuotePanelProps) {
+export default function QuotePanel({ variant = "sidebar", documentExtras }: QuotePanelProps) {
   const isSheet = variant === "sheet";
+  const pathname = usePathname();
+  const quoteSource = pathname.startsWith("/admin") ? "admin" : "public";
   const { items, totals, removeItem, updateQuantity, toggleInstallation, clearQuote } = useQuote();
   const [isGenerating, setIsGenerating] = useState(false);
   const [lastSentRef, setLastSentRef] = useState<string | null>(null);
@@ -41,7 +45,14 @@ export default function QuotePanel({ variant = "sidebar" }: QuotePanelProps) {
     setIsGenerating(true);
     setLastSentRef(null);
     try {
-      const result = await generateAndSendQuote(items, customer);
+      const customerWithAddress: QuoteCustomerInfo = {
+        ...customer,
+        address: documentExtras?.customerAddress?.trim() || customer.address,
+      };
+      const result = await generateAndSendQuote(items, customerWithAddress, {
+        source: quoteSource,
+        extras: documentExtras,
+      });
       setLastSentRef(result.quoteRef);
       setShowCustomerModal(false);
     } catch (err) {

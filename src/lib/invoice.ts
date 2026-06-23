@@ -20,7 +20,10 @@ export interface InvoiceData {
   customer: InvoiceCustomer;
   items: InvoiceLineItem[];
   notes: string;
+  materials?: string;
+  engineer?: string;
   includeTax: boolean;
+  sourceQuoteId?: string;
 }
 
 export function generateInvoiceNumber(): string {

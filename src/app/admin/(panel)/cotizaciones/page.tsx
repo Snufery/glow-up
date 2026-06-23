@@ -1,10 +1,19 @@
 "use client";
 
+import { useState } from "react";
+import AdminQuoteExtras from "@/components/admin/AdminQuoteExtras";
+import QuoteHistoryList from "@/components/admin/QuoteHistoryList";
 import ProductPicker from "@/components/cotizador/ProductPicker";
 import QuotePanel from "@/components/cotizador/QuotePanel";
 import { QuoteProvider } from "@/context/QuoteContext";
+import { companyLegal } from "@/data/company";
+import type { QuoteDocumentExtras } from "@/lib/quoteCustomer";
 
 export default function AdminCotizacionesPage() {
+  const [documentExtras, setDocumentExtras] = useState<QuoteDocumentExtras>({
+    engineer: companyLegal.defaultEngineer,
+  });
+
   return (
     <QuoteProvider>
       <div>
@@ -18,13 +27,18 @@ export default function AdminCotizacionesPage() {
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-[1fr_minmax(320px,380px)] gap-6">
-          <div className="glass rounded-[var(--radius-xl)] p-5 sm:p-6">
-            <ProductPicker />
+          <div className="space-y-6">
+            <div className="glass rounded-[var(--radius-xl)] p-5 sm:p-6">
+              <ProductPicker />
+            </div>
+            <AdminQuoteExtras value={documentExtras} onChange={setDocumentExtras} />
           </div>
           <div className="xl:sticky xl:top-6 xl:self-start">
-            <QuotePanel />
+            <QuotePanel documentExtras={documentExtras} />
           </div>
         </div>
+
+        <QuoteHistoryList />
       </div>
     </QuoteProvider>
   );

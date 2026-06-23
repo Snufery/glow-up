@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Plus, Trash2, FileDown, Loader2 } from "lucide-react";
 import {
   type InvoiceData,
@@ -11,6 +12,8 @@ import {
   calcInvoiceTotal,
   buildInvoiceFilename,
 } from "@/lib/invoice";
+import InvoiceHistoryList from "@/components/admin/InvoiceHistoryList";
+import { downloadPdfViaFetch } from "@/lib/downloadPdf";
 import { formatCOP } from "@/lib/quote";
 
 function todayISO() {
@@ -32,26 +35,15 @@ function emptyItem(): InvoiceLineItem {
   };
 }
 
-function downloadViaForm(payload: object) {
-  const form = document.createElement("form");
-  form.method = "POST";
-  form.action = "/api/admin/factura/pdf";
-  form.target = "_blank";
-  form.style.display = "none";
+const INVOICE_DRAFT_KEY = "glowup-invoice-draft";
 
-  const input = document.createElement("input");
-  input.type = "hidden";
-  input.name = "payload";
-  input.value = JSON.stringify(payload);
-  form.appendChild(input);
-
-  document.body.appendChild(form);
-  form.submit();
-  document.body.removeChild(form);
-}
-
-export default function AdminFacturasPage() {
-  const [invoiceNumber] = useState(generateInvoiceNumber);
+function AdminFacturasPageContent() {
+  const searchParams = useSearchParams();
+  const [invoiceNumber, setInvoiceNumber] = useState(generateInvoiceNumber);
+  const [sourceQuoteId, setSourceQuoteId] = useState<string | undefined>();
+  const [engineer, setEngineer] = useState("");
+  const [materials, setMaterials] = useState("");
+  const [fromQuoteBanner, setFromQuoteBanner] = useState(false);
   const [issuedAt, setIssuedAt] = useState(todayISO());
   const [dueAt, setDueAt] = useState(dueISO());
   const [includeTax, setIncludeTax] = useState(false);
@@ -69,6 +61,41 @@ export default function AdminFacturasPage() {
 
   const [items, setItems] = useState<InvoiceLineItem[]>([emptyItem()]);
 
+  useEffect(() => {
+    if (searchParams.get("fromQuote") !== "1") return;
+
+    const raw = sessionStorage.getItem(INVOICE_DRAFT_KEY);
+    if (!raw) return;
+
+    try {
+      const draft = JSON.parse(raw) as InvoiceData;
+      setInvoiceNumber(draft.invoiceNumber || generateInvoiceNumber());
+      setIssuedAt(draft.issuedAt || todayISO());
+      setDueAt(draft.dueAt || dueISO());
+      setIncludeTax(draft.includeTax ?? false);
+      setNotes(draft.notes || "");
+      setEngineer(draft.engineer || "");
+      setMaterials(draft.materials || "");
+      setSourceQuoteId(draft.sourceQuoteId);
+      setCustomer({
+        name: draft.customer.name || "",
+        document: draft.customer.document || "",
+        phone: draft.customer.phone || "",
+        email: draft.customer.email || "",
+        address: draft.customer.address || "",
+      });
+      setItems(
+        draft.items?.length
+          ? draft.items.map((item) => ({ ...item, id: item.id || crypto.randomUUID() }))
+          : [emptyItem()]
+      );
+      setFromQuoteBanner(true);
+      sessionStorage.removeItem(INVOICE_DRAFT_KEY);
+    } catch {
+      sessionStorage.removeItem(INVOICE_DRAFT_KEY);
+    }
+  }, [searchParams]);
+
   const subtotal = useMemo(() => calcInvoiceSubtotal(items), [items]);
   const tax = useMemo(() => calcInvoiceTax(subtotal, includeTax), [subtotal, includeTax]);
   const total = useMemo(() => calcInvoiceTotal(items, includeTax), [items, includeTax]);
@@ -77,7 +104,7 @@ export default function AdminFacturasPage() {
     setItems((prev) => prev.map((i) => (i.id === id ? { ...i, ...patch } : i)));
   };
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     setError("");
 
     if (!customer.name.trim()) {
@@ -104,14 +131,25 @@ export default function AdminFacturasPage() {
       },
       items: validItems,
       notes: notes.trim(),
+      materials: materials.trim() || undefined,
+      engineer: engineer.trim() || undefined,
       includeTax,
+      sourceQuoteId,
     };
 
     const filename = buildInvoiceFilename(invoiceNumber, customer.name);
 
     setGenerating(true);
-    downloadViaForm({ invoice, filename });
-    setTimeout(() => setGenerating(false), 800);
+    try {
+      await downloadPdfViaFetch("/api/admin/factura/pdf", { invoice, filename }, filename);
+    } catch (err) {
+      console.error("Error generando factura:", err);
+      setError(
+        err instanceof Error ? err.message : "No se pudo descargar la factura. Intenta de nuevo."
+      );
+    } finally {
+      setGenerating(false);
+    }
   };
 
   return (
@@ -123,6 +161,11 @@ export default function AdminFacturasPage() {
         <p className="text-sm text-zinc-500">
           Crea facturas internas y descargalas en PDF con la marca Glow Up.
         </p>
+        {fromQuoteBanner && (
+          <p className="text-xs text-[var(--accent-bright)] mt-2">
+            Datos precargados desde una cotización. Revisa y descarga la factura PDF.
+          </p>
+        )}
       </div>
 
       <div className="grid lg:grid-cols-[1fr_280px] gap-6">
@@ -247,8 +290,26 @@ export default function AdminFacturasPage() {
             </div>
           </section>
 
-          <section className="glass rounded-2xl p-5 border border-white/[0.06]">
-            <label className="flex items-center gap-2 text-sm mb-3 cursor-pointer">
+          <section className="glass rounded-2xl p-5 border border-white/[0.06] space-y-3">
+            <div>
+              <label className="block text-xs text-zinc-500 mb-1.5">Ingeniero</label>
+              <input
+                className="form-input text-sm"
+                placeholder="Nombre del ingeniero"
+                value={engineer}
+                onChange={(e) => setEngineer(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-zinc-500 mb-1.5">Materiales requeridos</label>
+              <textarea
+                className="form-input text-sm min-h-[72px] resize-y"
+                placeholder="Lista de materiales (opcional)"
+                value={materials}
+                onChange={(e) => setMaterials(e.target.value)}
+              />
+            </div>
+            <label className="flex items-center gap-2 text-sm cursor-pointer">
               <input
                 type="checkbox"
                 checked={includeTax}
@@ -309,6 +370,20 @@ export default function AdminFacturasPage() {
           </button>
         </aside>
       </div>
+
+      <InvoiceHistoryList />
     </div>
+  );
+}
+
+export default function AdminFacturasPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="max-w-5xl px-2 py-10 text-sm text-zinc-500">Cargando facturas...</div>
+      }
+    >
+      <AdminFacturasPageContent />
+    </Suspense>
   );
 }
