@@ -31,7 +31,11 @@ function formatDate(iso: string): string {
   });
 }
 
-export default function QuoteHistoryList() {
+interface QuoteHistoryListProps {
+  className?: string;
+}
+
+export default function QuoteHistoryList({ className = "" }: QuoteHistoryListProps) {
   const router = useRouter();
   const [quotes, setQuotes] = useState<StoredQuote[]>([]);
   const [configured, setConfigured] = useState(true);
@@ -119,7 +123,7 @@ export default function QuoteHistoryList() {
   };
 
   return (
-    <section className="mt-10 glass rounded-2xl border border-white/[0.06] overflow-hidden">
+    <section className={`glass rounded-2xl border border-white/[0.06] overflow-hidden ${className}`}>
       <div className="flex items-center justify-between px-5 py-4 border-b border-white/[0.06]">
         <div className="flex items-center gap-2">
           <History size={16} className="text-[var(--accent)]" />

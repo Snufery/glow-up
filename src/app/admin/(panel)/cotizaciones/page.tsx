@@ -1,8 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
+import { History } from "lucide-react";
 import AdminQuoteExtras from "@/components/admin/AdminQuoteExtras";
-import QuoteHistoryList from "@/components/admin/QuoteHistoryList";
 import ProductPicker from "@/components/cotizador/ProductPicker";
 import QuotePanel from "@/components/cotizador/QuotePanel";
 import { QuoteProvider } from "@/context/QuoteContext";
@@ -38,7 +39,15 @@ export default function AdminCotizacionesPage() {
           </div>
         </div>
 
-        <QuoteHistoryList />
+        <div className="mt-8 flex justify-center sm:justify-start">
+          <Link
+            href="/admin/cotizaciones/historial"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold border border-[var(--accent)]/25 bg-[var(--accent)]/10 text-[var(--accent-bright)] hover:bg-[var(--accent)]/18 hover:border-[var(--accent)]/35 transition-all"
+          >
+            <History size={14} />
+            Ver historial de cotizaciones
+          </Link>
+        </div>
       </div>
     </QuoteProvider>
   );
