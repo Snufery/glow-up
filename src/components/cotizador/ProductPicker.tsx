@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { Plus, X, Check } from "lucide-react";
 import { products, categories, type Product } from "@/data/products";
 import { hasInstallationOption } from "@/data/installation";
 import { useQuote } from "@/context/QuoteContext";
 import { formatCOP } from "@/lib/quote";
+import { getProductThumbColorId } from "@/lib/productImageDisplay";
+import ProductImageFrame from "@/components/cotizador/ProductImageFrame";
 
 export default function ProductPicker() {
   const { addProduct } = useQuote();
@@ -117,6 +118,7 @@ export default function ProductPicker() {
         {filtered.map((product) => {
           const installAvailable = hasInstallationOption(product);
           const isFlashing = addedFlash === product.id;
+          const thumbColorId = getProductThumbColorId(product);
           const thumbSrc =
             product.image ??
             product.colorVariants?.[0]?.images?.[1] ??
@@ -129,21 +131,12 @@ export default function ProductPicker() {
                 isFlashing ? "ring-2 ring-[var(--accent)]/40" : ""
               }`}
             >
-              <div className="relative h-32 w-full bg-zinc-900/80 border-b border-white/[0.04] flex items-center justify-center">
-                {thumbSrc ? (
-                  <div className="relative w-full h-full flex items-center justify-center p-4">
-                    <Image
-                      src={thumbSrc}
-                      alt={product.name}
-                      width={120}
-                      height={120}
-                      className="max-h-[88px] w-auto h-auto object-contain"
-                    />
-                  </div>
-                ) : (
-                  <span className="text-xs text-[var(--accent)]/40 font-medium">IoT</span>
-                )}
-              </div>
+              <ProductImageFrame
+                product={product}
+                src={thumbSrc}
+                alt={product.name}
+                colorId={thumbColorId}
+              />
 
               <div className="p-4 flex flex-col flex-1">
                 <h4 className="text-sm font-semibold leading-snug line-clamp-2 text-left">
@@ -196,7 +189,20 @@ export default function ProductPicker() {
             </button>
 
             <h3 className="font-[var(--font-display)] text-lg font-bold mb-1 pr-8">{configProduct.name}</h3>
-            <p className="text-sm text-zinc-500 mb-5">Configura las opciones antes de agregar</p>
+            <p className="text-sm text-zinc-500 mb-4">Configura las opciones antes de agregar</p>
+
+            {getDisplayImage(configProduct) && (
+              <div className="mb-5 -mx-1 rounded-xl overflow-hidden">
+                <ProductImageFrame
+                  product={configProduct}
+                  src={getDisplayImage(configProduct)}
+                  alt={configProduct.name}
+                  colorId={selectedColor}
+                  className="aspect-[16/10] min-h-[160px]"
+                  sizes="400px"
+                />
+              </div>
+            )}
 
             {configProduct.channelOptions && (
               <div className="mb-4">

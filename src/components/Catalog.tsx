@@ -25,6 +25,13 @@ const categoryIcons: Record<string, LucideIcon> = {
   energia: Zap,
 };
 import { products, categories, type Product } from "@/data/products";
+import {
+  getProductImageBackground,
+  getProductImageBackgroundColor,
+  getProductImageFit,
+  getProductImagePadding,
+  shouldShowImageOverlay,
+} from "@/lib/productImageDisplay";
 import { productIcons } from "./ProductIcons";
 
 export default function Catalog() {
@@ -116,6 +123,10 @@ export default function Catalog() {
             const currentPrice = getCurrentPrice(product);
             const selectedColor = getSelectedColor(product);
             const selectedCh = getSelectedChannels(product);
+            const imageBackground = getProductImageBackground(product, selectedColor);
+            const imageBgColor = getProductImageBackgroundColor(product, selectedColor);
+            const imageFit = getProductImageFit(product);
+            const imagePadding = getProductImagePadding(product, imageBackground);
 
             return (
               <div
@@ -130,8 +141,10 @@ export default function Catalog() {
                 )}
 
                 <div
-                  className="aspect-[4/3] flex items-center justify-center relative overflow-hidden"
-                  style={{ backgroundColor: selectedColor === "blanco" ? "#09090b" : "#18181b" }}
+                  className={`aspect-[5/4] min-h-[220px] flex items-center justify-center relative overflow-hidden ${
+                    imageBackground === "white" ? "ring-1 ring-inset ring-zinc-300/15" : ""
+                  }`}
+                  style={{ backgroundColor: imageBgColor }}
                 >
                   {displayImage ? (
                     <>
@@ -140,11 +153,13 @@ export default function Catalog() {
                         alt={product.name}
                         fill
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        className={`transition-transform duration-500 group-hover:scale-105 ${
-                          product.imageFit === "cover" ? "object-cover" : "object-contain p-6"
+                        className={`transition-transform duration-500 group-hover:scale-[1.03] ${
+                          imageFit === "cover" ? "object-cover" : `object-contain ${imagePadding}`
                         }`}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/90 via-zinc-950/20 to-transparent opacity-60 group-hover:opacity-100 transition-opacity" />
+                      {shouldShowImageOverlay(imageBackground) && (
+                        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/90 via-zinc-950/20 to-transparent opacity-60 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                      )}
                     </>
                   ) : (
                     <div className="w-20 h-20 opacity-50 text-[var(--accent)] transition-transform group-hover:scale-110">
@@ -255,8 +270,17 @@ export default function Catalog() {
             )}
 
             <div
-              className="h-[280px] relative"
-              style={{ backgroundColor: getSelectedColor(modalProduct) === "blanco" ? "#09090b" : "#18181b" }}
+              className={`h-[320px] relative ${
+                getProductImageBackground(modalProduct, getSelectedColor(modalProduct)) === "white"
+                  ? "ring-1 ring-inset ring-zinc-300/15"
+                  : ""
+              }`}
+              style={{
+                backgroundColor: getProductImageBackgroundColor(
+                  modalProduct,
+                  getSelectedColor(modalProduct)
+                ),
+              }}
             >
               {getDisplayImage(modalProduct) ? (
                 <Image
@@ -264,7 +288,14 @@ export default function Catalog() {
                   alt={modalProduct.name}
                   fill
                   sizes="512px"
-                  className={modalProduct.imageFit === "cover" ? "object-cover" : "object-contain p-8"}
+                  className={
+                    getProductImageFit(modalProduct) === "cover"
+                      ? "object-cover"
+                      : `object-contain ${getProductImagePadding(
+                          modalProduct,
+                          getProductImageBackground(modalProduct, getSelectedColor(modalProduct))
+                        )}`
+                  }
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-[var(--accent)]">

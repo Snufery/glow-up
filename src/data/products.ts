@@ -24,6 +24,8 @@ export interface Product {
   features?: string[];
   image?: string;
   imageFit?: "cover" | "contain";
+  /** Fondo de la foto: blanco, negro o escena oscura (catálogo) */
+  imageBackground?: "white" | "black" | "dark";
   colorVariants?: ColorVariant[];
   channelOptions?: ChannelOption[];  // si existe, muestra selector de canales
 }
@@ -87,6 +89,7 @@ export const products: Product[] = [
     badge: "Popular",
     image: "/images/productos/led-wifi.jpg",
     imageFit: "cover",
+    imageBackground: "dark",
     features: [
       "16 millones de colores",
       "Compatible con Alexa y Google Home",
@@ -121,6 +124,7 @@ export const products: Product[] = [
     priceFormatted: "$120.000",
     badge: "Nuevo",
     image: "/images/productos/dahua-int-5mp.jpg",
+    imageBackground: "white",
     features: [
       "Resolucion Full HD 1080p",
       "Vision nocturna infrarroja",
@@ -155,6 +159,7 @@ export const products: Product[] = [
     priceFormatted: "$38.000",
     badge: "Top Ventas",
     image: "/images/productos/socket-wifi.jpg",
+    imageBackground: "white",
     features: [
       "Monitoreo de consumo en watts",
       "Temporizador y horarios",
