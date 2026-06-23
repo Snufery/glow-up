@@ -3,11 +3,12 @@ import QuotePDFDocument from "@/components/cotizador/QuotePDFDocument";
 import { getQuoteById } from "@/lib/db/quotes";
 import { isDatabaseConfigured } from "@/lib/db/client";
 import { buildQuoteFilename, buildQuotePdfTitle } from "@/lib/quoteCustomer";
+import { getLogoUrlFromRequest } from "@/lib/siteUrl";
 
 export const runtime = "nodejs";
 
 export async function GET(
-  _request: Request,
+  request: Request,
   context: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -43,6 +44,7 @@ export async function GET(
         materials={quote.materials}
         notes={quote.notes}
         issuedAt={new Date(quote.createdAt)}
+        logoUrl={getLogoUrlFromRequest(request)}
       />
     );
 

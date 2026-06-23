@@ -8,6 +8,7 @@ import {
   type QuoteCustomerInfo,
 } from "@/lib/quoteCustomer";
 import { contactInfo } from "@/data/contact";
+import { getSiteUrl } from "@/lib/siteUrl";
 
 import { downloadPdfViaFetch } from "@/lib/downloadPdf";
 import { persistQuoteRecord } from "@/lib/saveQuoteRecord";
@@ -18,6 +19,13 @@ export function generateQuoteRef(): string {
   const d = new Date();
   const pad = (n: number) => String(n).padStart(2, "0");
   return `GU-${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}`;
+}
+
+function getLogoUrl(): string {
+  if (typeof window !== "undefined") {
+    return `${window.location.origin}/logo.png`;
+  }
+  return `${getSiteUrl()}/logo.png`;
 }
 
 function isAndroid(): boolean {
@@ -132,6 +140,7 @@ async function createQuotePdfBlob(
         engineer={extras?.engineer}
         materials={extras?.materials}
         notes={extras?.notes}
+        logoUrl={getLogoUrl()}
       />
     ).toBlob(),
     45_000,

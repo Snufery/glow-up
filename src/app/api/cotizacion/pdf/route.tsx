@@ -3,6 +3,7 @@ import QuotePDFDocument from "@/components/cotizador/QuotePDFDocument";
 import type { QuoteLineItem } from "@/context/QuoteContext";
 import type { QuoteCustomerInfo, QuoteDocumentExtras } from "@/lib/quoteCustomer";
 
+import { getLogoUrlFromRequest } from "@/lib/siteUrl";
 import { checkIpRateLimit, getClientIp } from "@/lib/requestSecurity";
 import { saveQuoteFromPayload } from "@/lib/db/saveQuoteFromPayload";
 import type { QuoteSource } from "@/lib/db/types";
@@ -88,6 +89,7 @@ export async function POST(request: Request) {
         engineer={payload.extras?.engineer}
         materials={payload.extras?.materials}
         notes={payload.extras?.notes}
+        logoUrl={getLogoUrlFromRequest(request)}
       />
     );
 

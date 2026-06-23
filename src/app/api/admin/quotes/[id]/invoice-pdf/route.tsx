@@ -5,6 +5,7 @@ import { saveInvoice } from "@/lib/db/invoices";
 import { getQuoteById, markQuoteConverted } from "@/lib/db/quotes";
 import { buildInvoiceFromQuote, calcInvoiceAmounts } from "@/lib/convertQuoteToInvoice";
 import { buildInvoiceFilename } from "@/lib/invoice";
+import { getLogoUrlFromRequest } from "@/lib/siteUrl";
 
 export const runtime = "nodejs";
 
@@ -14,7 +15,7 @@ function sanitizeFilename(filename: string): string {
 }
 
 export async function POST(
-  _request: Request,
+  request: Request,
   context: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -35,7 +36,12 @@ export async function POST(
       buildInvoiceFilename(invoice.invoiceNumber, invoice.customer.name)
     );
 
-    const buffer = await renderToBuffer(<InvoicePDFDocument invoice={invoice} />);
+    const buffer = await renderToBuffer(
+      <InvoicePDFDocument
+        invoice={invoice}
+        logoUrl={getLogoUrlFromRequest(request)}
+      />
+    );
 
     const saved = await saveInvoice({
       invoice,

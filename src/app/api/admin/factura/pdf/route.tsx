@@ -9,7 +9,7 @@ import {
   calcInvoiceTax,
   calcInvoiceTotal,
 } from "@/lib/invoice";
-
+import { getLogoUrlFromRequest } from "@/lib/siteUrl";
 
 export const runtime = "nodejs";
 
@@ -48,7 +48,10 @@ export async function POST(request: Request) {
     );
 
     const buffer = await renderToBuffer(
-      <InvoicePDFDocument invoice={invoice} />
+      <InvoicePDFDocument
+        invoice={invoice}
+        logoUrl={getLogoUrlFromRequest(request)}
+      />
     );
 
     const subtotal = calcInvoiceSubtotal(invoice.items);

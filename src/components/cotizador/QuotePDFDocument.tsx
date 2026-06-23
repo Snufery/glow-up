@@ -1,6 +1,9 @@
 import { Document, Page } from "@react-pdf/renderer";
 import type { QuoteLineItem } from "@/context/QuoteContext";
-import type { QuoteCustomerInfo } from "@/lib/quoteCustomer";
+import {
+  formatPhoneDisplay,
+  type QuoteCustomerInfo,
+} from "@/lib/quoteCustomer";
 import { companyLegal } from "@/data/company";
 import {
   DocumentPdfContent,
@@ -22,6 +25,7 @@ interface QuotePDFDocumentProps {
   materials?: string;
   notes?: string;
   issuedAt?: Date;
+  logoUrl?: string;
 }
 
 export default function QuotePDFDocument({
@@ -34,6 +38,7 @@ export default function QuotePDFDocument({
   materials,
   notes,
   issuedAt = new Date(),
+  logoUrl,
 }: QuotePDFDocumentProps) {
   const lines = quoteItemsToPdfLines(items);
   const grandTotal = getQuoteGrandTotal(items);
@@ -49,9 +54,11 @@ export default function QuotePDFDocument({
             engineer: engineer || companyLegal.defaultEngineer,
             billToName: customer.name,
             billToAddress: customer.address || "",
+            billToPhone: formatPhoneDisplay(customer.phone),
             materials,
             notes,
             grandTotal,
+            logoUrl,
           }}
           lines={lines}
         />

@@ -29,6 +29,7 @@ function formatInvoiceDisplayNumber(invoiceNumber: string): string {
 
 export default function InvoicePDFDocument({
   invoice,
+  logoUrl,
 }: {
   invoice: InvoiceData;
   logoUrl?: string;
@@ -57,9 +58,12 @@ export default function InvoicePDFDocument({
             engineer: invoice.engineer || companyLegal.defaultEngineer,
             billToName: invoice.customer.name,
             billToAddress: invoice.customer.address || "",
+            billToPhone: invoice.customer.phone || undefined,
+            billToDocument: invoice.customer.document || undefined,
             materials: invoice.materials,
             notes: combinedNotes || undefined,
             grandTotal: total,
+            logoUrl,
           }}
           lines={lines}
         />
