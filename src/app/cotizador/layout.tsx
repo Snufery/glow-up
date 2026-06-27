@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { QuoteProvider } from "@/context/QuoteContext";
+import { HouseProvider } from "@/context/HouseContext";
+import { CotizadorFlowProvider } from "@/context/CotizadorFlowContext";
 
 export const metadata: Metadata = {
   title: "Simulador de Cotizacion — Glow Up Entornos Inteligentes",
@@ -12,5 +14,11 @@ export default function CotizadorLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <QuoteProvider>{children}</QuoteProvider>;
+  return (
+    <QuoteProvider>
+      <HouseProvider>
+        <CotizadorFlowProvider>{children}</CotizadorFlowProvider>
+      </HouseProvider>
+    </QuoteProvider>
+  );
 }

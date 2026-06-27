@@ -1,14 +1,13 @@
-import { renderToBuffer } from "@react-pdf/renderer";
-import QuotePDFDocument from "@/components/cotizador/QuotePDFDocument";
 import { getQuoteById } from "@/lib/db/quotes";
 import { isDatabaseConfigured } from "@/lib/db/client";
-import { buildQuoteFilename, buildQuotePdfTitle } from "@/lib/quoteCustomer";
-import { getLogoUrlFromRequest } from "@/lib/siteUrl";
+import { buildQuoteFilename } from "@/lib/quoteCustomer";
+import { generateQuotePdfBuffer } from "@/lib/generateQuotePdfBuffer";
 
 export const runtime = "nodejs";
+export const maxDuration = 60;
 
 export async function GET(
-  request: Request,
+  _request: Request,
   context: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -30,23 +29,22 @@ export async function GET(
     };
 
     const filename =
-      quote.pdfFilename ||
-      buildQuoteFilename(quote.quoteRef, customer);
-    const pdfTitle = buildQuotePdfTitle(filename);
+      quote.pdfFilename || buildQuoteFilename(quote.quoteRef, customer);
 
-    const buffer = await renderToBuffer(
-      <QuotePDFDocument
-        items={quote.items}
-        quoteRef={quote.quoteRef}
-        customer={customer}
-        pdfTitle={pdfTitle}
-        engineer={quote.engineer}
-        materials={quote.materials}
-        notes={quote.notes}
-        issuedAt={new Date(quote.createdAt)}
-        logoUrl={getLogoUrlFromRequest(request)}
-      />
-    );
+    const buffer = await generateQuotePdfBuffer({
+      items: quote.items,
+      quoteRef: quote.quoteRef,
+      quoteNumber: quote.quoteNumber,
+      customer,
+      engineer: quote.engineer,
+      materials: quote.materials,
+      notes: quote.notes,
+      extras: {
+        intelligence: quote.intelligence ?? undefined,
+        includeIva: quote.includeIva,
+      },
+      issuedAt: new Date(quote.createdAt),
+    });
 
     return new Response(new Uint8Array(buffer), {
       headers: {

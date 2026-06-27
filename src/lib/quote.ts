@@ -6,8 +6,10 @@ export function formatCOP(amount: number): string {
   return `$${amount.toLocaleString("es-CO")}`;
 }
 
-export function lineKey(item: Pick<QuoteLineItem, "productId" | "channels" | "colorId">): string {
-  return `${item.productId}:${item.channels ?? 0}:${item.colorId ?? ""}`;
+export function lineKey(
+  item: Pick<QuoteLineItem, "productId" | "channels" | "colorId" | "roomId">
+): string {
+  return `${item.productId}:${item.channels ?? 0}:${item.colorId ?? ""}:${item.roomId ?? ""}`;
 }
 
 export function calcLineSubtotal(item: QuoteLineItem): number {
@@ -58,7 +60,14 @@ export function buildWhatsAppMessage(
   if (installationSubtotal > 0) {
     msg += `\nSubtotal instalacion: ${formatCOP(installationSubtotal)}`;
   }
-  msg += `\nTOTAL ESTIMADO: ${formatCOP(grandTotal)}`;
+  const rangeLow = Math.round(grandTotal * 0.92);
+  const rangeHigh = Math.round(grandTotal * 1.18);
+  if (rangeLow !== rangeHigh) {
+    msg += `\nRANGO ESTIMADO: ${formatCOP(rangeLow)} – ${formatCOP(rangeHigh)}`;
+    msg += `\nReferencia central: ${formatCOP(grandTotal)}`;
+  } else {
+    msg += `\nTOTAL ESTIMADO: ${formatCOP(grandTotal)}`;
+  }
   msg += "\n\n¿Pueden confirmar disponibilidad y agendar visita?";
 
   return msg;

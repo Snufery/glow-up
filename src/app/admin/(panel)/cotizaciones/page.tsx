@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { History } from "lucide-react";
 import AdminQuoteExtras from "@/components/admin/AdminQuoteExtras";
+import CustomQuoteItemForm from "@/components/admin/CustomQuoteItemForm";
+import QuoteIntelligencePanel from "@/components/admin/QuoteIntelligencePanel";
 import ProductPicker from "@/components/cotizador/ProductPicker";
 import QuotePanel from "@/components/cotizador/QuotePanel";
 import { QuoteProvider } from "@/context/QuoteContext";
@@ -41,6 +43,11 @@ export default function AdminCotizacionesPage() {
             <div className="glass rounded-[var(--radius-xl)] p-5 sm:p-6">
               <ProductPicker />
             </div>
+            <CustomQuoteItemForm />
+            <QuoteIntelligencePanel
+              documentExtras={documentExtras}
+              onChange={setDocumentExtras}
+            />
             <AdminQuoteExtras value={documentExtras} onChange={setDocumentExtras} />
           </div>
           <div className="xl:sticky xl:top-6 xl:self-start">

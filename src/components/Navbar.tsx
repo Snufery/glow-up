@@ -65,11 +65,12 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 right-0 z-[1000] transition-all duration-500 ${
+        className={`fixed top-0 left-0 right-0 z-[1100] transition-all duration-500 supports-[backdrop-filter]:backdrop-blur-xl ${
           scrolled
-            ? "glass border-b border-white/[0.08] shadow-[0_8px_40px_rgba(0,0,0,0.55)] py-2.5"
-            : "bg-zinc-950/55 backdrop-blur-xl border-b border-white/[0.04] py-4"
+            ? "glass border-b border-white/[0.1] shadow-[0_8px_40px_rgba(0,0,0,0.55)] py-2.5 bg-zinc-950/80"
+            : "bg-zinc-950/60 border-b border-white/[0.06] py-3.5 sm:py-4"
         }`}
+        aria-label="Navegacion principal"
       >
         <div className="max-w-[1200px] mx-auto px-5 sm:px-6 flex items-center justify-between">
           <a href="#hero" className="flex items-center gap-3 group">
@@ -150,7 +151,7 @@ export default function Navbar() {
 
       {/* Mobile overlay menu */}
       <div
-        className={`fixed inset-0 z-[999] lg:hidden transition-all duration-400 ${
+        className={`fixed inset-0 z-[1090] lg:hidden transition-all duration-400 ${
           menuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
       >

@@ -1,9 +1,6 @@
-import { renderToBuffer } from "@react-pdf/renderer";
-import QuotePDFDocument from "@/components/cotizador/QuotePDFDocument";
 import type { QuoteLineItem } from "@/context/QuoteContext";
 import type { QuoteCustomerInfo, QuoteDocumentExtras } from "@/lib/quoteCustomer";
-
-import { getLogoUrlFromRequest } from "@/lib/siteUrl";
+import { generateQuotePdfBuffer } from "@/lib/generateQuotePdfBuffer";
 import { checkIpRateLimit, getClientIp } from "@/lib/requestSecurity";
 import { saveQuoteFromPayload } from "@/lib/db/saveQuoteFromPayload";
 import type { QuoteSource } from "@/lib/db/types";
@@ -14,6 +11,7 @@ import {
 } from "@/lib/validateQuoteItems";
 
 export const runtime = "nodejs";
+export const maxDuration = 60;
 
 interface PdfPayload {
   items: QuoteLineItem[];
@@ -78,20 +76,16 @@ export async function POST(request: Request) {
     }
 
     const filename = sanitizeFilename(payload.filename);
-    const pdfTitle = payload.pdfTitle || filename.replace(/\.pdf$/i, "");
 
-    const buffer = await renderToBuffer(
-      <QuotePDFDocument
-        items={items}
-        quoteRef={quoteRef}
-        customer={customer}
-        pdfTitle={pdfTitle}
-        engineer={payload.extras?.engineer}
-        materials={payload.extras?.materials}
-        notes={payload.extras?.notes}
-        logoUrl={getLogoUrlFromRequest(request)}
-      />
-    );
+    const buffer = await generateQuotePdfBuffer({
+      items,
+      quoteRef,
+      customer,
+      engineer: payload.extras?.engineer,
+      materials: payload.extras?.materials,
+      notes: payload.extras?.notes,
+      extras: payload.extras,
+    });
 
     void saveQuoteFromPayload({
       quoteRef,

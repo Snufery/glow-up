@@ -1,13 +1,13 @@
-import { renderToBuffer } from "@react-pdf/renderer";
-import InvoicePDFDocument from "@/components/admin/InvoicePDFDocument";
+import { renderInvoicePdfBuffer } from "@/lib/renderInvoicePdf";
 import { isDatabaseConfigured } from "@/lib/db/client";
 import { saveInvoice } from "@/lib/db/invoices";
 import { getQuoteById, markQuoteConverted } from "@/lib/db/quotes";
 import { buildInvoiceFromQuote, calcInvoiceAmounts } from "@/lib/convertQuoteToInvoice";
 import { buildInvoiceFilename } from "@/lib/invoice";
-import { getLogoUrlFromRequest } from "@/lib/siteUrl";
+
 
 export const runtime = "nodejs";
+export const maxDuration = 60;
 
 function sanitizeFilename(filename: string): string {
   const safe = filename.replace(/[^a-zA-Z0-9._-]/g, "");
@@ -36,12 +36,7 @@ export async function POST(
       buildInvoiceFilename(invoice.invoiceNumber, invoice.customer.name)
     );
 
-    const buffer = await renderToBuffer(
-      <InvoicePDFDocument
-        invoice={invoice}
-        logoUrl={getLogoUrlFromRequest(request)}
-      />
-    );
+    const buffer = await renderInvoicePdfBuffer(invoice);
 
     const saved = await saveInvoice({
       invoice,

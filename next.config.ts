@@ -31,6 +31,13 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  serverExternalPackages: ["@sparticuz/chromium", "puppeteer-core"],
+  outputFileTracingIncludes: {
+    "/api/cotizacion/pdf": ["./public/pdf-templates/**/*"],
+    "/api/admin/quotes/[id]/pdf": ["./public/pdf-templates/**/*"],
+    "/api/admin/factura/pdf": ["./public/pdf-templates/**/*"],
+    "/api/admin/quotes/[id]/invoice-pdf": ["./public/pdf-templates/**/*"],
+  },
   images: {
     remotePatterns: [
       {

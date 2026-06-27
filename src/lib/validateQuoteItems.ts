@@ -29,6 +29,34 @@ export function sanitizeQuoteItems(raw: QuoteLineItem[]): QuoteLineItem[] | null
   for (const item of raw) {
     if (!item?.productId || typeof item.quantity !== "number") return null;
 
+    if (item.productId === "custom" || item.isCustom) {
+      const name = String(item.name ?? "").trim().slice(0, 200);
+      const unitPrice =
+        typeof item.unitPrice === "number" && item.unitPrice >= 0
+          ? Math.floor(item.unitPrice)
+          : null;
+      if (!name || unitPrice === null) return null;
+
+      const quantity = Math.min(99, Math.max(1, Math.floor(item.quantity)));
+
+      sanitized.push({
+        id: String(item.id || crypto.randomUUID()),
+        productId: "custom",
+        slug: "producto-personalizado",
+        name,
+        category: "custom",
+        quantity,
+        unitPrice,
+        installationPrice: null,
+        includeInstallation: false,
+        isCustom: true,
+        customDescription: item.customDescription?.slice(0, 1000),
+        roomId: item.roomId?.slice(0, 64),
+        roomLabel: item.roomLabel?.slice(0, 100),
+      });
+      continue;
+    }
+
     const product = products.find((p) => p.id === item.productId);
     if (!product) return null;
 
@@ -61,6 +89,8 @@ export function sanitizeQuoteItems(raw: QuoteLineItem[]): QuoteLineItem[] | null
       includeInstallation: Boolean(
         item.includeInstallation && installationPrice !== null
       ),
+      roomId: item.roomId?.slice(0, 64),
+      roomLabel: item.roomLabel?.slice(0, 100),
     });
   }
 

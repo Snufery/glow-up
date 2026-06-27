@@ -16,6 +16,7 @@ import { contactInfo } from "@/data/contact";
 export interface DocumentPdfLine {
   quantity: number;
   description: string;
+  bullets?: string[];
   unitPrice: number;
   total: number;
 }
@@ -33,6 +34,10 @@ export interface DocumentPdfMeta {
   notes?: string;
   grandTotal: number;
   logoUrl?: string;
+  projectTitle?: string;
+  projectSummary?: string;
+  includeIva?: boolean;
+  termsAndConditions?: string[];
 }
 
 const BRAND_GLOW = "#7ab648";
@@ -254,6 +259,72 @@ const styles = StyleSheet.create({
     color: BRAND_GLOW_DARK,
   },
   cellText: { fontSize: 9, lineHeight: 1.4, color: "#27272a" },
+  bulletText: {
+    fontSize: 7.5,
+    lineHeight: 1.35,
+    color: "#52525b",
+    marginTop: 2,
+    paddingLeft: 6,
+  },
+  projectBox: {
+    marginBottom: 14,
+    padding: 12,
+    backgroundColor: BRAND_MIX_LIGHT,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: BRAND_UP_LIGHT,
+    borderLeftWidth: 4,
+    borderLeftColor: BRAND_UP,
+  },
+  projectTitle: {
+    fontSize: 10,
+    fontFamily: "Helvetica-Bold",
+    color: BRAND_UP_DARK,
+    marginBottom: 4,
+  },
+  projectSummary: {
+    fontSize: 8.5,
+    lineHeight: 1.45,
+    color: "#3f3f46",
+  },
+  termsBox: {
+    marginBottom: 12,
+    padding: 10,
+    backgroundColor: "#fafafa",
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: "#e4e4e7",
+  },
+  termItem: {
+    fontSize: 8,
+    lineHeight: 1.45,
+    color: "#52525b",
+    marginBottom: 3,
+  },
+  totalsBreakdown: {
+    alignSelf: "flex-end",
+    width: 260,
+    marginBottom: 10,
+    padding: 12,
+    backgroundColor: "#fafafa",
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: "#e4e4e7",
+  },
+  totalsBreakdownRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 4,
+  },
+  totalsBreakdownLabel: {
+    fontSize: 9,
+    color: "#52525b",
+  },
+  totalsBreakdownValue: {
+    fontSize: 9,
+    fontFamily: "Helvetica-Bold",
+    color: "#27272a",
+  },
   totalBox: {
     alignSelf: "flex-end",
     width: 240,
@@ -434,6 +505,9 @@ export function DocumentPdfContent({
 }) {
   const isQuote = meta.documentType === "Cotización";
   const numberLabel = isQuote ? "Nº cotización" : "Nº factura";
+  const subtotal = meta.grandTotal;
+  const ivaAmount = meta.includeIva ? Math.round(subtotal * 0.19) : 0;
+  const totalWithIva = subtotal + ivaAmount;
 
   const billToDetails = [
     meta.billToDocument ? `CC / NIT: ${meta.billToDocument}` : null,
@@ -493,6 +567,15 @@ export function DocumentPdfContent({
         ))}
       </View>
 
+      {meta.projectTitle ? (
+        <View style={styles.projectBox}>
+          <Text style={styles.projectTitle}>PROYECTO: {meta.projectTitle}</Text>
+          {meta.projectSummary ? (
+            <Text style={styles.projectSummary}>{meta.projectSummary}</Text>
+          ) : null}
+        </View>
+      ) : null}
+
       <View style={styles.tableWrapper}>
         <View style={{ position: "relative" }}>
           <TableHeaderGradient />
@@ -513,7 +596,14 @@ export function DocumentPdfContent({
             ]}
           >
             <Text style={[styles.cellText, styles.colQty]}>{line.quantity}</Text>
-            <Text style={[styles.cellText, styles.colDesc]}>{line.description}</Text>
+            <View style={styles.colDesc}>
+              <Text style={styles.cellText}>{line.description}</Text>
+              {line.bullets?.map((bullet, bulletIndex) => (
+                <Text key={bulletIndex} style={styles.bulletText}>
+                  • {bullet}
+                </Text>
+              ))}
+            </View>
             <Text style={[styles.cellText, styles.colUnit]}>
               {line.unitPrice > 0 ? formatCOP(line.unitPrice) : "—"}
             </Text>
@@ -524,12 +614,40 @@ export function DocumentPdfContent({
         ))}
       </View>
 
+      {isQuote && meta.includeIva ? (
+        <View style={styles.totalsBreakdown}>
+          <View style={styles.totalsBreakdownRow}>
+            <Text style={styles.totalsBreakdownLabel}>Subtotal</Text>
+            <Text style={styles.totalsBreakdownValue}>{formatCOP(subtotal)}</Text>
+          </View>
+          <View style={styles.totalsBreakdownRow}>
+            <Text style={styles.totalsBreakdownLabel}>IVA (19%)</Text>
+            <Text style={styles.totalsBreakdownValue}>{formatCOP(ivaAmount)}</Text>
+          </View>
+        </View>
+      ) : null}
+
       <View style={styles.totalBox}>
         <View style={styles.totalRow}>
-          <Text style={styles.totalLabel}>Total</Text>
-          <Text style={styles.totalValue}>{formatCOP(meta.grandTotal)}</Text>
+          <Text style={styles.totalLabel}>
+            {isQuote && meta.includeIva ? "Total a pagar" : "Total"}
+          </Text>
+          <Text style={styles.totalValue}>
+            {formatCOP(isQuote && meta.includeIva ? totalWithIva : meta.grandTotal)}
+          </Text>
         </View>
       </View>
+
+      {isQuote && meta.termsAndConditions?.length ? (
+        <View style={styles.termsBox}>
+          <Text style={styles.sectionTitle}>Términos y condiciones</Text>
+          {meta.termsAndConditions.map((term, i) => (
+            <Text key={i} style={styles.termItem}>
+              • {term}
+            </Text>
+          ))}
+        </View>
+      ) : null}
 
       {meta.materials ? (
         <View style={styles.materialsBox}>

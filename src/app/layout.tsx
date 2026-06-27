@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Syne, Outfit } from "next/font/google";
+import BrandSplash from "@/components/transitions/BrandSplash";
+import SiteNavbar from "@/components/SiteNavbar";
 import "./globals.css";
 
 const syne = Syne({
@@ -43,8 +45,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={`${syne.variable} ${outfit.variable}`}>
+      <head>
+        <link rel="preload" href="/logo.png" as="image" />
+      </head>
       <body className="min-h-screen bg-[#0a0a0a] text-[var(--text-primary)] font-[var(--font-body)] antialiased overflow-x-hidden">
-        {children}
+        <BrandSplash>
+          <SiteNavbar />
+          {children}
+        </BrandSplash>
       </body>
     </html>
   );

@@ -197,6 +197,189 @@ body {
   animation: fadeInUp 0.8s ease-out 0.2s both;
 }
 
+/* ═══════════ Route & page enter ═══════════ */
+
+@keyframes routeEnter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.route-enter {
+  animation: routeEnter 0.42s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.route-enter-fast {
+  animation: routeEnter 0.24s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.route-enter-admin {
+  animation: routeEnter 0.15s ease-out both;
+}
+
+/* ═══════════ Brand splash (primera visita) ═══════════ */
+
+@keyframes brandLogoBounceIn {
+  0% {
+    opacity: 0;
+    transform: translateY(48px) scale(0.55);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-14px) scale(1.1);
+  }
+  68% {
+    transform: translateY(8px) scale(0.94);
+  }
+  82% {
+    transform: translateY(-4px) scale(1.03);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes brandSplashGlowPulse {
+  0% {
+    opacity: 0;
+    transform: scale(0.75);
+  }
+  45% {
+    opacity: 0.85;
+    transform: scale(1.2);
+  }
+  100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+}
+
+@keyframes brandSplashTaglineIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes brandSplashOverlayExit {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+.brand-splash-content {
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.brand-splash-content-visible {
+  opacity: 1;
+}
+
+.brand-splash-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-primary);
+  overflow: hidden;
+}
+
+.brand-splash-overlay-exit {
+  animation: brandSplashOverlayExit 0.35s ease-out forwards;
+  pointer-events: none;
+}
+
+.brand-splash-glow {
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(43, 188, 179, 0.35) 0%,
+    rgba(122, 182, 72, 0.2) 40%,
+    transparent 70%
+  );
+  animation: brandSplashGlowPulse 0.9s ease-out both;
+}
+
+.brand-splash-logo-wrap {
+  position: relative;
+  z-index: 1;
+}
+
+.brand-splash-logo {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  animation: brandLogoBounceIn 0.75s cubic-bezier(0.34, 1.4, 0.64, 1) both;
+  filter: drop-shadow(0 12px 32px rgba(43, 188, 179, 0.25));
+}
+
+.brand-splash-tagline {
+  position: relative;
+  z-index: 1;
+  margin-top: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  animation: brandSplashTaglineIn 0.5s ease-out 0.35s both;
+}
+
+.brand-splash-tagline-title {
+  font-family: var(--font-display), sans-serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--brand-glow), var(--brand-up));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.brand-splash-tagline-sub {
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+}
+
+.brand-splash-skip {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  z-index: 2;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.brand-splash-skip:hover {
+  color: var(--text-primary);
+  border-color: var(--border-hover);
+}
+
 @keyframes hotspotPulse {
   0%, 100% { box-shadow: 0 0 0 0 rgba(43, 188, 179, 0.35); }
   50% { box-shadow: 0 0 0 8px rgba(43, 188, 179, 0); }
@@ -217,6 +400,32 @@ body {
 .reveal.visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .route-enter,
+  .route-enter-fast,
+  .route-enter-admin,
+  .animate-fade-in-up,
+  .animate-fade-in-up-delay,
+  .brand-splash-logo,
+  .brand-splash-glow,
+  .brand-splash-tagline,
+  .brand-splash-overlay-exit {
+    animation: none !important;
+  }
+
+  .brand-splash-content,
+  .brand-splash-content-visible {
+    opacity: 1 !important;
+    transition: none !important;
+  }
+
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
 }
 
 /* ═══════════ Service List Dot ═══════════ */

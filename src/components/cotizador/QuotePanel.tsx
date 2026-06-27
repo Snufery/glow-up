@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -17,9 +17,13 @@ import {
 } from "lucide-react";
 import { useQuote } from "@/context/QuoteContext";
 import { calcLineInstallation, calcLineSubtotal, formatCOP } from "@/lib/quote";
+import { formatPriceRange } from "@/lib/quoteRecommendations";
+import { useQuoteRecommendations } from "@/hooks/useQuoteRecommendations";
 import { generateAndSendQuote } from "@/lib/generateQuotePdf";
 import type { QuoteCustomerInfo, QuoteDocumentExtras } from "@/lib/quoteCustomer";
 import QuoteCustomerModal from "./QuoteCustomerModal";
+import QuoteIncludesSummary from "./QuoteIncludesSummary";
+import { useCotizadorFlowOptional } from "@/context/CotizadorFlowContext";
 
 interface QuotePanelProps {
   variant?: "sidebar" | "sheet";
@@ -31,12 +35,31 @@ export default function QuotePanel({ variant = "sidebar", documentExtras }: Quot
   const pathname = usePathname();
   const quoteSource = pathname.startsWith("/admin") ? "admin" : "public";
   const { items, totals, removeItem, updateQuantity, toggleInstallation, clearQuote } = useQuote();
+  const flow = useCotizadorFlowOptional();
+  const { priceRange, hasBlockingIssues } = useQuoteRecommendations();
   const [isGenerating, setIsGenerating] = useState(false);
   const [lastSentRef, setLastSentRef] = useState<string | null>(null);
   const [showCustomerModal, setShowCustomerModal] = useState(false);
+  const [showIncludesStep, setShowIncludesStep] = useState(false);
+
+  const resetIncludesReviewed = flow?.resetIncludesReviewed;
+
+  useEffect(() => {
+    resetIncludesReviewed?.();
+  }, [items, resetIncludesReviewed]);
 
   const handleOpenCustomerModal = () => {
     if (items.length === 0 || isGenerating) return;
+    if (flow && !flow.includesReviewed) {
+      setShowIncludesStep(true);
+      return;
+    }
+    setShowCustomerModal(true);
+  };
+
+  const handleIncludesConfirm = () => {
+    flow?.markIncludesReviewed();
+    setShowIncludesStep(false);
     setShowCustomerModal(true);
   };
 
@@ -133,6 +156,10 @@ export default function QuotePanel({ variant = "sidebar", documentExtras }: Quot
                 <div className="flex-1 min-w-0">
                   <h4 className="text-sm font-semibold leading-snug">{item.name}</h4>
                   <p className="text-[11px] text-zinc-500 mt-0.5">
+                    {item.roomLabel && (
+                      <span className="text-[var(--accent)]/80">{item.roomLabel}</span>
+                    )}
+                    {item.roomLabel && (item.channels || item.colorLabel) && " · "}
                     {item.channels && `${item.channels} canal${item.channels > 1 ? "es" : ""}`}
                     {item.channels && item.colorLabel && " · "}
                     {item.colorLabel}
@@ -201,16 +228,41 @@ export default function QuotePanel({ variant = "sidebar", documentExtras }: Quot
             </div>
           )}
           <div className="flex justify-between items-baseline pt-2 border-t border-white/[0.06]">
-            <span className="font-semibold text-white">Total estimado</span>
-            <span className="text-2xl font-bold font-[var(--font-display)] text-gradient">
-              {formatCOP(totals.grandTotal)}
+            <div>
+              <span className="font-semibold text-white block">Rango estimado</span>
+              {priceRange && priceRange.low !== priceRange.high && (
+                <span className="text-[10px] text-zinc-500">
+                  según visita técnica
+                </span>
+              )}
+            </div>
+            <span className="text-xl sm:text-2xl font-bold font-[var(--font-display)] text-gradient text-right">
+              {priceRange
+                ? formatPriceRange(priceRange)
+                : formatCOP(totals.grandTotal)}
             </span>
           </div>
+          {priceRange && priceRange.low !== priceRange.high && (
+            <div className="flex justify-between text-[11px] text-zinc-500">
+              <span>Referencia central</span>
+              <span>{formatCOP(priceRange.midpoint)}</span>
+            </div>
+          )}
         </div>
+
+        {hasBlockingIssues && (
+          <div className="flex items-start gap-2 text-[10px] text-amber-300/90 leading-relaxed px-1">
+            <AlertCircle size={12} className="flex-shrink-0 mt-0.5" />
+            <span>Hay accesorios requeridos pendientes. Revísalos arriba antes de enviar.</span>
+          </div>
+        )}
 
         <div className="flex items-start gap-2 text-[10px] text-zinc-500 leading-relaxed">
           <AlertCircle size={12} className="flex-shrink-0 mt-0.5 text-zinc-600" />
-          <span>Cotizacion estimada. El valor final puede ajustarse tras evaluacion en sitio.</span>
+          <span>
+            Cotización orientativa. El rango contempla variaciones por cableado,
+            obra y condiciones en sitio.
+          </span>
         </div>
 
         <button
@@ -256,6 +308,17 @@ export default function QuotePanel({ variant = "sidebar", documentExtras }: Quot
     </>
   );
 
+  const includesStep = showIncludesStep && (
+    <div className="fixed inset-0 z-[1050] flex items-end sm:items-center justify-center p-4 sm:p-6 bg-zinc-950/80 backdrop-blur-sm">
+      <div className="w-full max-w-lg">
+        <QuoteIncludesSummary
+          onConfirm={handleIncludesConfirm}
+          onBack={() => setShowIncludesStep(false)}
+        />
+      </div>
+    </div>
+  );
+
   const customerModal = (
     <QuoteCustomerModal
       open={showCustomerModal}
@@ -269,6 +332,7 @@ export default function QuotePanel({ variant = "sidebar", documentExtras }: Quot
     return (
       <>
         <div className="flex flex-col">{panelContent}</div>
+        {includesStep}
         {customerModal}
       </>
     );
@@ -279,6 +343,7 @@ export default function QuotePanel({ variant = "sidebar", documentExtras }: Quot
       <div className="glass rounded-[var(--radius-xl)] flex flex-col h-full min-h-[400px] overflow-hidden">
         {panelContent}
       </div>
+      {includesStep}
       {customerModal}
     </>
   );

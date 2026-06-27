@@ -4,11 +4,15 @@ export interface QuoteCustomerInfo {
   address?: string;
 }
 
+import type { QuoteIntelligence } from "@/lib/quoteIntelligence";
+
 export interface QuoteDocumentExtras {
   engineer?: string;
   materials?: string;
   notes?: string;
   customerAddress?: string;
+  intelligence?: QuoteIntelligence;
+  includeIva?: boolean;
 }
 
 export function normalizePhone(phone: string): string {

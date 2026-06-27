@@ -31,5 +31,7 @@ export async function saveQuoteFromPayload(input: {
     itemCount: totals.itemCount,
     source: input.source ?? "public",
     pdfFilename: input.filename,
+    intelligence: input.extras?.intelligence ?? null,
+    includeIva: input.extras?.includeIva,
   });
 }

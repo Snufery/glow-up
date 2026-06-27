@@ -23,6 +23,11 @@ export function buildInvoiceFromQuote(quote: StoredQuote): InvoiceData {
   const quoteNumber = formatQuoteDisplayNumber(quote.quoteNumber ?? null, quote.quoteRef);
   const items = quoteItemsToInvoiceLines(quote.items);
 
+  const projectTitle =
+    quote.intelligence?.projectTitle ||
+    items.map((item) => item.description).slice(0, 2).join(" + ") ||
+    "Proyecto Glow Up";
+
   return {
     invoiceNumber: generateInvoiceNumber(),
     issuedAt: todayISO(),
@@ -37,11 +42,11 @@ export function buildInvoiceFromQuote(quote: StoredQuote): InvoiceData {
       address: quote.customerAddress,
     },
     items,
-    notes:
-      quote.notes ||
-      `Factura generada desde cotización Nº ${quoteNumber} (${quote.quoteRef}).`,
-    includeTax: false,
+    notes: quote.notes || "",
+    includeTax: Boolean(quote.includeIva),
     sourceQuoteId: quote.id,
+    quoteReference: quoteNumber,
+    projectTitle,
   };
 }
 

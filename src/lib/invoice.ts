@@ -1,8 +1,11 @@
+export type InvoiceItemSection = "equipos" | "servicios";
+
 export interface InvoiceLineItem {
   id: string;
   description: string;
   quantity: number;
   unitPrice: number;
+  section?: InvoiceItemSection;
 }
 
 export interface InvoiceCustomer {
@@ -24,6 +27,8 @@ export interface InvoiceData {
   engineer?: string;
   includeTax: boolean;
   sourceQuoteId?: string;
+  quoteReference?: string;
+  projectTitle?: string;
 }
 
 export function generateInvoiceNumber(): string {

@@ -1,6 +1,6 @@
-import { renderToBuffer } from "@react-pdf/renderer";
-import InvoicePDFDocument from "@/components/admin/InvoicePDFDocument";
+
 import type { InvoiceData } from "@/lib/invoice";
+import { renderInvoicePdfBuffer } from "@/lib/renderInvoicePdf";
 import { saveInvoice } from "@/lib/db/invoices";
 import { markQuoteConverted } from "@/lib/db/quotes";
 import {
@@ -9,9 +9,10 @@ import {
   calcInvoiceTax,
   calcInvoiceTotal,
 } from "@/lib/invoice";
-import { getLogoUrlFromRequest } from "@/lib/siteUrl";
+
 
 export const runtime = "nodejs";
+export const maxDuration = 60;
 
 function sanitizeFilename(filename: string): string {
   const safe = filename.replace(/[^a-zA-Z0-9._-]/g, "");
@@ -47,12 +48,7 @@ export async function POST(request: Request) {
       filename || buildInvoiceFilename(invoice.invoiceNumber, invoice.customer.name)
     );
 
-    const buffer = await renderToBuffer(
-      <InvoicePDFDocument
-        invoice={invoice}
-        logoUrl={getLogoUrlFromRequest(request)}
-      />
-    );
+    const buffer = await renderInvoicePdfBuffer(invoice);
 
     const subtotal = calcInvoiceSubtotal(invoice.items);
     const tax = calcInvoiceTax(subtotal, invoice.includeTax);

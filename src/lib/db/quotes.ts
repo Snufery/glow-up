@@ -18,6 +18,8 @@ interface QuoteRow {
   source: string;
   pdf_filename: string | null;
   converted_to_invoice: boolean | null;
+  intelligence_json: unknown;
+  include_iva: boolean | null;
   created_at: string | Date;
 }
 
@@ -39,6 +41,8 @@ function mapQuoteRow(row: QuoteRow): StoredQuote {
     source: row.source === "admin" ? "admin" : "public",
     pdfFilename: row.pdf_filename,
     convertedToInvoice: Boolean(row.converted_to_invoice),
+    intelligence: (row.intelligence_json as StoredQuote["intelligence"]) ?? null,
+    includeIva: Boolean(row.include_iva),
     createdAt: new Date(row.created_at).toISOString(),
   };
 }
@@ -67,7 +71,9 @@ export async function saveQuote(input: SaveQuoteInput): Promise<StoredQuote | nu
         grand_total,
         item_count,
         source,
-        pdf_filename
+        pdf_filename,
+        intelligence_json,
+        include_iva
       ) VALUES (
         ${input.quoteRef},
         ${input.customerName},
@@ -82,7 +88,9 @@ export async function saveQuote(input: SaveQuoteInput): Promise<StoredQuote | nu
         ${input.grandTotal},
         ${input.itemCount},
         ${input.source ?? "public"},
-        ${input.pdfFilename ?? null}
+        ${input.pdfFilename ?? null},
+        ${input.intelligence ? JSON.stringify(input.intelligence) : null},
+        ${Boolean(input.includeIva)}
       )
       ON CONFLICT (quote_ref) DO UPDATE SET
         customer_name = EXCLUDED.customer_name,
@@ -97,7 +105,9 @@ export async function saveQuote(input: SaveQuoteInput): Promise<StoredQuote | nu
         grand_total = EXCLUDED.grand_total,
         item_count = EXCLUDED.item_count,
         source = EXCLUDED.source,
-        pdf_filename = COALESCE(EXCLUDED.pdf_filename, quotes.pdf_filename)
+        pdf_filename = COALESCE(EXCLUDED.pdf_filename, quotes.pdf_filename),
+        intelligence_json = COALESCE(EXCLUDED.intelligence_json, quotes.intelligence_json),
+        include_iva = EXCLUDED.include_iva
       RETURNING *
     `;
 

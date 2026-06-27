@@ -1,5 +1,6 @@
 import type { QuoteLineItem } from "@/context/QuoteContext";
 import type { InvoiceCustomer, InvoiceData, InvoiceLineItem } from "@/lib/invoice";
+import type { QuoteIntelligence } from "@/lib/quoteIntelligence";
 
 export type QuoteSource = "public" | "admin";
 
@@ -21,6 +22,8 @@ export interface StoredQuote {
   source: QuoteSource;
   pdfFilename: string | null;
   convertedToInvoice: boolean;
+  intelligence?: QuoteIntelligence | null;
+  includeIva?: boolean;
   createdAt: string;
 }
 
@@ -58,6 +61,8 @@ export interface SaveQuoteInput {
   itemCount: number;
   source?: QuoteSource;
   pdfFilename?: string;
+  intelligence?: QuoteIntelligence | null;
+  includeIva?: boolean;
 }
 
 export interface SaveInvoiceInput {

@@ -27,6 +27,17 @@ export interface QuoteLineItem {
   image?: string;
   installationPrice: number | null;
   includeInstallation: boolean;
+  /** Producto agregado manualmente (no está en catálogo) */
+  isCustom?: boolean;
+  customDescription?: string;
+  roomId?: string;
+  roomLabel?: string;
+}
+
+interface AddCustomItemInput {
+  name: string;
+  unitPrice: number;
+  description?: string;
 }
 
 interface AddProductOptions {
@@ -35,6 +46,8 @@ interface AddProductOptions {
   colorLabel?: string;
   image?: string;
   unitPrice: number;
+  roomId?: string;
+  roomLabel?: string;
 }
 
 interface QuoteContextValue {
@@ -44,10 +57,13 @@ interface QuoteContextValue {
   setMobileCartOpen: (open: boolean) => void;
   openMobileCart: () => void;
   addProduct: (product: Product, options: AddProductOptions) => void;
+  addCustomItem: (input: AddCustomItemInput) => void;
   removeItem: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   toggleInstallation: (id: string) => void;
   clearQuote: () => void;
+  replaceItems: (items: QuoteLineItem[]) => void;
+  applyPackageItems: (items: QuoteLineItem[]) => void;
 }
 
 const QuoteContext = createContext<QuoteContextValue | null>(null);
@@ -80,12 +96,51 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
   }, [items, hydrated]);
 
+  const addCustomItem = useCallback((input: AddCustomItemInput) => {
+    const name = input.name.trim();
+    if (!name) return;
+
+    const unitPrice = Math.max(0, Math.floor(input.unitPrice));
+    const key = `custom:${name.toLowerCase()}:${unitPrice}`;
+
+    setItems((prev) => {
+      const existing = prev.find(
+        (i) =>
+          i.isCustom &&
+          `custom:${i.name.toLowerCase()}:${i.unitPrice}` === key
+      );
+
+      if (existing) {
+        return prev.map((i) =>
+          i.id === existing.id ? { ...i, quantity: i.quantity + 1 } : i
+        );
+      }
+
+      const newItem: QuoteLineItem = {
+        id: crypto.randomUUID(),
+        productId: "custom",
+        slug: "producto-personalizado",
+        name,
+        category: "custom",
+        quantity: 1,
+        unitPrice,
+        installationPrice: null,
+        includeInstallation: false,
+        isCustom: true,
+        customDescription: input.description?.trim() || undefined,
+      };
+
+      return [...prev, newItem];
+    });
+  }, []);
+
   const addProduct = useCallback((product: Product, options: AddProductOptions) => {
     const installationPrice = getInstallationPrice(product);
     const key = lineKey({
       productId: product.id,
       channels: options.channels,
       colorId: options.colorId,
+      roomId: options.roomId,
     });
 
     setItems((prev) => {
@@ -95,6 +150,7 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
             productId: i.productId,
             channels: i.channels,
             colorId: i.colorId,
+            roomId: i.roomId,
           }) === key
       );
 
@@ -118,6 +174,8 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
         image: options.image,
         installationPrice,
         includeInstallation: false,
+        roomId: options.roomId,
+        roomLabel: options.roomLabel,
       };
 
       return [...prev, newItem];
@@ -148,6 +206,14 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
     setItems([]);
   }, []);
 
+  const replaceItems = useCallback((nextItems: QuoteLineItem[]) => {
+    setItems(nextItems);
+  }, []);
+
+  const applyPackageItems = useCallback((packageItems: QuoteLineItem[]) => {
+    setItems(packageItems);
+  }, []);
+
   const totals = useMemo(() => calcQuoteTotals(items), [items]);
 
   const value = useMemo(
@@ -158,10 +224,13 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
       setMobileCartOpen,
       openMobileCart,
       addProduct,
+      addCustomItem,
       removeItem,
       updateQuantity,
       toggleInstallation,
       clearQuote,
+      replaceItems,
+      applyPackageItems,
     }),
     [
       items,
@@ -169,10 +238,13 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
       mobileCartOpen,
       openMobileCart,
       addProduct,
+      addCustomItem,
       removeItem,
       updateQuantity,
       toggleInstallation,
       clearQuote,
+      replaceItems,
+      applyPackageItems,
     ]
   );
 

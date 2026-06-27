@@ -5,12 +5,26 @@ import { Plus, X, Check } from "lucide-react";
 import { products, categories, type Product } from "@/data/products";
 import { hasInstallationOption } from "@/data/installation";
 import { useQuote } from "@/context/QuoteContext";
+import { useHouseOptional } from "@/context/HouseContext";
+import { AlertCircle } from "lucide-react";
 import { formatCOP } from "@/lib/quote";
 import { getProductThumbColorId } from "@/lib/productImageDisplay";
 import ProductImageFrame from "@/components/cotizador/ProductImageFrame";
+import RoomRecommendations from "@/components/cotizador/RoomRecommendations";
+import HouseZonePicker from "@/components/cotizador/HouseZonePicker";
+import { useCotizadorFlowOptional } from "@/context/CotizadorFlowContext";
 
-export default function ProductPicker() {
+interface ProductPickerProps {
+  onEditSpaces?: () => void;
+}
+
+export default function ProductPicker({ onEditSpaces }: ProductPickerProps) {
   const { addProduct } = useQuote();
+  const house = useHouseOptional();
+  const flow = useCotizadorFlowOptional();
+  const houseMode = Boolean(house?.isConfigured);
+  const selectedRoom = house?.selectedRoom ?? null;
+  const needsRoomSelection = houseMode && !selectedRoom;
   const [filter, setFilter] = useState("all");
   const [configProduct, setConfigProduct] = useState<Product | null>(null);
   const [selectedColor, setSelectedColor] = useState("");
@@ -66,6 +80,8 @@ export default function ProductPicker() {
   };
 
   const handleAdd = (product: Product, fromModal = false) => {
+    if (needsRoomSelection) return;
+
     if ((product.channelOptions || product.colorVariants) && !fromModal) {
       openConfig(product);
       return;
@@ -79,6 +95,8 @@ export default function ProductPicker() {
       colorId: opts.colorId,
       colorLabel: opts.colorLabel,
       image: opts.image,
+      roomId: selectedRoom?.id,
+      roomLabel: selectedRoom?.label,
     });
 
     setAddedFlash(product.id);
@@ -93,10 +111,27 @@ export default function ProductPicker() {
 
   return (
     <div>
-      <div className="mb-6">
-        <h3 className="font-[var(--font-display)] text-lg font-bold mb-1">Catalogo de productos</h3>
-        <p className="text-sm text-zinc-500">Haz clic en + para agregar a tu cotizacion</p>
+      <div className="mb-4">
+        <h3 className="font-[var(--font-display)] text-lg font-bold mb-1">Catálogo de productos</h3>
+        {!houseMode && (
+          <p className="text-sm text-zinc-500">
+            Haz clic en + para agregar a tu cotización
+          </p>
+        )}
       </div>
+
+      {houseMode && (
+        <HouseZonePicker onEditSpaces={onEditSpaces} />
+      )}
+
+      {houseMode && !selectedRoom && (
+        <p className="text-sm text-amber-400/90 flex items-center gap-1.5 mb-4">
+          <AlertCircle size={14} />
+          Selecciona una zona arriba para agregar productos
+        </p>
+      )}
+
+      {flow?.goalWizardDone && houseMode && <RoomRecommendations />}
 
       <div className="flex gap-2 flex-wrap mb-6">
         {categories.map((cat) => (
@@ -160,7 +195,8 @@ export default function ProductPicker() {
                         ? openConfig(product)
                         : handleAdd(product)
                     }
-                    className="w-10 h-10 rounded-xl bg-gradient-brand text-zinc-950 flex items-center justify-center transition-all hover:scale-105 hover:shadow-[0_0_20px_rgba(43,188,179,0.35)] cursor-pointer"
+                    disabled={needsRoomSelection}
+                    className="w-10 h-10 rounded-xl bg-gradient-brand text-zinc-950 flex items-center justify-center transition-all hover:scale-105 hover:shadow-[0_0_20px_rgba(43,188,179,0.35)] cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
                     aria-label={`Agregar ${product.name}`}
                   >
                     {isFlashing ? <Check size={16} /> : <Plus size={16} />}
@@ -255,7 +291,8 @@ export default function ProductPicker() {
               </span>
               <button
                 onClick={confirmAddFromModal}
-                className="btn-primary cursor-pointer"
+                disabled={needsRoomSelection}
+                className="btn-primary cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Plus size={16} />
                 Agregar

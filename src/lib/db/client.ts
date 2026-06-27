@@ -74,9 +74,23 @@ async function runSchema(sql: NeonQueryFunction<false, false>): Promise<void> {
   await sql`ALTER TABLE invoices ADD COLUMN IF NOT EXISTS source_quote_id UUID REFERENCES quotes(id) ON DELETE SET NULL`;
   await sql`ALTER TABLE invoices ADD COLUMN IF NOT EXISTS engineer TEXT NOT NULL DEFAULT ''`;
   await sql`ALTER TABLE invoices ADD COLUMN IF NOT EXISTS materials TEXT NOT NULL DEFAULT ''`;
+  await sql`ALTER TABLE quotes ADD COLUMN IF NOT EXISTS intelligence_json JSONB`;
+  await sql`ALTER TABLE quotes ADD COLUMN IF NOT EXISTS include_iva BOOLEAN NOT NULL DEFAULT FALSE`;
+
+  await sql`
+    CREATE TABLE IF NOT EXISTS quote_drafts (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      share_token TEXT UNIQUE NOT NULL,
+      payload JSONB NOT NULL,
+      expires_at TIMESTAMPTZ NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )
+  `;
 
   await sql`CREATE INDEX IF NOT EXISTS idx_quotes_created_at ON quotes (created_at DESC)`;
   await sql`CREATE INDEX IF NOT EXISTS idx_invoices_created_at ON invoices (created_at DESC)`;
+  await sql`CREATE INDEX IF NOT EXISTS idx_quote_drafts_token ON quote_drafts (share_token)`;
+  await sql`CREATE INDEX IF NOT EXISTS idx_quote_drafts_expires ON quote_drafts (expires_at)`;
 }
 
 export async function ensureSchema(): Promise<boolean> {
