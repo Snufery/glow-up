@@ -117,10 +117,10 @@ export default function BrandSplash({ children }: BrandSplashProps) {
           <div className="brand-splash-glow" />
           <div className="brand-splash-logo-wrap">
             <Image
-              src="/logo.png"
+              src="/ICONO.png"
               alt=""
-              width={120}
-              height={120}
+              width={140}
+              height={140}
               priority
               className="brand-splash-logo"
             />
