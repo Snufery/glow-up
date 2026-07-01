@@ -4,6 +4,9 @@ import type { Product } from "./products";
 const INSTALLATION_BY_SLUG: Record<string, number> = {
   "interruptor-inteligente-wifi": 15000,
   "camara-wifi-360": 50000,
+  "camara-imou-cruiser-sc-4k": 50000,
+  "camara-imou-cruiser-dual-10mp": 50000,
+  "camara-imou-cruiser-triple-11mp": 50000,
 };
 
 export function getInstallationPrice(product: Product): number | null {

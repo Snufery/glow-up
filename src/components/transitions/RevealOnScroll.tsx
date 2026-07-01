@@ -27,18 +27,46 @@ export default function RevealOnScroll({
     const element = ref.current;
     if (!element) return;
 
+    const reveal = () => setVisible(true);
+
+    const isInViewport = () => {
+      const rect = element.getBoundingClientRect();
+      return rect.top < window.innerHeight && rect.bottom > 0;
+    };
+
+    const hashTarget = window.location.hash;
+    if (hashTarget && element.querySelector(hashTarget)) {
+      reveal();
+      return;
+    }
+
+    if (isInViewport()) {
+      reveal();
+      return;
+    }
+
+    const onHashChange = () => {
+      const hash = window.location.hash;
+      if (hash && element.querySelector(hash)) reveal();
+    };
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setVisible(true);
+          reveal();
           observer.disconnect();
         }
       },
       { threshold: 0.08, rootMargin: "0px 0px -48px 0px" }
     );
 
+    window.addEventListener("hashchange", onHashChange);
     observer.observe(element);
-    return () => observer.disconnect();
+
+    return () => {
+      window.removeEventListener("hashchange", onHashChange);
+      observer.disconnect();
+    };
   }, [reducedMotion]);
 
   return (
