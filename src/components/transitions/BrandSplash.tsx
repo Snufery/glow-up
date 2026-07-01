@@ -119,8 +119,8 @@ export default function BrandSplash({ children }: BrandSplashProps) {
             <Image
               src="/ICONO.png"
               alt=""
-              width={140}
-              height={140}
+              width={148}
+              height={148}
               priority
               className="brand-splash-logo"
             />
