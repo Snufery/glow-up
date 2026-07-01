@@ -77,11 +77,11 @@ export default function Navbar() {
             <div className="relative">
               <div className="absolute inset-0 rounded-xl bg-[var(--accent)]/20 blur-lg opacity-0 group-hover:opacity-100 transition-opacity" />
               <Image
-                src="/logo.png"
+                src="/ICONO.png"
                 alt="Glow Up"
                 width={48}
                 height={48}
-                className="relative h-11 w-11 sm:h-12 sm:w-12 object-contain"
+                className="relative h-11 w-11 sm:h-12 sm:w-12 rounded-full object-cover"
                 priority
               />
             </div>
@@ -166,7 +166,7 @@ export default function Navbar() {
         >
           <div className="flex flex-col h-full pt-20 px-6 pb-8">
             <div className="flex items-center gap-3 mb-8 pb-6 border-b border-white/[0.06]">
-              <Image src="/logo.png" alt="Glow Up" width={40} height={40} className="h-10 w-10 object-contain" />
+              <Image src="/ICONO.png" alt="Glow Up" width={40} height={40} className="h-10 w-10 rounded-full object-cover" />
               <div>
                 <p className="text-sm font-bold font-[var(--font-display)]">
                   <span className="text-brand-glow">Glow</span>{" "}

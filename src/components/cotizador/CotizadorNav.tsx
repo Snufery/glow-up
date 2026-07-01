@@ -13,7 +13,7 @@ export default function CotizadorNav() {
       <div className="max-w-[1440px] mx-auto px-5 sm:px-8 h-[68px] flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2.5 text-zinc-400 hover:text-white transition-colors group">
           <ArrowLeft size={18} className="group-hover:-translate-x-0.5 transition-transform" />
-          <Image src="/logo.png" alt="Glow Up" width={36} height={36} className="h-9 w-9 object-contain" />
+          <Image src="/ICONO.png" alt="Glow Up" width={36} height={36} className="h-9 w-9 rounded-full object-cover" />
           <span className="hidden sm:block text-sm font-semibold font-[var(--font-display)]">
             <span className="text-brand-glow">Glow</span>{" "}
             <span className="text-brand-up">Up</span>
