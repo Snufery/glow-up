@@ -6,8 +6,8 @@ import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 const SESSION_KEY = "glowup_splash_seen";
-const SPLASH_HOLD_MS = 900;
-const SPLASH_EXIT_MS = 350;
+const SPLASH_HOLD_MS = 1200;
+const SPLASH_EXIT_MS = 400;
 
 type SplashPhase = "init" | "splash" | "exiting" | "ready";
 
