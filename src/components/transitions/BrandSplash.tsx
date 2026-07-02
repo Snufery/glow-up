@@ -2,12 +2,14 @@
 
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useCallback, useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 const SESSION_KEY = "glowup_splash_seen";
 const SPLASH_HOLD_MS = 1200;
 const SPLASH_EXIT_MS = 400;
+const SPLASH_AUDIO_SRC = "/sonido/intro.mp3";
+const SPLASH_AUDIO_VOLUME = 0.32;
 
 type SplashPhase = "init" | "splash" | "exiting" | "ready";
 
@@ -45,6 +47,25 @@ export default function BrandSplash({ children }: BrandSplashProps) {
   const reducedMotion = usePrefersReducedMotion();
   const [phase, setPhase] = useState<SplashPhase>("init");
   const [hydrated, setHydrated] = useState(false);
+  const splashAudioRef = useRef<HTMLAudioElement | null>(null);
+
+  const stopSplashAudio = useCallback(() => {
+    const audio = splashAudioRef.current;
+    if (!audio) return;
+    audio.pause();
+    audio.currentTime = 0;
+    splashAudioRef.current = null;
+  }, []);
+
+  const playSplashAudio = useCallback(() => {
+    stopSplashAudio();
+    const audio = new Audio(SPLASH_AUDIO_SRC);
+    audio.volume = SPLASH_AUDIO_VOLUME;
+    splashAudioRef.current = audio;
+    void audio.play().catch(() => {
+      // Autoplay bloqueado por el navegador
+    });
+  }, [stopSplashAudio]);
 
   const finishSplash = useCallback(() => {
     markSplashSeen();
@@ -52,9 +73,10 @@ export default function BrandSplash({ children }: BrandSplashProps) {
   }, []);
 
   const skipSplash = useCallback(() => {
+    stopSplashAudio();
     markSplashSeen();
     setPhase("ready");
-  }, []);
+  }, [stopSplashAudio]);
 
   useEffect(() => {
     setHydrated(true);
@@ -72,6 +94,7 @@ export default function BrandSplash({ children }: BrandSplashProps) {
     }
 
     setPhase("splash");
+    playSplashAudio();
 
     const exitTimer = window.setTimeout(() => {
       setPhase("exiting");
@@ -84,8 +107,9 @@ export default function BrandSplash({ children }: BrandSplashProps) {
     return () => {
       window.clearTimeout(exitTimer);
       window.clearTimeout(doneTimer);
+      stopSplashAudio();
     };
-  }, [hydrated, pathname, reducedMotion, finishSplash]);
+  }, [hydrated, pathname, reducedMotion, finishSplash, playSplashAudio, stopSplashAudio]);
 
   const showOverlay = phase === "splash" || phase === "exiting";
   const showContent = phase === "exiting" || phase === "ready";
