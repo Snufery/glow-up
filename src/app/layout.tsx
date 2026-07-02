@@ -47,7 +47,6 @@ export default function RootLayout({
     <html lang="es" className={`${syne.variable} ${outfit.variable}`}>
       <head>
         <link rel="preload" href="/ICONO.png" as="image" />
-        <link rel="preload" href="/sonido/intro.mp3" as="audio" type="audio/mpeg" />
       </head>
       <body className="min-h-screen bg-[#0a0a0a] text-[var(--text-primary)] font-[var(--font-body)] antialiased overflow-x-hidden">
         <BrandSplash>
