@@ -9,7 +9,7 @@ const SESSION_KEY = "glowup_splash_seen";
 const SPLASH_HOLD_MS = 1200;
 const SPLASH_EXIT_MS = 400;
 const SPLASH_AUDIO_SRC = "/sonido/intro.mp3";
-const SPLASH_AUDIO_VOLUME = 0.4;
+const SPLASH_AUDIO_VOLUME = 0.55;
 
 type SplashPhase = "init" | "splash" | "exiting" | "ready";
 
@@ -47,52 +47,51 @@ export default function BrandSplash({ children }: BrandSplashProps) {
   const reducedMotion = usePrefersReducedMotion();
   const [phase, setPhase] = useState<SplashPhase>("init");
   const [hydrated, setHydrated] = useState(false);
-  const splashAudioRef = useRef<HTMLAudioElement | null>(null);
+  const splashAudioRef = useRef<HTMLAudioElement>(null);
   const splashStartedAtRef = useRef<number | null>(null);
-  const audioStartedRef = useRef(false);
 
-  const getSplashAudio = useCallback(() => {
-    if (!splashAudioRef.current) {
-      const audio = new Audio(SPLASH_AUDIO_SRC);
-      audio.preload = "auto";
-      audio.volume = SPLASH_AUDIO_VOLUME;
-      splashAudioRef.current = audio;
-    }
-    return splashAudioRef.current;
+  const syncAudioToSplash = useCallback((audio: HTMLAudioElement) => {
+    if (splashStartedAtRef.current === null) return;
+    const elapsed = (performance.now() - splashStartedAtRef.current) / 1000;
+    const duration = Number.isFinite(audio.duration) && audio.duration > 0 ? audio.duration : 1;
+    audio.currentTime = Math.min(Math.max(elapsed, 0), duration);
   }, []);
+
+  const startSplashAudio = useCallback(
+    (syncToElapsed: boolean) => {
+      const audio = splashAudioRef.current;
+      if (!audio || reducedMotion) return;
+      if (!audio.paused && audio.currentTime > 0) return;
+
+      audio.volume = SPLASH_AUDIO_VOLUME;
+      if (syncToElapsed) {
+        syncAudioToSplash(audio);
+      } else {
+        audio.currentTime = 0;
+      }
+
+      void audio.play().catch(() => {
+        // Autoplay bloqueado: se reintenta con interaccion del usuario
+      });
+    },
+    [reducedMotion, syncAudioToSplash]
+  );
 
   const stopSplashAudio = useCallback(() => {
     const audio = splashAudioRef.current;
     if (!audio) return;
     audio.pause();
     audio.currentTime = 0;
-    audioStartedRef.current = false;
   }, []);
 
-  const playSplashAudio = useCallback(
-    async (syncToElapsed = false) => {
-      if (reducedMotion || audioStartedRef.current) return true;
+  const unlockSplashAudio = useCallback(() => {
+    const audio = splashAudioRef.current;
+    if (!audio || reducedMotion) return;
 
-      const audio = getSplashAudio();
-
-      if (syncToElapsed && splashStartedAtRef.current !== null) {
-        const elapsed = (performance.now() - splashStartedAtRef.current) / 1000;
-        const duration = Number.isFinite(audio.duration) && audio.duration > 0 ? audio.duration : 1;
-        audio.currentTime = Math.min(Math.max(elapsed, 0), duration);
-      } else {
-        audio.currentTime = 0;
-      }
-
-      try {
-        await audio.play();
-        audioStartedRef.current = true;
-        return true;
-      } catch {
-        return false;
-      }
-    },
-    [getSplashAudio, reducedMotion]
-  );
+    audio.volume = SPLASH_AUDIO_VOLUME;
+    syncAudioToSplash(audio);
+    void audio.play().catch(() => {});
+  }, [reducedMotion, syncAudioToSplash]);
 
   const finishSplash = useCallback(() => {
     markSplashSeen();
@@ -108,13 +107,6 @@ export default function BrandSplash({ children }: BrandSplashProps) {
   useEffect(() => {
     setHydrated(true);
   }, []);
-
-  useEffect(() => {
-    return () => {
-      stopSplashAudio();
-      splashAudioRef.current = null;
-    };
-  }, [stopSplashAudio]);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -146,34 +138,54 @@ export default function BrandSplash({ children }: BrandSplashProps) {
 
   useLayoutEffect(() => {
     if (phase !== "splash" || reducedMotion) return;
-    const audio = getSplashAudio();
-    void audio.load();
-    void playSplashAudio(false);
-  }, [phase, reducedMotion, getSplashAudio, playSplashAudio]);
+
+    const audio = splashAudioRef.current;
+    if (!audio) return;
+
+    const attemptAutoplay = () => startSplashAudio(false);
+
+    if (audio.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) {
+      attemptAutoplay();
+      return;
+    }
+
+    const onReady = () => attemptAutoplay();
+    audio.addEventListener("canplaythrough", onReady, { once: true });
+    audio.load();
+
+    return () => {
+      audio.removeEventListener("canplaythrough", onReady);
+    };
+  }, [phase, reducedMotion, startSplashAudio]);
 
   useEffect(() => {
     if (phase !== "splash" || reducedMotion) return;
 
-    const unlockOnInteract = () => {
-      void playSplashAudio(true);
-    };
-
-    window.addEventListener("pointerdown", unlockOnInteract, { passive: true });
-    window.addEventListener("keydown", unlockOnInteract);
-    window.addEventListener("touchstart", unlockOnInteract, { passive: true });
+    window.addEventListener("pointerdown", unlockSplashAudio, { passive: true, capture: true });
+    window.addEventListener("touchstart", unlockSplashAudio, { passive: true, capture: true });
+    window.addEventListener("keydown", unlockSplashAudio, { capture: true });
 
     return () => {
-      window.removeEventListener("pointerdown", unlockOnInteract);
-      window.removeEventListener("keydown", unlockOnInteract);
-      window.removeEventListener("touchstart", unlockOnInteract);
+      window.removeEventListener("pointerdown", unlockSplashAudio, { capture: true });
+      window.removeEventListener("touchstart", unlockSplashAudio, { capture: true });
+      window.removeEventListener("keydown", unlockSplashAudio, { capture: true });
     };
-  }, [phase, reducedMotion, playSplashAudio]);
+  }, [phase, reducedMotion, unlockSplashAudio]);
 
   const showOverlay = phase === "splash" || phase === "exiting";
   const showContent = phase === "exiting" || phase === "ready";
 
   return (
     <>
+      <audio
+        ref={splashAudioRef}
+        src={SPLASH_AUDIO_SRC}
+        preload="auto"
+        playsInline
+        className="absolute w-px h-px opacity-0 overflow-hidden pointer-events-none"
+        aria-hidden="true"
+      />
+
       <div
         className={`brand-splash-content ${showContent ? "brand-splash-content-visible" : ""}`}
         aria-hidden={!showContent}
@@ -186,9 +198,8 @@ export default function BrandSplash({ children }: BrandSplashProps) {
           className={`brand-splash-overlay ${phase === "exiting" ? "brand-splash-overlay-exit" : ""}`}
           role="presentation"
           aria-hidden="true"
-          onPointerDown={() => {
-            void playSplashAudio(true);
-          }}
+          onPointerDown={unlockSplashAudio}
+          onTouchStart={unlockSplashAudio}
         >
           <button
             type="button"
