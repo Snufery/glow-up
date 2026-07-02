@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import {
@@ -41,7 +41,6 @@ export default function Catalog() {
   const [selectedChannels, setSelectedChannels] = useState<Record<string, number>>({});
   const [modalProduct, setModalProduct] = useState<Product | null>(null);
   const [portalReady, setPortalReady] = useState(false);
-  const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setPortalReady(true);
@@ -50,22 +49,15 @@ export default function Catalog() {
   useEffect(() => {
     if (!modalProduct) return;
 
-    const scrollY = window.scrollY;
-    document.body.style.position = "fixed";
-    document.body.style.top = `-${scrollY}px`;
-    document.body.style.left = "0";
-    document.body.style.right = "0";
+    const html = document.documentElement;
+    const previousHtmlOverflow = html.style.overflow;
+    const previousBodyOverflow = document.body.style.overflow;
+    html.style.overflow = "hidden";
     document.body.style.overflow = "hidden";
 
-    overlayRef.current?.scrollTo({ top: 0 });
-
     return () => {
-      document.body.style.position = "";
-      document.body.style.top = "";
-      document.body.style.left = "";
-      document.body.style.right = "";
-      document.body.style.overflow = "";
-      window.scrollTo(0, scrollY);
+      html.style.overflow = previousHtmlOverflow;
+      document.body.style.overflow = previousBodyOverflow;
     };
   }, [modalProduct]);
 
@@ -297,16 +289,14 @@ export default function Catalog() {
         modalProduct &&
         createPortal(
           <div
-            ref={overlayRef}
-            className="fixed inset-0 z-[1200] overflow-y-auto overscroll-contain bg-black/80 backdrop-blur-md"
+            className="fixed inset-0 z-[1200] flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-md overscroll-contain"
             onClick={closeProductModal}
             role="dialog"
             aria-modal="true"
             aria-labelledby="catalog-product-title"
           >
-            <div className="flex min-h-full items-start justify-center p-4 sm:p-6 pt-[88px] pb-8">
               <div
-                className="relative w-full max-w-lg shrink-0 glass border border-white/[0.08] rounded-[var(--radius-lg)] shadow-[0_24px_80px_rgba(0,0,0,0.6)] overflow-hidden"
+                className="relative w-full max-w-lg max-h-[min(90dvh,calc(100dvh-2rem))] flex flex-col glass border border-white/[0.08] rounded-[var(--radius-lg)] shadow-[0_24px_80px_rgba(0,0,0,0.6)] overflow-hidden"
                 onClick={(e) => e.stopPropagation()}
               >
                 <button
@@ -360,7 +350,7 @@ export default function Catalog() {
                   )}
                 </div>
 
-                <div className="p-6">
+                <div className="p-6 overflow-y-auto overscroll-contain">
                   <span className="text-[0.68rem] font-semibold uppercase tracking-[0.15em] text-[var(--accent)]">
                     {modalProduct.category}
                   </span>
@@ -446,7 +436,6 @@ export default function Catalog() {
                   </div>
                 </div>
               </div>
-            </div>
           </div>,
           document.body
         )}
