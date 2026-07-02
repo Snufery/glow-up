@@ -11,7 +11,7 @@ export const productIcons: Record<string, React.ReactNode> = {
       <path d="M16 26v16M32 26v20M48 26v16" stroke="var(--green)" strokeWidth="2" strokeLinecap="round" />
     </svg>
   ),
-  "camara-wifi-360": (
+  "imou-ranger": (
     <svg viewBox="0 0 64 64" fill="none">
       <circle cx="32" cy="28" r="14" stroke="var(--teal)" strokeWidth="2" />
       <circle cx="32" cy="28" r="5" fill="var(--green)" opacity="0.6" />
@@ -72,7 +72,7 @@ export const productIcons: Record<string, React.ReactNode> = {
       <path d="M28 36l3 3 5-6" stroke="var(--green)" strokeWidth="2" strokeLinecap="round" />
     </svg>
   ),
-  "cerradura-digital-smart": (
+  "cerradura-ezviz-dl05": (
     <svg viewBox="0 0 64 64" fill="none">
       <rect x="14" y="24" width="36" height="28" rx="4" stroke="var(--green)" strokeWidth="2" />
       <circle cx="32" cy="38" r="6" stroke="var(--teal)" strokeWidth="2" />
@@ -86,7 +86,7 @@ export const productIcons: Record<string, React.ReactNode> = {
       <path d="M24 32h4l4-8 4 16 4-8h4" stroke="var(--green)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   ),
-  "medidor-consumo-wifi": (
+  "disyuntor-inteligente-wifi": (
     <svg viewBox="0 0 64 64" fill="none">
       <rect x="18" y="14" width="28" height="40" rx="4" stroke="var(--green)" strokeWidth="2" />
       <path d="M28 8h8M32 54v4" stroke="var(--teal)" strokeWidth="2" strokeLinecap="round" />
