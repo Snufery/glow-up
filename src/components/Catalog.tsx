@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import {
   X,
@@ -39,15 +40,51 @@ export default function Catalog() {
   const [selectedColors, setSelectedColors] = useState<Record<string, string>>({});
   const [selectedChannels, setSelectedChannels] = useState<Record<string, number>>({});
   const [modalProduct, setModalProduct] = useState<Product | null>(null);
+  const [portalReady, setPortalReady] = useState(false);
+  const overlayRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setPortalReady(true);
+  }, []);
 
   useEffect(() => {
     if (!modalProduct) return;
-    const previousOverflow = document.body.style.overflow;
+
+    const scrollY = window.scrollY;
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.left = "0";
+    document.body.style.right = "0";
     document.body.style.overflow = "hidden";
+
+    overlayRef.current?.scrollTo({ top: 0 });
+
     return () => {
-      document.body.style.overflow = previousOverflow;
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.left = "";
+      document.body.style.right = "";
+      document.body.style.overflow = "";
+      window.scrollTo(0, scrollY);
     };
   }, [modalProduct]);
+
+  useEffect(() => {
+    if (!modalProduct) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") closeProductModal();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [modalProduct]);
+
+  const openProductModal = (product: Product) => {
+    setModalProduct(product);
+  };
+
+  const closeProductModal = () => {
+    setModalProduct(null);
+  };
 
   const filtered = activeFilter === "all" ? products : products.filter((p) => p.category === activeFilter);
 
@@ -83,7 +120,7 @@ export default function Catalog() {
     const mensaje = document.getElementById("mensaje") as HTMLTextAreaElement | null;
     if (servicio) servicio.value = "producto";
     if (mensaje) mensaje.value = msg;
-    setModalProduct(null);
+    closeProductModal();
     document.getElementById("contacto")?.scrollIntoView({ behavior: "smooth" });
   };
 
@@ -140,7 +177,7 @@ export default function Catalog() {
             return (
               <div
                 key={product.id}
-                onClick={() => setModalProduct(product)}
+                onClick={() => openProductModal(product)}
                 className="premium-card group cursor-pointer flex flex-col"
               >
                 {product.badge && (
@@ -256,146 +293,163 @@ export default function Catalog() {
         </div>
       </div>
 
-      {modalProduct && (
-        <div
-          className="fixed inset-0 z-50 overflow-y-auto overscroll-contain bg-black/80 backdrop-blur-md"
-          onClick={() => setModalProduct(null)}
-        >
-          <div className="flex min-h-full items-start justify-center p-4 sm:p-6 pt-[88px] pb-8">
+      {portalReady &&
+        modalProduct &&
+        createPortal(
           <div
-            className="relative w-full max-w-lg shrink-0 glass border border-white/[0.08] rounded-[var(--radius-lg)] shadow-[0_24px_80px_rgba(0,0,0,0.6)]"
-            onClick={(e) => e.stopPropagation()}
+            ref={overlayRef}
+            className="fixed inset-0 z-[1200] overflow-y-auto overscroll-contain bg-black/80 backdrop-blur-md"
+            onClick={closeProductModal}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="catalog-product-title"
           >
-            <button
-              onClick={() => setModalProduct(null)}
-              className="absolute top-4 right-4 z-10 w-9 h-9 flex items-center justify-center rounded-xl bg-zinc-900 border border-white/[0.08] text-zinc-400 hover:text-white hover:border-[var(--accent)]/30 transition-all cursor-pointer"
-            >
-              <X size={18} />
-            </button>
-
-            {modalProduct.badge && (
-              <div className="absolute top-4 left-4 px-3 py-1 rounded-full text-[0.7rem] font-semibold bg-[var(--accent)] text-zinc-950 z-10 tracking-wide">
-                {modalProduct.badge}
-              </div>
-            )}
-
-            <div
-              className={`h-[220px] sm:h-[280px] relative ${
-                getProductImageBackground(modalProduct, getSelectedColor(modalProduct)) === "white"
-                  ? "ring-1 ring-inset ring-zinc-300/15"
-                  : ""
-              }`}
-              style={{
-                backgroundColor: getProductImageBackgroundColor(
-                  modalProduct,
-                  getSelectedColor(modalProduct)
-                ),
-              }}
-            >
-              {getDisplayImage(modalProduct) ? (
-                <Image
-                  src={getDisplayImage(modalProduct)!}
-                  alt={modalProduct.name}
-                  fill
-                  sizes="512px"
-                  className={
-                    getProductImageFit(modalProduct) === "cover"
-                      ? "object-cover"
-                      : `object-contain ${getProductImagePadding(
-                          modalProduct,
-                          getProductImageBackground(modalProduct, getSelectedColor(modalProduct))
-                        )}`
-                  }
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-[var(--accent)]">
-                  <div className="w-24 h-24 opacity-60">
-                    {productIcons[modalProduct.slug] || productIcons["default"]}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <div className="p-6">
-              <span className="text-[0.68rem] font-semibold uppercase tracking-[0.15em] text-[var(--accent)]">
-                {modalProduct.category}
-              </span>
-              <h3 className="font-[var(--font-display)] text-xl font-bold mt-2 mb-2">{modalProduct.name}</h3>
-              <p className="text-sm text-zinc-400 leading-relaxed mb-5">{modalProduct.description}</p>
-
-              {modalProduct.features && modalProduct.features.length > 0 && (
-                <ul className="mb-5 space-y-2">
-                  {modalProduct.features.map((f, i) => (
-                    <li key={i} className="flex items-center gap-2 text-sm text-zinc-400">
-                      <Check size={14} className="text-[var(--accent)] flex-shrink-0" strokeWidth={2.5} />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-              )}
-
-              {modalProduct.channelOptions && (
-                <div className="mb-4">
-                  <span className="text-xs text-zinc-500 font-medium block mb-2">Canales:</span>
-                  <div className="flex gap-2">
-                    {modalProduct.channelOptions.map((opt) => (
-                      <button
-                        key={opt.channels}
-                        onClick={() => setSelectedChannels((prev) => ({ ...prev, [modalProduct.id]: opt.channels }))}
-                        className={`w-9 h-9 rounded-lg text-sm font-bold border transition-all cursor-pointer ${
-                          getSelectedChannels(modalProduct) === opt.channels
-                            ? "bg-[var(--accent)] border-[var(--accent)] text-zinc-950"
-                            : "bg-transparent border-white/[0.08] text-zinc-400 hover:border-[var(--accent)]/40"
-                        }`}
-                      >
-                        {opt.channels}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {modalProduct.colorVariants && modalProduct.colorVariants.length > 0 && (
-                <div className="flex items-center gap-3 mb-5">
-                  <span className="text-xs text-zinc-500 font-medium">Color:</span>
-                  <div className="flex items-center gap-2">
-                    {modalProduct.colorVariants.map((variant) => (
-                      <button
-                        key={variant.id}
-                        onClick={() => setSelectedColors((prev) => ({ ...prev, [modalProduct.id]: variant.id }))}
-                        title={variant.label}
-                        className={`w-7 h-7 rounded-full border-2 transition-all cursor-pointer ${
-                          getSelectedColor(modalProduct) === variant.id
-                            ? "border-[var(--accent)] scale-110"
-                            : "border-white/[0.1]"
-                        }`}
-                        style={{ backgroundColor: variant.hex }}
-                      />
-                    ))}
-                  </div>
-                  <span className="text-xs text-zinc-400">
-                    {modalProduct.colorVariants.find((v) => v.id === getSelectedColor(modalProduct))?.label}
-                  </span>
-                </div>
-              )}
-
-              <div className="flex items-center justify-between pt-4 border-t border-white/[0.06]">
-                <span className="font-[var(--font-display)] text-2xl font-bold text-gradient">
-                  {getCurrentPrice(modalProduct)}
-                </span>
+            <div className="flex min-h-full items-start justify-center p-4 sm:p-6 pt-[88px] pb-8">
+              <div
+                className="relative w-full max-w-lg shrink-0 glass border border-white/[0.08] rounded-[var(--radius-lg)] shadow-[0_24px_80px_rgba(0,0,0,0.6)] overflow-hidden"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <button
-                  onClick={() => scrollToContact(modalProduct)}
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-zinc-950 bg-gradient-brand glow-cyan transition-all hover:-translate-y-0.5 cursor-pointer"
+                  onClick={closeProductModal}
+                  className="absolute top-4 right-4 z-10 w-9 h-9 flex items-center justify-center rounded-xl bg-zinc-900 border border-white/[0.08] text-zinc-400 hover:text-white hover:border-[var(--accent)]/30 transition-all cursor-pointer"
+                  aria-label="Cerrar detalle del producto"
                 >
-                  <ShoppingBag size={16} />
-                  Consultar
+                  <X size={18} />
                 </button>
+
+                {modalProduct.badge && (
+                  <div className="absolute top-4 left-4 px-3 py-1 rounded-full text-[0.7rem] font-semibold bg-[var(--accent)] text-zinc-950 z-10 tracking-wide">
+                    {modalProduct.badge}
+                  </div>
+                )}
+
+                <div
+                  className={`h-[200px] sm:h-[260px] relative shrink-0 ${
+                    getProductImageBackground(modalProduct, getSelectedColor(modalProduct)) === "white"
+                      ? "ring-1 ring-inset ring-zinc-300/15"
+                      : ""
+                  }`}
+                  style={{
+                    backgroundColor: getProductImageBackgroundColor(
+                      modalProduct,
+                      getSelectedColor(modalProduct)
+                    ),
+                  }}
+                >
+                  {getDisplayImage(modalProduct) ? (
+                    <Image
+                      src={getDisplayImage(modalProduct)!}
+                      alt={modalProduct.name}
+                      fill
+                      sizes="512px"
+                      className={
+                        getProductImageFit(modalProduct) === "cover"
+                          ? "object-cover"
+                          : `object-contain ${getProductImagePadding(
+                              modalProduct,
+                              getProductImageBackground(modalProduct, getSelectedColor(modalProduct))
+                            )}`
+                      }
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-[var(--accent)]">
+                      <div className="w-24 h-24 opacity-60">
+                        {productIcons[modalProduct.slug] || productIcons["default"]}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="p-6">
+                  <span className="text-[0.68rem] font-semibold uppercase tracking-[0.15em] text-[var(--accent)]">
+                    {modalProduct.category}
+                  </span>
+                  <h3
+                    id="catalog-product-title"
+                    className="font-[var(--font-display)] text-xl font-bold mt-2 mb-2"
+                  >
+                    {modalProduct.name}
+                  </h3>
+                  <p className="text-sm text-zinc-400 leading-relaxed mb-5">{modalProduct.description}</p>
+
+                  {modalProduct.features && modalProduct.features.length > 0 && (
+                    <ul className="mb-5 space-y-2">
+                      {modalProduct.features.map((f, i) => (
+                        <li key={i} className="flex items-center gap-2 text-sm text-zinc-400">
+                          <Check size={14} className="text-[var(--accent)] flex-shrink-0" strokeWidth={2.5} />
+                          {f}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+
+                  {modalProduct.channelOptions && (
+                    <div className="mb-4">
+                      <span className="text-xs text-zinc-500 font-medium block mb-2">Canales:</span>
+                      <div className="flex gap-2">
+                        {modalProduct.channelOptions.map((opt) => (
+                          <button
+                            key={opt.channels}
+                            onClick={() =>
+                              setSelectedChannels((prev) => ({ ...prev, [modalProduct.id]: opt.channels }))
+                            }
+                            className={`w-9 h-9 rounded-lg text-sm font-bold border transition-all cursor-pointer ${
+                              getSelectedChannels(modalProduct) === opt.channels
+                                ? "bg-[var(--accent)] border-[var(--accent)] text-zinc-950"
+                                : "bg-transparent border-white/[0.08] text-zinc-400 hover:border-[var(--accent)]/40"
+                            }`}
+                          >
+                            {opt.channels}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {modalProduct.colorVariants && modalProduct.colorVariants.length > 0 && (
+                    <div className="flex items-center gap-3 mb-5">
+                      <span className="text-xs text-zinc-500 font-medium">Color:</span>
+                      <div className="flex items-center gap-2">
+                        {modalProduct.colorVariants.map((variant) => (
+                          <button
+                            key={variant.id}
+                            onClick={() =>
+                              setSelectedColors((prev) => ({ ...prev, [modalProduct.id]: variant.id }))
+                            }
+                            title={variant.label}
+                            className={`w-7 h-7 rounded-full border-2 transition-all cursor-pointer ${
+                              getSelectedColor(modalProduct) === variant.id
+                                ? "border-[var(--accent)] scale-110"
+                                : "border-white/[0.1]"
+                            }`}
+                            style={{ backgroundColor: variant.hex }}
+                          />
+                        ))}
+                      </div>
+                      <span className="text-xs text-zinc-400">
+                        {modalProduct.colorVariants.find((v) => v.id === getSelectedColor(modalProduct))?.label}
+                      </span>
+                    </div>
+                  )}
+
+                  <div className="flex items-center justify-between pt-4 border-t border-white/[0.06]">
+                    <span className="font-[var(--font-display)] text-2xl font-bold text-gradient">
+                      {getCurrentPrice(modalProduct)}
+                    </span>
+                    <button
+                      onClick={() => scrollToContact(modalProduct)}
+                      className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-zinc-950 bg-gradient-brand glow-cyan transition-all hover:-translate-y-0.5 cursor-pointer"
+                    >
+                      <ShoppingBag size={16} />
+                      Consultar
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
     </section>
   );
 }
