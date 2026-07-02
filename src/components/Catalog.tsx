@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import {
   X,
@@ -39,6 +39,15 @@ export default function Catalog() {
   const [selectedColors, setSelectedColors] = useState<Record<string, string>>({});
   const [selectedChannels, setSelectedChannels] = useState<Record<string, number>>({});
   const [modalProduct, setModalProduct] = useState<Product | null>(null);
+
+  useEffect(() => {
+    if (!modalProduct) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [modalProduct]);
 
   const filtered = activeFilter === "all" ? products : products.filter((p) => p.category === activeFilter);
 
@@ -249,11 +258,12 @@ export default function Catalog() {
 
       {modalProduct && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center pt-[72px] p-4 bg-black/80 backdrop-blur-md"
+          className="fixed inset-0 z-50 overflow-y-auto overscroll-contain bg-black/80 backdrop-blur-md"
           onClick={() => setModalProduct(null)}
         >
+          <div className="flex min-h-full items-start justify-center p-4 sm:p-6 pt-[88px] pb-8">
           <div
-            className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto glass border border-white/[0.08] rounded-[var(--radius-lg)] shadow-[0_24px_80px_rgba(0,0,0,0.6)]"
+            className="relative w-full max-w-lg shrink-0 glass border border-white/[0.08] rounded-[var(--radius-lg)] shadow-[0_24px_80px_rgba(0,0,0,0.6)]"
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -270,7 +280,7 @@ export default function Catalog() {
             )}
 
             <div
-              className={`h-[320px] relative ${
+              className={`h-[220px] sm:h-[280px] relative ${
                 getProductImageBackground(modalProduct, getSelectedColor(modalProduct)) === "white"
                   ? "ring-1 ring-inset ring-zinc-300/15"
                   : ""
@@ -382,6 +392,7 @@ export default function Catalog() {
                 </button>
               </div>
             </div>
+          </div>
           </div>
         </div>
       )}

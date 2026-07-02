@@ -7,6 +7,8 @@ const INSTALLATION_BY_SLUG: Record<string, number> = {
   "camara-imou-cruiser-sc-4k": 50000,
   "camara-imou-cruiser-dual-10mp": 50000,
   "camara-imou-cruiser-triple-11mp": 50000,
+  "videoportero-ezviz-hp7": 80000,
+  "videoportero-ezviz-hp7-pro-4k": 80000,
 };
 
 export function getInstallationPrice(product: Product): number | null {
