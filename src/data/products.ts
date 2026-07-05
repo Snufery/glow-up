@@ -395,8 +395,8 @@ export const products: Product[] = [
     category: "seguridad",
     description:
       "Videoportero premium 4K con reconocimiento de palma y rostro, pantalla de 8\" y hub central para dispositivos EZVIZ",
-    price: 1280000,
-    priceFormatted: "$1.280.000",
+    price: 1700000,
+    priceFormatted: "$1.700.000",
     badge: "Nuevo",
     image: "/images/productos/ezviz-hp7pro-4k.png",
     imageBackground: "white",
