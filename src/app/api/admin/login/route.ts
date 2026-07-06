@@ -81,7 +81,11 @@ export async function POST(request: Request) {
       return lockoutResponse(ipLock.retryAfterSec ?? 1800);
     }
 
-    const body = (await request.json()) as { password?: string; inviteCode?: string };
+    const body = (await request.json()) as {
+      password?: string;
+      inviteCode?: string;
+      rebindDevice?: boolean;
+    };
     const password = body.password ?? "";
     const inviteCode = body.inviteCode?.trim();
 
@@ -114,6 +118,7 @@ export async function POST(request: Request) {
     const deviceResult = await resolveTrustedDeviceLogin({
       deviceCookie,
       inviteCode,
+      rebindDevice: body.rebindDevice === true,
       userAgent,
     });
 

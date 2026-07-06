@@ -57,6 +57,7 @@ export async function attachAdminAuthCookies(
 export async function resolveTrustedDeviceLogin(input: {
   deviceCookie?: string;
   inviteCode?: string;
+  rebindDevice?: boolean;
   userAgent: string;
 }): Promise<
   | { ok: true; deviceId: string; secret: string; bootstrapped: boolean }
@@ -70,6 +71,21 @@ export async function resolveTrustedDeviceLogin(input: {
         | "INVALID_RECOVERY";
     }
 > {
+  if (input.rebindDevice) {
+    await resetAllTrustedDevices();
+    const registered = await registerTrustedDevice({
+      label: detectDeviceLabel(input.userAgent),
+      userAgent: input.userAgent,
+    });
+    if (!registered) return { ok: false, code: "DB_UNAVAILABLE" };
+    return {
+      ok: true,
+      deviceId: registered.deviceId,
+      secret: registered.secret,
+      bootstrapped: true,
+    };
+  }
+
   const recoveryKey = getDeviceRecoveryKey();
   if (recoveryKey && input.inviteCode && safeEqual(input.inviteCode.trim(), recoveryKey)) {
     await resetAllTrustedDevices();

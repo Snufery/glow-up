@@ -14,6 +14,7 @@ function AdminLoginForm() {
 
   const [password, setPassword] = useState("");
   const [inviteCode, setInviteCode] = useState("");
+  const [rebindDevice, setRebindDevice] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
   const [error, setError] = useState(
     urlError === "device"
@@ -34,6 +35,7 @@ function AdminLoginForm() {
         body: JSON.stringify({
           password,
           inviteCode: inviteCode.trim() || undefined,
+          rebindDevice: rebindDevice || undefined,
         }),
       });
 
@@ -48,6 +50,7 @@ function AdminLoginForm() {
         setError(data.error || "No se pudo iniciar sesion");
         if (data.code === "DEVICE_NOT_TRUSTED" || data.code === "INVALID_INVITE") {
           setShowRegister(true);
+          setRebindDevice(true);
         }
         if (data.locked) setPassword("");
         return;
@@ -79,8 +82,8 @@ function AdminLoginForm() {
         <div className="glass rounded-2xl p-4 mb-4 border border-[var(--accent)]/15 flex gap-3">
           <Shield size={16} className="text-[var(--accent)] flex-shrink-0 mt-0.5" />
           <p className="text-[11px] text-zinc-500 leading-relaxed">
-            Solo tu PC y celular personal pueden entrar. Si intentas desde otro equipo, se
-            bloqueara aunque la contrasena sea correcta.
+            Usa el navegador normal (no incognito). Si cerraste incognito o borraste cookies,
+            marca la opcion de registrar este navegador de nuevo abajo.
           </p>
         </div>
 
@@ -103,6 +106,19 @@ function AdminLoginForm() {
               />
             </div>
           </div>
+
+          <label className="flex items-start gap-3 rounded-xl border border-white/[0.08] bg-zinc-900/40 px-3 py-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={rebindDevice}
+              onChange={(e) => setRebindDevice(e.target.checked)}
+              className="mt-0.5 accent-[var(--accent)]"
+            />
+            <span className="text-[11px] text-zinc-400 leading-relaxed">
+              Registrar este navegador de nuevo (si usaste incognito antes o no te deja entrar).
+              Revoca otros dispositivos registrados.
+            </span>
+          </label>
 
           <div>
             <button
