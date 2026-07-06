@@ -17,19 +17,19 @@ export default function Home() {
       <RevealOnScroll>
         <About />
       </RevealOnScroll>
-      <RevealOnScroll delay={80} deferRender anchorId="servicios" placeholderMinHeight="40vh">
+      <RevealOnScroll delay={80} deferRender anchorId="servicios" sectionId="servicios" placeholderMinHeight="40vh">
         <Services />
       </RevealOnScroll>
-      <RevealOnScroll delay={120} deferRender anchorId="catalogo" placeholderMinHeight="60vh">
+      <RevealOnScroll delay={120} deferRender anchorId="catalogo" sectionId="catalogo" placeholderMinHeight="60vh">
         <Catalog />
       </RevealOnScroll>
-      <RevealOnScroll delay={80} deferRender anchorId="proyectos" placeholderMinHeight="35vh">
+      <RevealOnScroll delay={80} deferRender anchorId="proyectos" sectionId="proyectos" placeholderMinHeight="35vh">
         <Process />
       </RevealOnScroll>
-      <RevealOnScroll delay={100} deferRender anchorId="testimonios" placeholderMinHeight="45vh">
+      <RevealOnScroll delay={100} deferRender anchorId="testimonios" sectionId="testimonios" placeholderMinHeight="45vh">
         <Testimonials />
       </RevealOnScroll>
-      <RevealOnScroll delay={80} deferRender anchorId="contacto" placeholderMinHeight="50vh">
+      <RevealOnScroll delay={80} deferRender anchorId="contacto" sectionId="contacto" placeholderMinHeight="50vh">
         <Contact />
       </RevealOnScroll>
       <RevealOnScroll deferRender placeholderMinHeight="30vh">

@@ -1,6 +1,7 @@
 "use client";
 
 import { contactInfo } from "@/data/contact";
+import { trackEvent } from "@/lib/analytics/track";
 
 export default function WhatsAppFloat() {
   return (
@@ -18,6 +19,7 @@ export default function WhatsAppFloat() {
         href={contactInfo.socialLinks.whatsapp}
         target="_blank"
         rel="noopener noreferrer"
+        onClick={() => trackEvent("whatsapp_click", { source: "float" })}
         className="group relative flex items-center justify-center w-[3.75rem] h-[3.75rem] rounded-2xl bg-[#25D366] text-white shadow-[0_4px_28px_rgba(37,211,102,0.45)] transition-all hover:scale-105 hover:shadow-[0_8px_36px_rgba(37,211,102,0.55)] animate-[whatsappBounce_3s_ease-in-out_infinite]"
         aria-label={`Contactar por WhatsApp al ${contactInfo.phone}`}
       >

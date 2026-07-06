@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Phone, Mail, MapPin, Send, CheckCircle2 } from "lucide-react";
 import { contactInfo } from "@/data/contact";
+import { trackEvent } from "@/lib/analytics/track";
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
@@ -22,6 +23,7 @@ export default function Contact() {
       `Hola Glow Up! Soy ${nombre}.\nEmail: ${email}\n${telefono ? "Tel: " + telefono + "\n" : ""}Servicio: ${servicio}\n\n${mensaje}`
     );
 
+    trackEvent("whatsapp_click", { source: "contact_form" });
     window.open(`https://wa.me/${contactInfo.whatsappNumber}?text=${whatsappMsg}`, "_blank");
 
     setSubmitted(true);
@@ -89,6 +91,7 @@ export default function Contact() {
                 href={contactInfo.socialLinks.whatsapp}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackEvent("whatsapp_click", { source: "contact_link" })}
                 className="w-11 h-11 rounded-xl bg-[#25D366]/10 border border-[#25D366]/25 flex items-center justify-center text-[#25D366] transition-all hover:bg-[#25D366]/20 hover:-translate-y-0.5"
                 aria-label="WhatsApp"
               >

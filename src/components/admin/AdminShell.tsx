@@ -5,16 +5,12 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
-  FileText,
-  Receipt,
   LogOut,
   ExternalLink,
 } from "lucide-react";
 
 const navItems = [
-  { href: "/admin", label: "Inicio", icon: LayoutDashboard, exact: true },
-  { href: "/admin/cotizaciones", label: "Cotizaciones", icon: FileText },
-  { href: "/admin/facturas", label: "Facturas", icon: Receipt },
+  { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
 ];
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {

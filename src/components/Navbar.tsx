@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Menu, X, ShoppingBag, Calculator } from "lucide-react";
+import { trackEvent } from "@/lib/analytics/track";
 
 const navLinks = [
   { href: "#hero", label: "Inicio" },
@@ -38,6 +39,7 @@ function NavLink({
   return (
     <a
       href={link.href}
+      onClick={() => trackEvent("nav_click", { target: link.href.slice(1) })}
       className={`font-medium rounded-lg transition-all flex items-center gap-1.5 ${
         compact ? "px-2.5 py-1.5 text-xs" : "px-3.5 py-2 text-sm"
       } ${
@@ -173,6 +175,7 @@ export default function Navbar() {
             <li>
               <Link
                 href="/cotizador"
+                onClick={() => trackEvent("nav_click", { target: "cotizador" })}
                 className="ml-1 px-3.5 py-2 text-sm font-medium rounded-lg text-[var(--accent-bright)] hover:bg-[var(--accent)]/10 transition-all flex items-center gap-1.5"
               >
                 <Calculator size={14} />
@@ -182,6 +185,7 @@ export default function Navbar() {
             <li>
               <a
                 href="#contacto"
+                onClick={() => trackEvent("nav_click", { target: "contacto" })}
                 className="ml-2 px-5 py-2.5 text-sm font-semibold text-zinc-950 rounded-xl bg-gradient-brand glow-cyan glow-cyan-hover transition-all hover:-translate-y-0.5"
               >
                 Contacto
@@ -233,7 +237,10 @@ export default function Navbar() {
                   <a
                     key={link.href}
                     href={link.href}
-                    onClick={() => setMenuOpen(false)}
+                    onClick={() => {
+                      trackEvent("nav_click", { target: link.href.slice(1) });
+                      setMenuOpen(false);
+                    }}
                     style={{ transitionDelay: menuOpen ? `${i * 40}ms` : "0ms" }}
                     className={`px-4 py-3.5 text-sm font-medium rounded-xl transition-all flex items-center gap-2 border ${
                       menuOpen ? "translate-x-0 opacity-100" : "translate-x-4 opacity-0"
@@ -251,7 +258,10 @@ export default function Navbar() {
 
             <Link
               href="/cotizador"
-              onClick={() => setMenuOpen(false)}
+              onClick={() => {
+                trackEvent("nav_click", { target: "cotizador" });
+                setMenuOpen(false);
+              }}
               className="mt-6 px-5 py-3.5 text-sm font-semibold text-center rounded-xl border border-[var(--accent)]/25 bg-[var(--accent)]/8 text-[var(--accent-bright)] flex items-center justify-center gap-2"
             >
               <Calculator size={16} />
@@ -260,7 +270,10 @@ export default function Navbar() {
 
             <a
               href="#contacto"
-              onClick={() => setMenuOpen(false)}
+              onClick={() => {
+                trackEvent("nav_click", { target: "contacto" });
+                setMenuOpen(false);
+              }}
               className="mt-3 px-5 py-3.5 text-sm font-semibold text-zinc-950 text-center rounded-xl bg-gradient-brand glow-cyan"
             >
               Solicitar Cotizacion

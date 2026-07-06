@@ -13,6 +13,7 @@ import ProductImageFrame from "@/components/cotizador/ProductImageFrame";
 import RoomRecommendations from "@/components/cotizador/RoomRecommendations";
 import HouseZonePicker from "@/components/cotizador/HouseZonePicker";
 import { useCotizadorFlowOptional } from "@/context/CotizadorFlowContext";
+import { trackEvent } from "@/lib/analytics/track";
 
 interface ProductPickerProps {
   onEditSpaces?: () => void;
@@ -97,6 +98,11 @@ export default function ProductPicker({ onEditSpaces }: ProductPickerProps) {
       image: opts.image,
       roomId: selectedRoom?.id,
       roomLabel: selectedRoom?.label,
+    });
+
+    trackEvent("cotizador_add_product", {
+      productId: product.id,
+      productName: product.name,
     });
 
     setAddedFlash(product.id);

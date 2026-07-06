@@ -87,10 +87,26 @@ async function runSchema(sql: NeonQueryFunction<false, false>): Promise<void> {
     )
   `;
 
+  await sql`
+    CREATE TABLE IF NOT EXISTS site_events (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      event_type TEXT NOT NULL,
+      session_id TEXT NOT NULL,
+      path TEXT NOT NULL DEFAULT '/',
+      metadata JSONB NOT NULL DEFAULT '{}',
+      device TEXT NOT NULL DEFAULT 'unknown',
+      referrer TEXT,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )
+  `;
+
   await sql`CREATE INDEX IF NOT EXISTS idx_quotes_created_at ON quotes (created_at DESC)`;
   await sql`CREATE INDEX IF NOT EXISTS idx_invoices_created_at ON invoices (created_at DESC)`;
   await sql`CREATE INDEX IF NOT EXISTS idx_quote_drafts_token ON quote_drafts (share_token)`;
   await sql`CREATE INDEX IF NOT EXISTS idx_quote_drafts_expires ON quote_drafts (expires_at)`;
+  await sql`CREATE INDEX IF NOT EXISTS idx_site_events_created_at ON site_events (created_at DESC)`;
+  await sql`CREATE INDEX IF NOT EXISTS idx_site_events_type_created ON site_events (event_type, created_at DESC)`;
+  await sql`CREATE INDEX IF NOT EXISTS idx_site_events_session ON site_events (session_id, created_at DESC)`;
 }
 
 export async function ensureSchema(): Promise<boolean> {

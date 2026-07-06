@@ -17,6 +17,7 @@ import { useCotizadorFlow } from "@/context/CotizadorFlowContext";
 import { useHouse } from "@/context/HouseContext";
 import { useQuoteDraftLoader } from "@/hooks/useQuoteDraftLoader";
 import type { QuoteGoal } from "@/data/quotePackages";
+import { trackEvent } from "@/lib/analytics/track";
 
 function CotizadorShellInner() {
   const flow = useCotizadorFlow();
@@ -30,6 +31,10 @@ function CotizadorShellInner() {
   useEffect(() => {
     if (isConfigured) setEditingSpaces(false);
   }, [isConfigured]);
+
+  useEffect(() => {
+    trackEvent("cotizador_enter");
+  }, []);
 
   const waitingForDraft = hasShareToken && draftState.loading;
 

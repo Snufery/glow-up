@@ -34,6 +34,7 @@ import {
   getProductImagePadding,
   shouldShowImageOverlay,
 } from "@/lib/productImageDisplay";
+import { trackEvent } from "@/lib/analytics/track";
 import { productIcons } from "./ProductIcons";
 
 export default function Catalog() {
@@ -73,6 +74,11 @@ export default function Catalog() {
 
   const openProductModal = (product: Product) => {
     setModalProduct(product);
+    trackEvent("product_open", {
+      productId: product.id,
+      productName: product.name,
+      category: product.category,
+    });
   };
 
   const closeProductModal = () => {
@@ -141,7 +147,10 @@ export default function Catalog() {
               return (
                 <button
                   key={cat.id}
-                  onClick={() => setActiveFilter(cat.id)}
+                  onClick={() => {
+                    setActiveFilter(cat.id);
+                    trackEvent("catalog_filter", { filter: cat.id });
+                  }}
                   className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium border transition-all cursor-pointer ${
                     isActive
                       ? "bg-gradient-brand text-zinc-950 border-transparent shadow-[0_0_20px_rgba(43,188,179,0.25)]"

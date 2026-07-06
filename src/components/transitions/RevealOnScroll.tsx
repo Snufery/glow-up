@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { trackEvent } from "@/lib/analytics/track";
 
 interface RevealOnScrollProps {
   children: ReactNode;
@@ -13,6 +14,8 @@ interface RevealOnScrollProps {
   placeholderMinHeight?: string;
   /** ID de ancla (#catalogo) para montar de inmediato al navegar por hash */
   anchorId?: string;
+  /** ID de seccion para analytics (section_view) */
+  sectionId?: string;
 }
 
 export default function RevealOnScroll({
@@ -22,8 +25,10 @@ export default function RevealOnScroll({
   deferRender = false,
   placeholderMinHeight = "40vh",
   anchorId,
+  sectionId,
 }: RevealOnScrollProps) {
   const ref = useRef<HTMLDivElement>(null);
+  const trackedSection = useRef(false);
   const [visible, setVisible] = useState(false);
   const [shouldRender, setShouldRender] = useState(!deferRender);
   const reducedMotion = usePrefersReducedMotion();
@@ -41,6 +46,10 @@ export default function RevealOnScroll({
     const reveal = () => {
       setShouldRender(true);
       setVisible(true);
+      if (sectionId && !trackedSection.current) {
+        trackedSection.current = true;
+        trackEvent("section_view", { section: sectionId });
+      }
     };
 
     const isInViewport = () => {
@@ -81,7 +90,7 @@ export default function RevealOnScroll({
       window.removeEventListener("hashchange", onHashChange);
       observer.disconnect();
     };
-  }, [reducedMotion, deferRender, anchorId]);
+  }, [reducedMotion, deferRender, anchorId, sectionId]);
 
   return (
     <div

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Syne, Outfit } from "next/font/google";
 import BrandSplash from "@/components/transitions/BrandSplash";
+import PageViewTracker from "@/components/analytics/PageViewTracker";
 import SiteNavbar from "@/components/SiteNavbar";
 import "./globals.css";
 
@@ -49,6 +51,9 @@ export default function RootLayout({
         <link rel="preload" href="/ICONO.png" as="image" />
       </head>
       <body className="min-h-screen bg-[#0a0a0a] text-[var(--text-primary)] font-[var(--font-body)] antialiased overflow-x-hidden">
+        <Suspense fallback={null}>
+          <PageViewTracker />
+        </Suspense>
         <BrandSplash>
           <SiteNavbar />
           {children}

@@ -24,6 +24,7 @@ import type { QuoteCustomerInfo, QuoteDocumentExtras } from "@/lib/quoteCustomer
 import QuoteCustomerModal from "./QuoteCustomerModal";
 import QuoteIncludesSummary from "./QuoteIncludesSummary";
 import { useCotizadorFlowOptional } from "@/context/CotizadorFlowContext";
+import { trackEvent } from "@/lib/analytics/track";
 
 interface QuotePanelProps {
   variant?: "sidebar" | "sheet";
@@ -77,6 +78,12 @@ export default function QuotePanel({ variant = "sidebar", documentExtras }: Quot
         extras: documentExtras,
       });
       setLastSentRef(result.quoteRef);
+      if (quoteSource === "public") {
+        trackEvent("cotizador_pdf_generated", {
+          itemCount: items.length,
+          grandTotal: totals.grandTotal,
+        });
+      }
       setShowCustomerModal(false);
     } catch (err) {
       console.error("Error generando cotizacion:", err);
