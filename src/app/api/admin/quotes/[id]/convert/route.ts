@@ -1,3 +1,4 @@
+import { isAdminApiAuthorized, unauthorizedAdminResponse } from "@/lib/adminApiGuard";
 import { getQuoteById, markQuoteConverted } from "@/lib/db/quotes";
 import { saveInvoice } from "@/lib/db/invoices";
 import { isDatabaseConfigured } from "@/lib/db/client";
@@ -10,6 +11,8 @@ export async function POST(
   _request: Request,
   context: { params: Promise<{ id: string }> }
 ) {
+  if (!(await isAdminApiAuthorized())) return unauthorizedAdminResponse();
+
   try {
     if (!isDatabaseConfigured()) {
       return Response.json({ error: "Base de datos no configurada" }, { status: 503 });

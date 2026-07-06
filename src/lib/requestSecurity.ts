@@ -11,7 +11,12 @@ export function getClientIp(request: Request): string {
 export function isAllowedSameOrigin(request: Request): boolean {
   const origin = request.headers.get("origin");
   const host = request.headers.get("host");
-  if (!origin || !host) return true;
+  if (!host) return false;
+
+  if (!origin) {
+    const secFetchSite = request.headers.get("sec-fetch-site");
+    return secFetchSite === "same-origin" || secFetchSite === "same-site";
+  }
 
   try {
     const originHost = new URL(origin).host;

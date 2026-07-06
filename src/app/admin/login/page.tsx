@@ -147,8 +147,8 @@ function AdminLoginForm() {
                   placeholder="000000"
                 />
                 <p className="text-[10px] text-zinc-600 mt-2 leading-relaxed">
-                  Codigo de 6 digitos desde el panel admin (10 min), o clave de recuperacion
-                  (ADMIN_DEVICE_RECOVERY_KEY en Vercel) si perdiste acceso en todos los equipos.
+                  Codigo de 6 digitos generado desde el panel admin en un dispositivo ya autorizado.
+                  Expira en 10 minutos.
                 </p>
               </div>
             )}

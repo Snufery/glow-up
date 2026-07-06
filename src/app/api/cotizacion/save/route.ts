@@ -27,8 +27,8 @@ function sanitizeQuoteRef(ref: string): string | null {
   return ref;
 }
 
-function sanitizeSource(source?: string): QuoteSource {
-  return source === "admin" ? "admin" : "public";
+function sanitizeSource(): QuoteSource {
+  return "public";
 }
 
 export async function POST(request: Request) {
@@ -73,7 +73,7 @@ export async function POST(request: Request) {
       },
       items,
       filename: body.filename,
-      source: sanitizeSource(body.source),
+      source: sanitizeSource(),
       extras: body.extras,
     });
 

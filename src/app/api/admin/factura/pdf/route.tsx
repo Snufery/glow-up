@@ -1,4 +1,4 @@
-
+import { isAdminApiAuthorized, unauthorizedAdminResponse } from "@/lib/adminApiGuard";
 import type { InvoiceData } from "@/lib/invoice";
 import { renderInvoicePdfBuffer } from "@/lib/renderInvoicePdf";
 import { saveInvoice } from "@/lib/db/invoices";
@@ -20,6 +20,8 @@ function sanitizeFilename(filename: string): string {
 }
 
 export async function POST(request: Request) {
+  if (!(await isAdminApiAuthorized())) return unauthorizedAdminResponse();
+
   try {
     const contentType = request.headers.get("content-type") || "";
     let invoice: InvoiceData;

@@ -1,4 +1,4 @@
-import { createHash, randomBytes } from "crypto";
+import { createHash, randomBytes, randomInt } from "crypto";
 
 export const ADMIN_DEVICE_COOKIE = "glowup_trusted_device";
 export const DEVICE_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
@@ -39,5 +39,5 @@ export function detectDeviceLabel(userAgent: string): string {
 }
 
 export function generateInviteCode(): string {
-  return String(Math.floor(100000 + Math.random() * 900000));
+  return String(randomInt(100000, 1000000));
 }

@@ -1,7 +1,7 @@
 import type { QuoteLineItem } from "@/context/QuoteContext";
 import type { QuoteCustomerInfo, QuoteDocumentExtras } from "@/lib/quoteCustomer";
 import { generateQuotePdfBuffer } from "@/lib/generateQuotePdfBuffer";
-import { checkIpRateLimit, getClientIp } from "@/lib/requestSecurity";
+import { checkIpRateLimit, getClientIp, isAllowedSameOrigin } from "@/lib/requestSecurity";
 import { saveQuoteFromPayload } from "@/lib/db/saveQuoteFromPayload";
 import type { QuoteSource } from "@/lib/db/types";
 import {
@@ -51,6 +51,10 @@ async function parsePayload(request: Request): Promise<PdfPayload | null> {
 
 export async function POST(request: Request) {
   try {
+    if (!isAllowedSameOrigin(request)) {
+      return new Response("Solicitud no permitida", { status: 403 });
+    }
+
     const ip = getClientIp(request);
     const rate = checkIpRateLimit(`quote-pdf:${ip}`, 15, 10 * 60 * 1000);
     if (!rate.allowed) {
@@ -92,7 +96,7 @@ export async function POST(request: Request) {
       customer,
       items,
       filename,
-      source: payload.source === "admin" ? "admin" : "public",
+      source: "public",
       extras: payload.extras,
     });
 

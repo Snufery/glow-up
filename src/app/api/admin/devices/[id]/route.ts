@@ -1,6 +1,7 @@
-import { cookies } from "next/headers";
+import { isAdminApiAuthorized, unauthorizedAdminResponse } from "@/lib/adminApiGuard";
 import { ADMIN_COOKIE, getAdminSessionDeviceId } from "@/lib/adminSession";
 import { revokeTrustedDevice } from "@/lib/db/adminDevices";
+import { cookies } from "next/headers";
 
 export const runtime = "nodejs";
 
@@ -8,13 +9,12 @@ export async function DELETE(
   _request: Request,
   context: { params: Promise<{ id: string }> }
 ) {
+  if (!(await isAdminApiAuthorized())) return unauthorizedAdminResponse();
+
   const { id } = await context.params;
   const cookieStore = await cookies();
   const currentDeviceId = await getAdminSessionDeviceId(cookieStore.get(ADMIN_COOKIE)?.value);
-
-  if (!currentDeviceId) {
-    return Response.json({ error: "No autorizado" }, { status: 401 });
-  }
+  if (!currentDeviceId) return unauthorizedAdminResponse();
 
   if (id === currentDeviceId) {
     return Response.json(

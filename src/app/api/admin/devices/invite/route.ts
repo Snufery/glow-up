@@ -1,16 +1,11 @@
-import { cookies } from "next/headers";
-import { ADMIN_COOKIE, getAdminSessionDeviceId } from "@/lib/adminSession";
+import { isAdminApiAuthorized, unauthorizedAdminResponse } from "@/lib/adminApiGuard";
 import { createDeviceInvite } from "@/lib/db/adminDevices";
 import { checkIpRateLimit, getClientIp } from "@/lib/requestSecurity";
 
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
-  const cookieStore = await cookies();
-  const deviceId = await getAdminSessionDeviceId(cookieStore.get(ADMIN_COOKIE)?.value);
-  if (!deviceId) {
-    return Response.json({ error: "No autorizado" }, { status: 401 });
-  }
+  if (!(await isAdminApiAuthorized())) return unauthorizedAdminResponse();
 
   const ip = getClientIp(request);
   const rate = checkIpRateLimit(`admin-device-invite:${ip}`, 5, 10 * 60 * 1000);

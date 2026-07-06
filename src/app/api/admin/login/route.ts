@@ -19,6 +19,7 @@ import {
   readAttemptCookie,
 } from "@/lib/adminLoginAttempts";
 import {
+  checkIpRateLimit,
   clearIpFailures,
   getClientIp,
   getIpLockState,
@@ -113,6 +114,13 @@ export async function POST(request: Request) {
       return response;
     }
 
+    if (body.rebindDevice === true) {
+      const rebindRate = checkIpRateLimit(`admin-rebind:${ip}`, 3, 24 * 60 * 60 * 1000);
+      if (!rebindRate.allowed) {
+        return lockoutResponse(rebindRate.retryAfterSec ?? 3600);
+      }
+    }
+
     const deviceCookie = cookieStore.get(ADMIN_DEVICE_COOKIE)?.value;
     const userAgent = request.headers.get("user-agent") ?? "";
     const deviceResult = await resolveTrustedDeviceLogin({
@@ -123,6 +131,12 @@ export async function POST(request: Request) {
     });
 
     if (!deviceResult.ok) {
+      recordIpFailure(`admin-device:${ip}`, 8, 30 * 60 * 1000);
+      const deviceLock = getIpLockState(`admin-device:${ip}`, 8);
+      if (deviceLock.locked) {
+        return lockoutResponse(deviceLock.retryAfterSec ?? 1800);
+      }
+
       return NextResponse.json(
         {
           error: DEVICE_ERRORS[deviceResult.code] ?? "Dispositivo no autorizado",
@@ -131,6 +145,8 @@ export async function POST(request: Request) {
         { status: 403 }
       );
     }
+
+    clearIpFailures(`admin-device:${ip}`);
 
     clearIpFailures(ipKey);
     const response = NextResponse.json({

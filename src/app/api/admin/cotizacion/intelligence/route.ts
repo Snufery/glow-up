@@ -1,4 +1,6 @@
+import { isAdminApiAuthorized, unauthorizedAdminResponse } from "@/lib/adminApiGuard";
 import type { QuoteLineItem } from "@/context/QuoteContext";
+import { checkIpRateLimit, getClientIp } from "@/lib/requestSecurity";
 import { generateQuoteIntelligence } from "@/lib/quoteIntelligenceGenerate";
 import {
   normalizeQuoteIntelligence,
@@ -51,6 +53,14 @@ function sanitizeItems(raw: unknown): QuoteLineItem[] | null {
 }
 
 export async function POST(request: Request) {
+  if (!(await isAdminApiAuthorized())) return unauthorizedAdminResponse();
+
+  const ip = getClientIp(request);
+  const rate = checkIpRateLimit(`admin-intelligence:${ip}`, 10, 60 * 60 * 1000);
+  if (!rate.allowed) {
+    return Response.json({ error: "Demasiadas solicitudes de IA" }, { status: 429 });
+  }
+
   try {
     const body = (await request.json()) as {
       items?: unknown;
