@@ -411,6 +411,16 @@ body {
   transform: translateY(0);
 }
 
+/* Render diferido de secciones fuera de pantalla (mejora scroll en movil) */
+#servicios,
+#catalogo,
+#proyectos,
+#testimonios,
+#contacto {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .route-enter,
   .route-enter-fast,

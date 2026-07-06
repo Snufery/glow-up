@@ -55,9 +55,9 @@ export default function HeroExperience() {
           />
         )}
 
-        {/* Capa 2 — Foto de referencia con hotspots (opcion premium) */}
+        {/* Capa 2 — Foto de referencia (solo desktop, evita 2a descarga en movil) */}
         <div
-          className={`absolute inset-0 transition-opacity duration-700 ${
+          className={`absolute inset-0 transition-opacity duration-700 hidden lg:block ${
             photoBlend ? "opacity-[0.42] mix-blend-soft-light" : "opacity-0"
           }`}
         >
@@ -66,6 +66,7 @@ export default function HeroExperience() {
             alt=""
             fill
             sizes="580px"
+            loading="lazy"
             className="object-cover"
             aria-hidden
           />

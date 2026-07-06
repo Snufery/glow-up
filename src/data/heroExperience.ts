@@ -11,10 +11,10 @@ export const HERO_VIDEO_SRC =
   "https://videos.pexels.com/video-files/11630727/11630727-hd_1920_1080_30fps.mp4";
 
 export const HERO_POSTER_SRC =
-  "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1400&q=85";
+  "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=900&q=75";
 
 export const HERO_PHOTO_SRC =
-  "https://images.unsplash.com/photo-1600607687644-c7171b42498f?auto=format&fit=crop&w=1400&q=85";
+  "https://images.unsplash.com/photo-1600607687644-c7171b42498f?auto=format&fit=crop&w=900&q=75";
 
 export interface HeroHotspot {
   id: string;

@@ -59,10 +59,10 @@ export const products: Product[] = [
         label: "Negro",
         hex: "#1A1A1A",
         images: {
-          1: "/images/productos/interruptor-1-canal-negro.jpg",
-          2: "/images/productos/interruptor-2-canales-negro.jpg",
-          3: "/images/productos/interruptor-3-canales-negro.jpg",
-          4: "/images/productos/interruptor-4-canales-negro.jpg",
+          1: "/images/productos-opt/interruptor-1-canal-negro.jpg",
+          2: "/images/productos-opt/interruptor-2-canales-negro.jpg",
+          3: "/images/productos-opt/interruptor-3-canales-negro.jpg",
+          4: "/images/productos-opt/interruptor-4-canales-negro.jpg",
         },
       },
       {
@@ -70,10 +70,10 @@ export const products: Product[] = [
         label: "Blanco",
         hex: "#FFFFFF",
         images: {
-          1: "/images/productos/interruptor-1-canal-blanco.jpg",
-          2: "/images/productos/interruptor-2-canales-blanco.jpg",
-          3: "/images/productos/interruptor-3-canales-blanco.jpg",
-          4: "/images/productos/interruptor-4-canales-blanco.jpg",
+          1: "/images/productos-opt/interruptor-1-canal-blanco.jpg",
+          2: "/images/productos-opt/interruptor-2-canales-blanco.jpg",
+          3: "/images/productos-opt/interruptor-3-canales-blanco.jpg",
+          4: "/images/productos-opt/interruptor-4-canales-blanco.jpg",
         },
       },
     ],
@@ -87,7 +87,7 @@ export const products: Product[] = [
     price: 40000,
     priceFormatted: "$40.000",
     badge: "Popular",
-    image: "/images/productos/Bombillo.png",
+    image: "/images/productos-opt/Bombillo.png",
     imageFit: "cover",
     imageBackground: "dark",
     features: [
@@ -106,7 +106,7 @@ export const products: Product[] = [
     description: "5 metros, multicolor, efectos dinamicos, control desde app movil",
     price: 140000,
     priceFormatted: "$140.000",
-    image: "/images/productos/tira-led-wifi.jpg",
+    image: "/images/productos-opt/tira-led-wifi.jpg",
     imageBackground: "dark",
     features: [
       "5 metros de longitud",
@@ -126,7 +126,7 @@ export const products: Product[] = [
     price: 200000,
     priceFormatted: "$200.000",
     badge: "Nuevo",
-    image: "/images/productos/imou-ranger.jpg",
+    image: "/images/productos-opt/imou-ranger.jpg",
     imageBackground: "white",
     features: [
       "Resolucion 5MP con calidad 3K",
@@ -144,7 +144,7 @@ export const products: Product[] = [
     description: "Deteccion inteligente, notificaciones al celular, facil instalacion",
     price: 60000,
     priceFormatted: "$60.000",
-    image: "/images/productos/sensor-pir.jpg",
+    image: "/images/productos-opt/sensor-pir.jpg",
     imageBackground: "white",
     features: [
       "Deteccion hasta 6 metros",
@@ -163,7 +163,7 @@ export const products: Product[] = [
     price: 38000,
     priceFormatted: "$38.000",
     badge: "Top Ventas",
-    image: "/images/productos/socket-wifi.jpg",
+    image: "/images/productos-opt/socket-wifi.jpg",
     imageBackground: "white",
     features: [
       "Monitoreo de consumo en watts",
@@ -182,7 +182,7 @@ export const products: Product[] = [
       "Cerradura inteligente con huella, codigo, app y timbre integrado. Control remoto y notificaciones en tiempo real",
     price: 760000,
     priceFormatted: "$760.000",
-    image: "/images/productos/Cerradura.png",
+    image: "/images/productos-opt/Cerradura.png",
     imageBackground: "white",
     features: [
       "Apertura por huella, codigo, app, Bluetooth y tarjeta",
@@ -200,7 +200,7 @@ export const products: Product[] = [
     description: "Monitoreo en tiempo real, historial, alertas automaticas",
     price: 50000,
     priceFormatted: "$50.000",
-    image: "/images/productos/sensor-temperatura.jpg",
+    image: "/images/productos-opt/sensor-temperatura.jpg",
     imageBackground: "white",
     features: [
       "Precision de +/- 0.3 grados",
@@ -219,7 +219,7 @@ export const products: Product[] = [
       "Interruptor de circuito WiFi Tuya con medicion de energia, voltaje y corriente. Control remoto desde app y voz",
     price: 149000,
     priceFormatted: "$149.000",
-    image: "/images/productos/disyuntor.png",
+    image: "/images/productos-opt/disyuntor.png",
     imageBackground: "white",
     features: [
       "Medicion en tiempo real de kWh, voltaje y corriente",
@@ -239,7 +239,7 @@ export const products: Product[] = [
     price: 340000,
     priceFormatted: "$340.000",
     badge: "Nuevo",
-    image: "/images/productos/camara-ptZ-4K.jpg",
+    image: "/images/productos-opt/camara-ptZ-4K.jpg",
     imageBackground: "white",
     features: [
       "Resolucion 4K Ultra HD (8MP)",
@@ -259,7 +259,7 @@ export const products: Product[] = [
     price: 430000,
     priceFormatted: "$430.000",
     badge: "Nuevo",
-    image: "/images/productos/camara-ptz-2lens.jpg",
+    image: "/images/productos-opt/camara-ptz-2lens.jpg",
     imageBackground: "white",
     features: [
       "Doble lente 5+5MP (10MP total)",
@@ -279,7 +279,7 @@ export const products: Product[] = [
     price: 475000,
     priceFormatted: "$475.000",
     badge: "Nuevo",
-    image: "/images/productos/camara-ptz-3lens.jpg",
+    image: "/images/productos-opt/camara-ptz-3lens.jpg",
     imageBackground: "white",
     features: [
       "Triple lente 3+3+5MP (11MP total)",
@@ -299,7 +299,7 @@ export const products: Product[] = [
     price: 149000,
     priceFormatted: "$149.000",
     badge: "Nuevo",
-    image: "/images/productos/sirena-comunitaria.jpg",
+    image: "/images/productos-opt/sirena-comunitaria.jpg",
     imageBackground: "white",
     features: [
       "Sirena de 30W con 110 dB de potencia",
@@ -318,7 +318,7 @@ export const products: Product[] = [
       "Control remoto universal WiFi/IR para integrar aires acondicionados, televisores y electrodomesticos con control por infrarrojo a Alexa y Google Home",
     price: 58000,
     priceFormatted: "$58.000",
-    image: "/images/productos/Control.png",
+    image: "/images/productos-opt/Control.png",
     imageBackground: "white",
     features: [
       "Aprende comandos de controles IR de TV, aire acondicionado y mas",
@@ -338,7 +338,7 @@ export const products: Product[] = [
     price: 45000,
     priceFormatted: "$45.000",
     badge: "Nuevo",
-    image: "/images/productos/sensor-apertura.jpg",
+    image: "/images/productos-opt/sensor-apertura.jpg",
     imageBackground: "white",
     features: [
       "Deteccion magnetica de apertura y cierre",
@@ -358,7 +358,7 @@ export const products: Product[] = [
     price: 520000,
     priceFormatted: "$520.000",
     badge: "Nuevo",
-    image: "/images/productos/ax-home-hikvision.jpg",
+    image: "/images/productos-opt/ax-home-hikvision.jpg",
     imageBackground: "white",
     features: [
       "Conectividad WiFi 802.11 b/g/n y encriptacion AES-128",
@@ -378,7 +378,7 @@ export const products: Product[] = [
     price: 980000,
     priceFormatted: "$980.000",
     badge: "Nuevo",
-    image: "/images/productos/ezviz-hp7-2k.png",
+    image: "/images/productos-opt/ezviz-hp7-2k.png",
     imageBackground: "white",
     features: [
       "Resolucion 2K con angulo de vision 162°",
@@ -398,7 +398,7 @@ export const products: Product[] = [
     price: 1700000,
     priceFormatted: "$1.700.000",
     badge: "Nuevo",
-    image: "/images/productos/ezviz-hp7pro-4k.png",
+    image: "/images/productos-opt/ezviz-hp7pro-4k.png",
     imageBackground: "white",
     features: [
       "Resolucion 4K Ultra HD con vision nocturna a color",

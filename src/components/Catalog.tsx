@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
+import LazyImage from "@/components/LazyImage";
 import {
   X,
   ShoppingBag,
@@ -186,11 +187,12 @@ export default function Catalog() {
                 >
                   {displayImage ? (
                     <>
-                      <Image
+                      <LazyImage
                         src={displayImage}
                         alt={product.name}
                         fill
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        sizes="(max-width: 640px) 90vw, (max-width: 1024px) 50vw, 320px"
+                        quality={80}
                         className={`transition-transform duration-500 group-hover:scale-[1.03] ${
                           imageFit === "cover" ? "object-cover" : `object-contain ${imagePadding}`
                         }`}

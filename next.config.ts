@@ -39,6 +39,10 @@ const nextConfig: NextConfig = {
     "/api/admin/quotes/[id]/invoice-pdf": ["./public/pdf-templates/**/*"],
   },
   images: {
+    formats: ["image/avif", "image/webp"],
+    minimumCacheTTL: 31536000,
+    deviceSizes: [640, 750, 828, 1080, 1200],
+    imageSizes: [128, 256, 384, 512],
     remotePatterns: [
       {
         protocol: "https",
