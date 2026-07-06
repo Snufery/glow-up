@@ -88,6 +88,26 @@ async function runSchema(sql: NeonQueryFunction<false, false>): Promise<void> {
   `;
 
   await sql`
+    CREATE TABLE IF NOT EXISTS admin_trusted_devices (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      label TEXT NOT NULL DEFAULT 'Dispositivo',
+      token_hash TEXT NOT NULL,
+      user_agent TEXT NOT NULL DEFAULT '',
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      last_seen_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )
+  `;
+
+  await sql`
+    CREATE TABLE IF NOT EXISTS admin_device_invites (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      code_hash TEXT NOT NULL,
+      expires_at TIMESTAMPTZ NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )
+  `;
+
+  await sql`
     CREATE TABLE IF NOT EXISTS site_events (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       event_type TEXT NOT NULL,
@@ -107,6 +127,8 @@ async function runSchema(sql: NeonQueryFunction<false, false>): Promise<void> {
   await sql`CREATE INDEX IF NOT EXISTS idx_site_events_created_at ON site_events (created_at DESC)`;
   await sql`CREATE INDEX IF NOT EXISTS idx_site_events_type_created ON site_events (event_type, created_at DESC)`;
   await sql`CREATE INDEX IF NOT EXISTS idx_site_events_session ON site_events (session_id, created_at DESC)`;
+  await sql`CREATE INDEX IF NOT EXISTS idx_admin_devices_last_seen ON admin_trusted_devices (last_seen_at DESC)`;
+  await sql`CREATE INDEX IF NOT EXISTS idx_admin_device_invites_expires ON admin_device_invites (expires_at)`;
 }
 
 export async function ensureSchema(): Promise<boolean> {

@@ -34,9 +34,10 @@ function fromBase64(value: string): Uint8Array {
   return bytes;
 }
 
-export async function createAdminSessionToken(): Promise<string> {
+export async function createAdminSessionToken(deviceId: string): Promise<string> {
   const payload = JSON.stringify({
     role: "admin",
+    deviceId,
     exp: Date.now() + SESSION_MAX_AGE * 1000,
   });
   const key = await importKey();
@@ -48,30 +49,60 @@ export async function createAdminSessionToken(): Promise<string> {
   return `${toBase64(new TextEncoder().encode(payload))}.${toBase64(new Uint8Array(signature))}`;
 }
 
-export async function verifyAdminSessionToken(token: string | undefined): Promise<boolean> {
-  if (!token) return false;
+export interface AdminSessionPayload {
+  role: "admin";
+  deviceId: string;
+  exp: number;
+}
+
+export async function parseAdminSessionToken(
+  token: string | undefined
+): Promise<AdminSessionPayload | null> {
+  if (!token) return null;
 
   try {
     const [payloadPart, signaturePart] = token.split(".");
-    if (!payloadPart || !signaturePart) return false;
+    if (!payloadPart || !signaturePart) return null;
 
     const payloadBytes = fromBase64(payloadPart);
     const payload = new TextDecoder().decode(payloadBytes);
-    const data = JSON.parse(payload) as { role?: string; exp?: number };
+    const data = JSON.parse(payload) as { role?: string; deviceId?: string; exp?: number };
 
-    if (data.role !== "admin" || !data.exp || Date.now() > data.exp) return false;
+    if (data.role !== "admin" || !data.deviceId || !data.exp || Date.now() > data.exp) {
+      return null;
+    }
 
     const key = await importKey();
     const signature = fromBase64(signaturePart);
-    return crypto.subtle.verify(
+    const valid = await crypto.subtle.verify(
       "HMAC",
       key,
       new Uint8Array(signature),
       new Uint8Array(payloadBytes)
     );
+
+    if (!valid) return null;
+
+    return {
+      role: "admin",
+      deviceId: data.deviceId,
+      exp: data.exp,
+    };
   } catch {
-    return false;
+    return null;
   }
+}
+
+export async function verifyAdminSessionToken(token: string | undefined): Promise<boolean> {
+  const session = await parseAdminSessionToken(token);
+  return Boolean(session);
+}
+
+export async function getAdminSessionDeviceId(
+  token: string | undefined
+): Promise<string | null> {
+  const session = await parseAdminSessionToken(token);
+  return session?.deviceId ?? null;
 }
 
 export function safeEqual(a: string, b: string): boolean {

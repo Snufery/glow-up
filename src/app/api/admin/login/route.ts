@@ -2,12 +2,12 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import {
   ADMIN_COOKIE,
-  SESSION_MAX_AGE,
-  createAdminSessionToken,
   getAdminConfigError,
   getAdminPassword,
   safeEqual,
 } from "@/lib/adminSession";
+import { attachAdminAuthCookies, resolveTrustedDeviceLogin } from "@/lib/adminDeviceAuth";
+import { ADMIN_DEVICE_COOKIE } from "@/lib/adminDevice";
 import {
   ATTEMPT_COOKIE,
   MAX_LOGIN_ATTEMPTS,
@@ -42,6 +42,14 @@ function lockoutResponse(retryAfterSec: number) {
   );
 }
 
+const DEVICE_ERRORS: Record<string, string> = {
+  DEVICE_NOT_TRUSTED:
+    "Este dispositivo no esta autorizado. Registra tu celular o PC desde un dispositivo ya confiado.",
+  INVALID_INVITE: "Codigo de registro invalido o expirado. Genera uno nuevo desde el panel admin.",
+  DEVICE_LIMIT: "Ya alcanzaste el maximo de dispositivos autorizados.",
+  DB_UNAVAILABLE: "No se pudo validar el dispositivo. Revisa DATABASE_URL en Vercel.",
+};
+
 export async function POST(request: Request) {
   if (!isAllowedSameOrigin(request)) {
     return NextResponse.json({ error: "Solicitud no permitida" }, { status: 403 });
@@ -72,8 +80,9 @@ export async function POST(request: Request) {
       return lockoutResponse(ipLock.retryAfterSec ?? 1800);
     }
 
-    const body = (await request.json()) as { password?: string };
+    const body = (await request.json()) as { password?: string; inviteCode?: string };
     const password = body.password ?? "";
+    const inviteCode = body.inviteCode?.trim();
 
     if (!safeEqual(password, getAdminPassword())) {
       recordIpFailure(ipKey, MAX_LOGIN_ATTEMPTS, 30 * 60 * 1000);
@@ -99,18 +108,31 @@ export async function POST(request: Request) {
       return response;
     }
 
-    clearIpFailures(ipKey);
-    const token = await createAdminSessionToken();
-    const response = NextResponse.json({ ok: true });
-
-    response.cookies.set(ADMIN_COOKIE, token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      path: "/",
-      maxAge: SESSION_MAX_AGE,
+    const deviceCookie = cookieStore.get(ADMIN_DEVICE_COOKIE)?.value;
+    const userAgent = request.headers.get("user-agent") ?? "";
+    const deviceResult = await resolveTrustedDeviceLogin({
+      deviceCookie,
+      inviteCode,
+      userAgent,
     });
 
+    if (!deviceResult.ok) {
+      return NextResponse.json(
+        {
+          error: DEVICE_ERRORS[deviceResult.code] ?? "Dispositivo no autorizado",
+          code: deviceResult.code,
+        },
+        { status: 403 }
+      );
+    }
+
+    clearIpFailures(ipKey);
+    const response = NextResponse.json({
+      ok: true,
+      bootstrapped: deviceResult.bootstrapped,
+    });
+
+    await attachAdminAuthCookies(response, deviceResult.deviceId, deviceResult.secret);
     clearAttemptCookie(response);
     return response;
   } catch (error) {

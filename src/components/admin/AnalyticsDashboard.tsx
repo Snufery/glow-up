@@ -13,6 +13,7 @@ import {
   Users,
 } from "lucide-react";
 import type { AnalyticsSummary } from "@/lib/analytics/types";
+import TrustedDevicesPanel from "@/components/admin/TrustedDevicesPanel";
 
 const SOURCE_LABELS: Record<string, string> = {
   float: "Boton flotante",
@@ -297,6 +298,8 @@ export default function AnalyticsDashboard({
           )}
         </div>
       </div>
+
+      <TrustedDevicesPanel />
     </div>
   );
 }
