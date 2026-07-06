@@ -98,7 +98,13 @@ export function sanitizeQuoteItems(raw: QuoteLineItem[]): QuoteLineItem[] | null
 }
 
 export function parseQuoteCustomer(raw: QuoteCustomerInfo): QuoteCustomerInfo | null {
-  const validation = validateQuoteCustomer(raw.name, raw.phone);
+  const name = String(raw.name ?? "").trim().slice(0, 120);
+  const phone = String(raw.phone ?? "").trim().slice(0, 20);
+  const address = raw.address ? String(raw.address).trim().slice(0, 300) : undefined;
+
+  const validation = validateQuoteCustomer(name, phone);
   if (!validation.valid) return null;
-  return buildCustomerInfo(raw);
+
+  const customer = buildCustomerInfo({ name, phone });
+  return address ? { ...customer, address } : customer;
 }

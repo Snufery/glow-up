@@ -24,7 +24,7 @@ export interface QuoteDraftPayload {
 }
 
 function generateShareToken(): string {
-  return randomBytes(6).toString("base64url").slice(0, 10);
+  return randomBytes(12).toString("base64url");
 }
 
 export async function saveQuoteDraft(

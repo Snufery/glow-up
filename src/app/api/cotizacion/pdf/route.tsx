@@ -56,7 +56,7 @@ export async function POST(request: Request) {
     }
 
     const ip = getClientIp(request);
-    const rate = checkIpRateLimit(`quote-pdf:${ip}`, 15, 10 * 60 * 1000);
+    const rate = checkIpRateLimit(`quote-pdf:${ip}`, 8, 10 * 60 * 1000);
     if (!rate.allowed) {
       return new Response("Demasiadas solicitudes. Intenta mas tarde.", {
         status: 429,

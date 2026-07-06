@@ -4,7 +4,7 @@ import { checkIpRateLimit, getClientIp } from "@/lib/requestSecurity";
 export const runtime = "nodejs";
 
 function sanitizeToken(token: string): string | null {
-  if (!/^[A-Za-z0-9_-]{6,16}$/.test(token)) return null;
+  if (!/^[A-Za-z0-9_-]{8,24}$/.test(token)) return null;
   return token;
 }
 

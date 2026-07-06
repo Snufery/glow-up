@@ -1,6 +1,7 @@
 import type { QuoteLineItem } from "@/context/QuoteContext";
 import { saveQuoteDraft, type QuoteDraftPayload } from "@/lib/db/quoteDrafts";
-import { checkIpRateLimit, getClientIp } from "@/lib/requestSecurity";
+import { readJsonBody } from "@/lib/readJsonBody";
+import { checkIpRateLimit, getClientIp, isAllowedSameOrigin } from "@/lib/requestSecurity";
 import { sanitizeQuoteItems } from "@/lib/validateQuoteItems";
 
 export const runtime = "nodejs";
@@ -30,13 +31,17 @@ function sanitizeDraftPayload(body: unknown): QuoteDraftPayload | null {
 
 export async function POST(request: Request) {
   try {
+    if (!isAllowedSameOrigin(request)) {
+      return Response.json({ error: "Solicitud no permitida" }, { status: 403 });
+    }
+
     const contentLength = Number(request.headers.get("content-length") || 0);
     if (contentLength > MAX_DRAFT_BODY_BYTES) {
       return Response.json({ error: "Payload demasiado grande" }, { status: 400 });
     }
 
     const ip = getClientIp(request);
-    const rate = checkIpRateLimit(`quote-draft:${ip}`, 30, 10 * 60 * 1000);
+    const rate = checkIpRateLimit(`quote-draft:${ip}`, 20, 10 * 60 * 1000);
     if (!rate.allowed) {
       return Response.json(
         { error: "Demasiadas solicitudes" },
@@ -49,7 +54,10 @@ export async function POST(request: Request) {
       );
     }
 
-    const body = await request.json();
+    const body = await readJsonBody<unknown>(request, MAX_DRAFT_BODY_BYTES);
+    if (!body) {
+      return Response.json({ error: "Payload invalido o demasiado grande" }, { status: 400 });
+    }
     const payload = sanitizeDraftPayload(body);
     if (!payload) {
       return Response.json({ error: "Datos invalidos" }, { status: 400 });
