@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import type { NextResponse } from "next/server";
 import {
   ADMIN_DEVICE_COOKIE,
   DEVICE_COOKIE_MAX_AGE,
@@ -11,6 +12,7 @@ import {
   SESSION_MAX_AGE,
   createAdminSessionToken,
   getAdminSessionDeviceId,
+  safeEqual,
 } from "@/lib/adminSession";
 import {
   consumeDeviceInvite,
@@ -19,7 +21,6 @@ import {
   resetAllTrustedDevices,
   verifyTrustedDevice,
 } from "@/lib/db/adminDevices";
-import { safeEqual } from "@/lib/adminSession";
 
 function getDeviceRecoveryKey(): string | null {
   const key = process.env.ADMIN_DEVICE_RECOVERY_KEY;
@@ -27,34 +28,30 @@ function getDeviceRecoveryKey(): string | null {
   return key;
 }
 
-function attachDeviceCookie(
-  response: Response,
-  deviceId: string,
-  secret: string
-): void {
-  const secure = process.env.NODE_ENV === "production";
-  const value = buildDeviceCookieValue(deviceId, secret);
-
-  response.headers.append(
-    "Set-Cookie",
-    `${ADMIN_DEVICE_COOKIE}=${value}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${DEVICE_COOKIE_MAX_AGE}${secure ? "; Secure" : ""}`
-  );
-}
-
 export async function attachAdminAuthCookies(
-  response: Response,
+  response: NextResponse,
   deviceId: string,
   secret: string
 ): Promise<void> {
   const token = await createAdminSessionToken(deviceId);
   const secure = process.env.NODE_ENV === "production";
+  const deviceValue = buildDeviceCookieValue(deviceId, secret);
 
-  response.headers.append(
-    "Set-Cookie",
-    `${ADMIN_COOKIE}=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${SESSION_MAX_AGE}${secure ? "; Secure" : ""}`
-  );
+  response.cookies.set(ADMIN_COOKIE, token, {
+    httpOnly: true,
+    secure,
+    sameSite: "strict",
+    path: "/",
+    maxAge: SESSION_MAX_AGE,
+  });
 
-  attachDeviceCookie(response, deviceId, secret);
+  response.cookies.set(ADMIN_DEVICE_COOKIE, deviceValue, {
+    httpOnly: true,
+    secure,
+    sameSite: "strict",
+    path: "/",
+    maxAge: DEVICE_COOKIE_MAX_AGE,
+  });
 }
 
 export async function resolveTrustedDeviceLogin(input: {

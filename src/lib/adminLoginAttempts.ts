@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 export const ATTEMPT_COOKIE = "glowup_admin_login_attempts";
-export const MAX_LOGIN_ATTEMPTS = 2;
+export const MAX_LOGIN_ATTEMPTS = 5;
 export const LOCKOUT_MS = 30 * 60 * 1000;
 
 interface AttemptPayload {
