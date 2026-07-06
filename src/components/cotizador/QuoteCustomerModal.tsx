@@ -7,12 +7,15 @@ import {
   validateQuoteCustomer,
   buildCustomerInfo,
 } from "@/lib/quoteCustomer";
+import { useTurnstile } from "@/hooks/useTurnstile";
+import TurnstileField from "@/components/security/TurnstileField";
 
 interface QuoteCustomerModalProps {
   open: boolean;
   onClose: () => void;
-  onConfirm: (info: QuoteCustomerInfo) => void;
+  onConfirm: (info: QuoteCustomerInfo, turnstileToken?: string) => void;
   isSubmitting: boolean;
+  requireTurnstile?: boolean;
 }
 
 export default function QuoteCustomerModal({
@@ -20,10 +23,13 @@ export default function QuoteCustomerModal({
   onClose,
   onConfirm,
   isSubmitting,
+  requireTurnstile = true,
 }: QuoteCustomerModalProps) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [errors, setErrors] = useState<{ name?: string; phone?: string }>({});
+  const turnstile = useTurnstile({ enabled: open && requireTurnstile });
+  const turnstileActive = requireTurnstile && turnstile.required;
 
   useEffect(() => {
     if (!open) return;
@@ -52,8 +58,10 @@ export default function QuoteCustomerModal({
       return;
     }
     setErrors({});
-    onConfirm(buildCustomerInfo({ name, phone }));
+    onConfirm(buildCustomerInfo({ name, phone }), turnstile.token ?? undefined);
   };
+
+  const canSubmit = !isSubmitting && (!turnstileActive || turnstile.canSubmit);
 
   return (
     <div className="fixed inset-0 z-[1100] flex items-end sm:items-center justify-center p-4 sm:p-6">
@@ -147,6 +155,8 @@ export default function QuoteCustomerModal({
             {errors.phone && <p className="text-xs text-red-400 mt-1.5">{errors.phone}</p>}
           </div>
 
+          {turnstileActive && <TurnstileField turnstile={turnstile} />}
+
           <div className="flex flex-col-reverse sm:flex-row gap-3 pt-1">
             <button
               type="button"
@@ -158,7 +168,7 @@ export default function QuoteCustomerModal({
             </button>
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={!canSubmit}
               className="flex-1 btn-primary py-3 justify-center disabled:opacity-70 disabled:cursor-wait"
             >
               <FileDown size={16} className="relative z-[1]" />

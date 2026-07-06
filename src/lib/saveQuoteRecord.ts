@@ -10,6 +10,7 @@ interface SaveQuoteRecordInput {
   filename?: string;
   source?: QuoteSource;
   extras?: QuoteDocumentExtras;
+  turnstileToken?: string;
 }
 
 export async function persistQuoteRecord(input: SaveQuoteRecordInput): Promise<void> {
@@ -27,6 +28,7 @@ export async function persistQuoteRecord(input: SaveQuoteRecordInput): Promise<v
         source: input.source ?? "public",
         extras: input.extras,
         totals,
+        turnstileToken: input.turnstileToken,
       }),
       keepalive: true,
     });

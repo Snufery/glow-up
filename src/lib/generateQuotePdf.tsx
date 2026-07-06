@@ -37,6 +37,7 @@ function downloadPdfViaForm(payload: {
   pdfTitle: string;
   extras?: QuoteDocumentExtras;
   source?: QuoteSource;
+  turnstileToken?: string;
 }) {
   const form = document.createElement("form");
   form.method = "POST";
@@ -64,7 +65,11 @@ export interface GenerateQuoteResult {
 export async function generateAndSendQuote(
   items: QuoteLineItem[],
   customer: QuoteCustomerInfo,
-  options?: { source?: QuoteSource; extras?: QuoteDocumentExtras }
+  options?: {
+    source?: QuoteSource;
+    extras?: QuoteDocumentExtras;
+    turnstileToken?: string;
+  }
 ): Promise<GenerateQuoteResult> {
   const quoteRef = generateQuoteRef();
   const filename = buildQuoteFilename(quoteRef, customer);
@@ -74,10 +79,28 @@ export async function generateAndSendQuote(
 
   const extras = options?.extras;
   const source = options?.source ?? "public";
-  const pdfPayload = { items, quoteRef, customer, filename, pdfTitle, extras, source };
+  const turnstileToken = options?.turnstileToken;
+  const pdfPayload = {
+    items,
+    quoteRef,
+    customer,
+    filename,
+    pdfTitle,
+    extras,
+    source,
+    turnstileToken,
+  };
 
   const recordQuote = () =>
-    persistQuoteRecord({ quoteRef, customer, items, filename, source, extras });
+    persistQuoteRecord({
+      quoteRef,
+      customer,
+      items,
+      filename,
+      source,
+      extras,
+      turnstileToken,
+    });
 
   if (isAndroid()) {
     downloadPdfViaForm(pdfPayload);

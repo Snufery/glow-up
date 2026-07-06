@@ -5,7 +5,8 @@ import type { QuoteDocumentExtras } from "@/lib/quoteCustomer";
 import { calcQuoteTotals } from "@/lib/quote";
 import { readJsonBody } from "@/lib/readJsonBody";
 import { checkIpRateLimit, getClientIp, isAllowedSameOrigin } from "@/lib/requestSecurity";
-import { verifyTurnstileToken } from "@/lib/turnstile";
+import { isAdminApiAuthorized } from "@/lib/adminApiGuard";
+import { verifyTurnstileUnlessAdmin } from "@/lib/turnstile";
 import {
   MAX_QUOTE_BODY_BYTES,
   parseQuoteCustomer,
@@ -66,7 +67,8 @@ export async function POST(request: Request) {
       return Response.json({ error: "Payload invalido o demasiado grande" }, { status: 400 });
     }
 
-    const turnstileOk = await verifyTurnstileToken(body.turnstileToken, ip);
+    const isAdmin = await isAdminApiAuthorized();
+    const turnstileOk = await verifyTurnstileUnlessAdmin(body.turnstileToken, ip, isAdmin);
     if (!turnstileOk) {
       return Response.json({ error: "Verificacion anti-bot requerida" }, { status: 403 });
     }

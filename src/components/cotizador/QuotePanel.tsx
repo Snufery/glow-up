@@ -64,7 +64,10 @@ export default function QuotePanel({ variant = "sidebar", documentExtras }: Quot
     setShowCustomerModal(true);
   };
 
-  const handleGenerateAndSend = async (customer: QuoteCustomerInfo) => {
+  const handleGenerateAndSend = async (
+    customer: QuoteCustomerInfo,
+    turnstileToken?: string
+  ) => {
     if (items.length === 0 || isGenerating) return;
     setIsGenerating(true);
     setLastSentRef(null);
@@ -76,6 +79,7 @@ export default function QuotePanel({ variant = "sidebar", documentExtras }: Quot
       const result = await generateAndSendQuote(items, customerWithAddress, {
         source: quoteSource,
         extras: documentExtras,
+        turnstileToken: quoteSource === "public" ? turnstileToken : undefined,
       });
       setLastSentRef(result.quoteRef);
       if (quoteSource === "public") {
@@ -332,6 +336,7 @@ export default function QuotePanel({ variant = "sidebar", documentExtras }: Quot
       onClose={() => !isGenerating && setShowCustomerModal(false)}
       onConfirm={handleGenerateAndSend}
       isSubmitting={isGenerating}
+      requireTurnstile={quoteSource === "public"}
     />
   );
 

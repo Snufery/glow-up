@@ -26,3 +26,12 @@ export async function verifyTurnstileToken(
 export function isTurnstileConfigured(): boolean {
   return Boolean(process.env.TURNSTILE_SECRET_KEY && process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
 }
+
+export async function verifyTurnstileUnlessAdmin(
+  token: string | undefined,
+  ip: string,
+  isAdmin: boolean
+): Promise<boolean> {
+  if (isAdmin) return true;
+  return verifyTurnstileToken(token, ip);
+}

@@ -5,6 +5,8 @@ import { Link2, Copy, Check, Loader2, Save } from "lucide-react";
 import { useQuote } from "@/context/QuoteContext";
 import { useHouse } from "@/context/HouseContext";
 import { useCotizadorFlow } from "@/context/CotizadorFlowContext";
+import { useTurnstile } from "@/hooks/useTurnstile";
+import TurnstileField from "@/components/security/TurnstileField";
 
 export default function QuoteDraftBar() {
   const { items } = useQuote();
@@ -14,10 +16,14 @@ export default function QuoteDraftBar() {
   const [shareUrl, setShareUrl] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const turnstile = useTurnstile();
 
   if (!flow.goalWizardDone || items.length === 0) return null;
 
+  const canSave = !saving && turnstile.canSubmit;
+
   const handleSave = async () => {
+    if (!canSave) return;
     setSaving(true);
     setError(null);
     setCopied(false);
@@ -27,6 +33,7 @@ export default function QuoteDraftBar() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          turnstileToken: turnstile.token ?? undefined,
           items,
           house: house.isConfigured
             ? {
@@ -61,6 +68,7 @@ export default function QuoteDraftBar() {
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al guardar");
+      turnstile.reset();
     } finally {
       setSaving(false);
     }
@@ -93,11 +101,13 @@ export default function QuoteDraftBar() {
         </div>
 
         {!shareUrl ? (
-          <button
+          <div className="flex flex-col items-stretch sm:items-end gap-3 sm:flex-shrink-0">
+            {turnstile.required && <TurnstileField turnstile={turnstile} />}
+            <button
             type="button"
             onClick={handleSave}
-            disabled={saving}
-            className="sm:flex-shrink-0 px-5 py-2.5 rounded-xl text-sm font-semibold border border-[var(--accent)]/30 text-[var(--accent)] hover:bg-[var(--accent)]/10 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+            disabled={!canSave}
+            className="px-5 py-2.5 rounded-xl text-sm font-semibold border border-[var(--accent)]/30 text-[var(--accent)] hover:bg-[var(--accent)]/10 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
           >
             {saving ? (
               <>
@@ -111,6 +121,7 @@ export default function QuoteDraftBar() {
               </>
             )}
           </button>
+          </div>
         ) : (
           <div className="flex items-center gap-2 w-full sm:w-auto min-w-0">
             <input

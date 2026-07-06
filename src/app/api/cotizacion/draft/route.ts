@@ -2,6 +2,7 @@ import type { QuoteLineItem } from "@/context/QuoteContext";
 import { saveQuoteDraft, type QuoteDraftPayload } from "@/lib/db/quoteDrafts";
 import { readJsonBody } from "@/lib/readJsonBody";
 import { checkIpRateLimit, getClientIp, isAllowedSameOrigin } from "@/lib/requestSecurity";
+import { verifyTurnstileToken } from "@/lib/turnstile";
 import { sanitizeQuoteItems } from "@/lib/validateQuoteItems";
 
 export const runtime = "nodejs";
@@ -54,10 +55,19 @@ export async function POST(request: Request) {
       );
     }
 
-    const body = await readJsonBody<unknown>(request, MAX_DRAFT_BODY_BYTES);
+    const body = await readJsonBody<{ turnstileToken?: string } & Record<string, unknown>>(
+      request,
+      MAX_DRAFT_BODY_BYTES
+    );
     if (!body) {
       return Response.json({ error: "Payload invalido o demasiado grande" }, { status: 400 });
     }
+
+    const turnstileOk = await verifyTurnstileToken(body.turnstileToken, ip);
+    if (!turnstileOk) {
+      return Response.json({ error: "Verificacion anti-bot requerida" }, { status: 403 });
+    }
+
     const payload = sanitizeDraftPayload(body);
     if (!payload) {
       return Response.json({ error: "Datos invalidos" }, { status: 400 });

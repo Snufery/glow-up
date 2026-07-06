@@ -1,7 +1,9 @@
 import type { QuoteLineItem } from "@/context/QuoteContext";
 import type { QuoteCustomerInfo, QuoteDocumentExtras } from "@/lib/quoteCustomer";
 import { generateQuotePdfBuffer } from "@/lib/generateQuotePdfBuffer";
+import { isAdminApiAuthorized } from "@/lib/adminApiGuard";
 import { checkIpRateLimit, getClientIp, isAllowedSameOrigin } from "@/lib/requestSecurity";
+import { verifyTurnstileUnlessAdmin } from "@/lib/turnstile";
 import { saveQuoteFromPayload } from "@/lib/db/saveQuoteFromPayload";
 import type { QuoteSource } from "@/lib/db/types";
 import {
@@ -21,6 +23,7 @@ interface PdfPayload {
   pdfTitle: string;
   extras?: QuoteDocumentExtras;
   source?: QuoteSource;
+  turnstileToken?: string;
 }
 
 function sanitizeFilename(filename: string): string {
@@ -69,6 +72,16 @@ export async function POST(request: Request) {
     const payload = await parsePayload(request);
     if (!payload?.items?.length || !payload.quoteRef || !payload.customer) {
       return new Response("Datos incompletos", { status: 400 });
+    }
+
+    const isAdmin = await isAdminApiAuthorized();
+    const turnstileOk = await verifyTurnstileUnlessAdmin(
+      payload.turnstileToken,
+      ip,
+      isAdmin
+    );
+    if (!turnstileOk) {
+      return new Response("Verificacion anti-bot requerida", { status: 403 });
     }
 
     const quoteRef = sanitizeQuoteRef(payload.quoteRef);
