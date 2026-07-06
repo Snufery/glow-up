@@ -156,6 +156,16 @@ export async function createDeviceInvite(): Promise<{ code: string; expiresAt: s
   return { code, expiresAt: expiresAt.toISOString() };
 }
 
+export async function resetAllTrustedDevices(): Promise<number> {
+  const sql = getSql();
+  if (!sql) return -1;
+  await ensureSchema();
+
+  await sql`DELETE FROM admin_device_invites`;
+  const removed = await sql`DELETE FROM admin_trusted_devices RETURNING id`;
+  return removed.length;
+}
+
 export async function consumeDeviceInvite(code: string): Promise<boolean> {
   const sql = getSql();
   if (!sql) return false;

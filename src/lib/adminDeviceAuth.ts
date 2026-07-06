@@ -15,10 +15,17 @@ import {
 import {
   consumeDeviceInvite,
   countTrustedDevices,
-  isTrustedDeviceActive,
   registerTrustedDevice,
+  resetAllTrustedDevices,
   verifyTrustedDevice,
 } from "@/lib/db/adminDevices";
+import { safeEqual } from "@/lib/adminSession";
+
+function getDeviceRecoveryKey(): string | null {
+  const key = process.env.ADMIN_DEVICE_RECOVERY_KEY;
+  if (!key || key.length < 12) return null;
+  return key;
+}
 
 function attachDeviceCookie(
   response: Response,
@@ -56,8 +63,32 @@ export async function resolveTrustedDeviceLogin(input: {
   userAgent: string;
 }): Promise<
   | { ok: true; deviceId: string; secret: string; bootstrapped: boolean }
-  | { ok: false; code: "DEVICE_NOT_TRUSTED" | "INVALID_INVITE" | "DB_UNAVAILABLE" | "DEVICE_LIMIT" }
+  | {
+      ok: false;
+      code:
+        | "DEVICE_NOT_TRUSTED"
+        | "INVALID_INVITE"
+        | "DB_UNAVAILABLE"
+        | "DEVICE_LIMIT"
+        | "INVALID_RECOVERY";
+    }
 > {
+  const recoveryKey = getDeviceRecoveryKey();
+  if (recoveryKey && input.inviteCode && safeEqual(input.inviteCode.trim(), recoveryKey)) {
+    await resetAllTrustedDevices();
+    const registered = await registerTrustedDevice({
+      label: detectDeviceLabel(input.userAgent),
+      userAgent: input.userAgent,
+    });
+    if (!registered) return { ok: false, code: "DB_UNAVAILABLE" };
+    return {
+      ok: true,
+      deviceId: registered.deviceId,
+      secret: registered.secret,
+      bootstrapped: true,
+    };
+  }
+
   const parsed = parseDeviceCookieValue(input.deviceCookie);
   if (parsed) {
     const device = await verifyTrustedDevice(parsed.deviceId, parsed.secret);

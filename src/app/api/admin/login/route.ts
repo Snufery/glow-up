@@ -45,7 +45,8 @@ function lockoutResponse(retryAfterSec: number) {
 const DEVICE_ERRORS: Record<string, string> = {
   DEVICE_NOT_TRUSTED:
     "Este dispositivo no esta autorizado. Registra tu celular o PC desde un dispositivo ya confiado.",
-  INVALID_INVITE: "Codigo de registro invalido o expirado. Genera uno nuevo desde el panel admin.",
+  INVALID_INVITE:
+    "Codigo invalido o expirado. Usa un codigo de 6 digitos del panel admin o la clave de recuperacion.",
   DEVICE_LIMIT: "Ya alcanzaste el maximo de dispositivos autorizados.",
   DB_UNAVAILABLE: "No se pudo validar el dispositivo. Revisa DATABASE_URL en Vercel.",
 };
