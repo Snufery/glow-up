@@ -1,3 +1,34 @@
+export interface ChannelOption {
+  channels: number;
+  price: number;
+  priceFormatted: string;
+}
+
+export interface ColorVariant {
+  id: string;
+  label: string;
+  hex: string;
+  image?: string;                    // imagen simple (productos normales)
+  images?: Record<number, string>;   // imagen por canal (interruptores): { 1: "...", 2: "...", etc }
+}
+
+export interface Product {
+  id: string;
+  name: string;
+  slug: string;
+  category: "iluminacion" | "control" | "seguridad" | "sensores" | "energia";
+  description: string;
+  price: number;
+  priceFormatted: string;
+  badge?: string;
+  features?: string[];
+  image?: string;
+  imageFit?: "cover" | "contain";
+  /** Fondo de la foto: blanco, negro o escena oscura (catálogo) */
+  imageBackground?: "white" | "black" | "dark";
+  colorVariants?: ColorVariant[];
+  channelOptions?: ChannelOption[];  // si existe, muestra selector de canales
+}
 export const products: Product[] = [
 {
     id: "4",
