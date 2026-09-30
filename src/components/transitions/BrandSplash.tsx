@@ -34,7 +34,6 @@ function hasSeenSplash(): boolean {
 function shouldSkipSplash(pathname: string, reducedMotion: boolean): boolean {
   if (reducedMotion) return true;
   if (pathname.startsWith("/admin")) return true;
-  if (pathname.startsWith("/cotizador")) return true;
   if (pathname !== "/") return true;
   if (hasSeenSplash()) return true;
   return false;

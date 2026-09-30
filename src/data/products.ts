@@ -1,44 +1,12 @@
-export interface ChannelOption {
-  channels: number;
-  price: number;
-  priceFormatted: string;
-}
-
-export interface ColorVariant {
-  id: string;
-  label: string;
-  hex: string;
-  image?: string;                    // imagen simple (productos normales)
-  images?: Record<number, string>;   // imagen por canal (interruptores): { 1: "...", 2: "...", etc }
-}
-
-export interface Product {
-  id: string;
-  name: string;
-  slug: string;
-  category: "iluminacion" | "control" | "seguridad" | "sensores" | "energia";
-  description: string;
-  price: number;
-  priceFormatted: string;
-  badge?: string;
-  features?: string[];
-  image?: string;
-  imageFit?: "cover" | "contain";
-  /** Fondo de la foto: blanco, negro o escena oscura (catálogo) */
-  imageBackground?: "white" | "black" | "dark";
-  colorVariants?: ColorVariant[];
-  channelOptions?: ChannelOption[];  // si existe, muestra selector de canales
-}
-
 export const products: Product[] = [
-  {
+{
     id: "4",
     name: "Interruptor Inteligente WiFi",
     slug: "interruptor-inteligente-wifi",
     category: "control",
     description: "Panel tactil de vidrio templado, control por app y voz. Compatible con Siri, Alexa y Google Home",
-    price: 68000,
-    priceFormatted: "$68.000",
+    price: 70000,
+    priceFormatted: "$70.000",
     badge: "Popular",
     features: [
       "Panel tactil de vidrio templado",
@@ -48,10 +16,10 @@ export const products: Product[] = [
       "Facil instalacion",
     ],
     channelOptions: [
-      { channels: 1, price: 68000, priceFormatted: "$68.000" },
-      { channels: 2, price: 70000, priceFormatted: "$70.000" },
-      { channels: 3, price: 75000, priceFormatted: "$75.000" },
-      { channels: 4, price: 85000, priceFormatted: "$85.000" },
+      { channels: 1, price: 70000, priceFormatted: "$70.000" },
+      { channels: 2, price: 76000, priceFormatted: "$76.000" },
+      { channels: 3, price: 86000, priceFormatted: "$86.000" },
+      { channels: 4, price: 98000, priceFormatted: "$98.000" },
     ],
     colorVariants: [
       {
@@ -78,7 +46,7 @@ export const products: Product[] = [
       },
     ],
   },
-  {
+{
     id: "1",
     name: "Foco LED Inteligente RGB",
     slug: "foco-led-inteligente-rgb",
@@ -98,7 +66,7 @@ export const products: Product[] = [
       "Bajo consumo energetico",
     ],
   },
-  {
+{
     id: "2",
     name: "Tira LED Smart WiFi",
     slug: "tira-led-smart-wifi",
@@ -116,27 +84,7 @@ export const products: Product[] = [
       "Sincronizacion con musica",
     ],
   },
-  {
-    id: "3",
-    name: "Imou Ranger",
-    slug: "imou-ranger",
-    category: "seguridad",
-    description:
-      "Camara interior WiFi 5MP con vision 360°, deteccion IA de personas y modo privacidad desde la app",
-    price: 200000,
-    priceFormatted: "$200.000",
-    badge: "Nuevo",
-    image: "/images/productos-opt/imou-ranger.jpg",
-    imageBackground: "white",
-    features: [
-      "Resolucion 5MP con calidad 3K",
-      "Rotacion 355° horizontal y 80° vertical",
-      "Deteccion IA de personas con seguimiento automatico",
-      "Vision nocturna IR y audio bidireccional",
-      "Modo privacidad y almacenamiento en SD o nube",
-    ],
-  },
-  {
+{
     id: "5",
     name: "Sensor de Movimiento PIR",
     slug: "sensor-de-movimiento-pir",
@@ -144,7 +92,7 @@ export const products: Product[] = [
     description: "Deteccion inteligente, notificaciones al celular, facil instalacion",
     price: 60000,
     priceFormatted: "$60.000",
-    image: "/images/productos-opt/sensor-pir.jpg",
+    image: "/images/productos-opt/sensor-movimiento-pir.jpg",
     imageBackground: "white",
     features: [
       "Deteccion hasta 6 metros",
@@ -154,14 +102,14 @@ export const products: Product[] = [
       "Montaje con adhesivo o tornillo",
     ],
   },
-  {
+{
     id: "6",
     name: "Enchufe Inteligente WiFi",
     slug: "enchufe-inteligente-wifi",
     category: "control",
     description: "Monitoreo de consumo, temporizador, control por voz y app",
-    price: 38000,
-    priceFormatted: "$38.000",
+    price: 40000,
+    priceFormatted: "$40.000",
     badge: "Top Ventas",
     image: "/images/productos-opt/socket-wifi.jpg",
     imageBackground: "white",
@@ -173,7 +121,7 @@ export const products: Product[] = [
       "Diseno compacto",
     ],
   },
-  {
+{
     id: "7",
     name: "Cerradura Ezviz DL05",
     slug: "cerradura-ezviz-dl05",
@@ -192,7 +140,27 @@ export const products: Product[] = [
       "IP65, alarma anti-manipulacion y bateria hasta 365 dias",
     ],
   },
-  {
+{
+    id: "21",
+    name: "Cerradura Esvis Reconocimiento Facial",
+    slug: "cerradura-ezviz-dl20fvs-plus",
+    category: "seguridad",
+    description:
+      "Cerradura inteligente Ezviz con reconocimiento facial 3D y venas de la palma, camara integrada, Wi-Fi y bateria recargable de 5000 mAh",
+    price: 1250000,
+    priceFormatted: "$1.250.000",
+    badge: "Nuevo",
+    image: "/images/productos-opt/cerradura-ezviz-dl20fvs-plus.jpg",
+    imageBackground: "white",
+    features: [
+      "Reconocimiento facial 3D y venas de la palma sin contacto",
+      "Huella, codigo, llave mecanica, Bluetooth y desbloqueo remoto por app",
+      "Camara frontal 1080x1960, pantalla IPS 4\" y vision nocturna IR",
+      "Wi-Fi 2.4 GHz y Bluetooth; alertas y videollamada en app EZVIZ",
+      "Bateria litio 5000 mAh recargable con carga de emergencia Type-C",
+    ],
+  },
+{
     id: "8",
     name: "Sensor de Temperatura y Humedad",
     slug: "sensor-temperatura-humedad",
@@ -200,7 +168,7 @@ export const products: Product[] = [
     description: "Monitoreo en tiempo real, historial, alertas automaticas",
     price: 50000,
     priceFormatted: "$50.000",
-    image: "/images/productos-opt/sensor-temperatura.jpg",
+    image: "/images/productos-opt/sensor-temperatura-humedad.jpg",
     imageBackground: "white",
     features: [
       "Precision de +/- 0.3 grados",
@@ -210,7 +178,7 @@ export const products: Product[] = [
       "Compatible con automatizaciones",
     ],
   },
-  {
+{
     id: "9",
     name: "Disyuntor Inteligente WiFi",
     slug: "disyuntor-inteligente-wifi",
@@ -229,15 +197,35 @@ export const products: Product[] = [
       "Programacion de horarios y estadisticas de consumo",
     ],
   },
-  {
+{
+    id: "3",
+    name: "Imou Ranger",
+    slug: "imou-ranger",
+    category: "seguridad",
+    description:
+      "Camara interior WiFi 5MP con vision 360°, deteccion IA de personas y modo privacidad desde la app",
+    price: 200000,
+    priceFormatted: "$200.000",
+    badge: "Nuevo",
+    image: "/images/imou-ranger-2-pro.jpg",
+    imageBackground: "white",
+    features: [
+      "Resolucion 5MP con calidad 3K",
+      "Rotacion 355° horizontal y 80° vertical",
+      "Deteccion IA de personas con seguimiento automatico",
+      "Vision nocturna IR y audio bidireccional",
+      "Modo privacidad y almacenamiento en SD o nube",
+    ],
+  },
+{
     id: "10",
-    name: "Camara Imou Cruiser SC 4K con Imou Sense",
+    name: "Camara Imou Cruiser 4K",
     slug: "camara-imou-cruiser-sc-4k",
     category: "seguridad",
     description:
       "Camara PTZ exterior 4K Ultra HD con vision nocturna a color, seguimiento inteligente y deteccion IA Imou Sense",
-    price: 340000,
-    priceFormatted: "$340.000",
+    price: 350000,
+    priceFormatted: "$350.000",
     badge: "Nuevo",
     image: "/images/productos-opt/camara-ptZ-4K.jpg",
     imageBackground: "white",
@@ -249,9 +237,9 @@ export const products: Product[] = [
       "Wi-Fi 6 y audio bidireccional",
     ],
   },
-  {
+{
     id: "11",
-    name: "Camara Imou Cruiser Dual 10MP con Imou Sense",
+    name: "Camara Imou Cruiser Dual 10MP",
     slug: "camara-imou-cruiser-dual-10mp",
     category: "seguridad",
     description:
@@ -269,15 +257,15 @@ export const products: Product[] = [
       "Audio bidireccional y almacenamiento en nube o SD",
     ],
   },
-  {
+{
     id: "12",
-    name: "Camara Imou Cruiser Triple 11MP con Imou Sense",
+    name: "Camara Imou Cruiser Triple 11MP",
     slug: "camara-imou-cruiser-triple-11mp",
     category: "seguridad",
     description:
       "Camara triple lente 3+3+5MP con cobertura 360°, Click2Track y algoritmos IA personalizables",
-    price: 475000,
-    priceFormatted: "$475.000",
+    price: 485000,
+    priceFormatted: "$485.000",
     badge: "Nuevo",
     image: "/images/productos-opt/camara-ptz-3lens.jpg",
     imageBackground: "white",
@@ -289,15 +277,36 @@ export const products: Product[] = [
       "Wi-Fi 6, doble ranura SD (hasta 1 TB) y luces de advertencia",
     ],
   },
-  {
+{
+    id: "20",
+    name: "Camara Imou Cruiser Z",
+    slug: "camara-imou-cruiser-z2x",
+    category: "seguridad",
+    description:
+      "Camara PTZ exterior Imou de un solo lente con zoom optico, vision nocturna a color, Wi-Fi y seguimiento inteligente",
+    price: 450000,
+    priceFormatted: "$450.000",
+    badge: "Nuevo",
+    image: "/images/productos-opt/imou-cruiser-z2x.jpg",
+    imageBackground: "white",
+    features: [
+      "Zoom optico de un solo lente para detalle a distancia",
+      "PTZ con cobertura panoramica e inclinacion remota",
+      "Vision nocturna a color con focos integrados",
+      "Wi-Fi, app Imou y audio bidireccional",
+      "Deteccion inteligente de personas y vehiculos",
+      "Uso exterior con carcasa resistente al clima",
+    ],
+  },
+{
     id: "13",
     name: "Sirena Inteligente Comunitaria",
     slug: "sirena-inteligente-comunitaria",
     category: "seguridad",
     description:
       "Kit de alarma comunitaria WiFi con sirena de 30W y 110 dB, control desde app y compatibilidad con Alexa y Google Home",
-    price: 149000,
-    priceFormatted: "$149.000",
+    price: 150000,
+    priceFormatted: "$150.000",
     badge: "Nuevo",
     image: "/images/productos-opt/sirena-comunitaria.jpg",
     imageBackground: "white",
@@ -309,7 +318,7 @@ export const products: Product[] = [
       "Alertas instantaneas a usuarios desde la app",
     ],
   },
-  {
+{
     id: "14",
     name: "Control Universal Inteligente",
     slug: "control-universal-inteligente",
@@ -328,17 +337,17 @@ export const products: Product[] = [
       "Instalacion sencilla, recarga USB-C y cobertura 360°",
     ],
   },
-  {
+{
     id: "15",
     name: "Sensor de Apertura Puerta y Ventana",
     slug: "sensor-apertura-puerta-ventana",
     category: "sensores",
     description:
       "Sensor magnetico Zigbee 3.0 para detectar apertura de puertas y ventanas con notificaciones en tiempo real",
-    price: 45000,
-    priceFormatted: "$45.000",
+    price: 60000,
+    priceFormatted: "$60.000",
     badge: "Nuevo",
-    image: "/images/productos-opt/sensor-apertura.jpg",
+    image: "/images/productos-opt/sensor-apertura-v3.png",
     imageBackground: "white",
     features: [
       "Deteccion magnetica de apertura y cierre",
@@ -348,7 +357,7 @@ export const products: Product[] = [
       "Bateria de larga duracion (hasta 1 año)",
     ],
   },
-  {
+{
     id: "16",
     name: "AX Home Hikvision WiFi",
     slug: "ax-home-hikvision-wifi",
@@ -368,7 +377,7 @@ export const products: Product[] = [
       "Compatible con sensores y perifericos AX Home",
     ],
   },
-  {
+{
     id: "17",
     name: "Videoportero Ezviz HP7",
     slug: "videoportero-ezviz-hp7",
@@ -388,7 +397,7 @@ export const products: Product[] = [
       "WiFi dual banda 2.4/5 GHz y almacenamiento SD o nube",
     ],
   },
-  {
+{
     id: "18",
     name: "Videoportero Ezviz HP7 Pro 4K",
     slug: "videoportero-ezviz-hp7-pro-4k",
@@ -407,9 +416,9 @@ export const products: Product[] = [
       "Wi-Fi 6, audio bidireccional y cambio de voz",
       "Hub central compatible con cerraduras y camaras EZVIZ",
     ],
-  },
-];
+  }
 
+];
 export const categories = [
   { id: "all", label: "Todos" },
   { id: "iluminacion", label: "Iluminacion" },

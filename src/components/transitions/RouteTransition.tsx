@@ -9,7 +9,6 @@ interface RouteTransitionProps {
 
 function getTransitionClass(pathname: string): string {
   if (pathname.startsWith("/admin")) return "route-enter-admin";
-  if (pathname.startsWith("/cotizador")) return "route-enter-fast";
   return "route-enter";
 }
 

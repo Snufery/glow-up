@@ -28,7 +28,7 @@ export async function POST(request: Request) {
   }
 
   const ip = getClientIp(request);
-  const rate = checkIpRateLimit(`analytics:${ip}`, 120, 60 * 1000);
+  const rate = checkIpRateLimit(`analytics:${ip}`, 60, 60 * 1000);
   if (!rate.allowed) {
     return Response.json(
       { error: "Demasiadas solicitudes" },

@@ -55,6 +55,12 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      { source: "/cotizador", destination: "/", permanent: false },
+      { source: "/cotizador/:path*", destination: "/", permanent: false },
+    ];
+  },
   async headers() {
     return [{ source: "/(.*)", headers: securityHeaders }];
   },

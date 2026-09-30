@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, useCallback, type MouseEvent as ReactMouseEvent } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import LazyImage from "@/components/LazyImage";
@@ -42,11 +42,100 @@ export default function Catalog() {
   const [selectedColors, setSelectedColors] = useState<Record<string, string>>({});
   const [selectedChannels, setSelectedChannels] = useState<Record<string, number>>({});
   const [modalProduct, setModalProduct] = useState<Product | null>(null);
+  const [imageZoomed, setImageZoomed] = useState(false);
+  const [imageScale, setImageScale] = useState(1);
   const [portalReady, setPortalReady] = useState(false);
+  const zoomStageRef = useRef<HTMLDivElement | null>(null);
+  const [zoomStageReady, setZoomStageReady] = useState(0);
+  const pinchRef = useRef<{ startDist: number; startScale: number } | null>(null);
+  const imageScaleRef = useRef(1);
+
+  const setZoomStageNode = useCallback((node: HTMLDivElement | null) => {
+    zoomStageRef.current = node;
+    setZoomStageReady((n) => n + 1);
+  }, []);
+
+  const ZOOM_MIN = 1;
+  const ZOOM_MAX = 4;
+
+  const clampImageScale = useCallback((value: number) => {
+    return Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, Math.round(value * 100) / 100));
+  }, []);
 
   useEffect(() => {
     setPortalReady(true);
   }, []);
+
+  useEffect(() => {
+    imageScaleRef.current = imageScale;
+  }, [imageScale]);
+
+  useEffect(() => {
+    if (!imageZoomed) {
+      setImageScale(1);
+      pinchRef.current = null;
+    }
+  }, [imageZoomed]);
+
+  useEffect(() => {
+    if (!imageZoomed) return;
+    const el = zoomStageRef.current;
+    if (!el) return;
+
+    const onWheel = (event: WheelEvent) => {
+      event.preventDefault();
+      event.stopPropagation();
+      const direction = event.deltaY > 0 ? -0.18 : 0.18;
+      const next = clampImageScale(imageScaleRef.current + direction);
+      imageScaleRef.current = next;
+      setImageScale(next);
+    };
+
+    const distanceFromTouches = (touches: TouchList) => {
+      const a = touches.item(0);
+      const b = touches.item(1);
+      if (!a || !b) return 0;
+      return Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+    };
+
+    const onTouchStart = (event: globalThis.TouchEvent) => {
+      if (event.touches.length === 2) {
+        pinchRef.current = {
+          startDist: distanceFromTouches(event.touches),
+          startScale: imageScaleRef.current,
+        };
+      }
+    };
+
+    const onTouchMove = (event: globalThis.TouchEvent) => {
+      if (event.touches.length !== 2 || !pinchRef.current) return;
+      event.preventDefault();
+      event.stopPropagation();
+      const dist = distanceFromTouches(event.touches);
+      if (pinchRef.current.startDist <= 0) return;
+      const ratio = dist / pinchRef.current.startDist;
+      const next = clampImageScale(pinchRef.current.startScale * ratio);
+      imageScaleRef.current = next;
+      setImageScale(next);
+    };
+
+    const onTouchEnd = () => {
+      pinchRef.current = null;
+    };
+
+    el.addEventListener("wheel", onWheel, { passive: false });
+    el.addEventListener("touchstart", onTouchStart, { passive: true });
+    el.addEventListener("touchmove", onTouchMove, { passive: false });
+    el.addEventListener("touchend", onTouchEnd);
+    el.addEventListener("touchcancel", onTouchEnd);
+    return () => {
+      el.removeEventListener("wheel", onWheel);
+      el.removeEventListener("touchstart", onTouchStart);
+      el.removeEventListener("touchmove", onTouchMove);
+      el.removeEventListener("touchend", onTouchEnd);
+      el.removeEventListener("touchcancel", onTouchEnd);
+    };
+  }, [imageZoomed, clampImageScale, zoomStageReady]);
 
   useEffect(() => {
     if (!modalProduct) return;
@@ -66,13 +155,20 @@ export default function Catalog() {
   useEffect(() => {
     if (!modalProduct) return;
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") closeProductModal();
+      if (event.key !== "Escape") return;
+      if (imageZoomed) {
+        setImageZoomed(false);
+        return;
+      }
+      closeProductModal();
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [modalProduct]);
+  }, [modalProduct, imageZoomed]);
 
   const openProductModal = (product: Product) => {
+    setImageZoomed(false);
+    setImageScale(1);
     setModalProduct(product);
     trackEvent("product_open", {
       productId: product.id,
@@ -82,7 +178,30 @@ export default function Catalog() {
   };
 
   const closeProductModal = () => {
+    setImageZoomed(false);
+    setImageScale(1);
     setModalProduct(null);
+  };
+
+  const openImageZoom = () => {
+    if (!getDisplayImage(modalProduct!)) return;
+    setImageScale(1);
+    setImageZoomed(true);
+  };
+
+  const closeImageZoom = () => {
+    setImageZoomed(false);
+    setImageScale(1);
+  };
+
+  const onZoomImageClick = (event: ReactMouseEvent) => {
+    event.stopPropagation();
+    if (imageScaleRef.current > 1.05) {
+      imageScaleRef.current = 1;
+      setImageScale(1);
+      return;
+    }
+    closeImageZoom();
   };
 
   const filtered = activeFilter === "all" ? products : products.filter((p) => p.category === activeFilter);
@@ -326,6 +445,8 @@ export default function Catalog() {
 
                 <div
                   className={`h-[200px] sm:h-[260px] relative shrink-0 ${
+                    getDisplayImage(modalProduct) ? "cursor-zoom-in" : ""
+                  } ${
                     getProductImageBackground(modalProduct, getSelectedColor(modalProduct)) === "white"
                       ? "ring-1 ring-inset ring-zinc-300/15"
                       : ""
@@ -336,6 +457,24 @@ export default function Catalog() {
                       getSelectedColor(modalProduct)
                     ),
                   }}
+                  onClick={getDisplayImage(modalProduct) ? openImageZoom : undefined}
+                  role={getDisplayImage(modalProduct) ? "button" : undefined}
+                  tabIndex={getDisplayImage(modalProduct) ? 0 : undefined}
+                  onKeyDown={
+                    getDisplayImage(modalProduct)
+                      ? (event) => {
+                          if (event.key === "Enter" || event.key === " ") {
+                            event.preventDefault();
+                            openImageZoom();
+                          }
+                        }
+                      : undefined
+                  }
+                  aria-label={
+                    getDisplayImage(modalProduct)
+                      ? `Ampliar imagen de ${modalProduct.name}`
+                      : undefined
+                  }
                 >
                   {getDisplayImage(modalProduct) ? (
                     <Image
@@ -358,6 +497,11 @@ export default function Catalog() {
                         {productIcons[modalProduct.slug] || productIcons["default"]}
                       </div>
                     </div>
+                  )}
+                  {getDisplayImage(modalProduct) && (
+                    <span className="pointer-events-none absolute bottom-3 right-3 rounded-lg bg-zinc-950/75 px-2.5 py-1 text-[0.65rem] font-medium text-zinc-200 border border-white/10">
+                      Toca para ampliar
+                    </span>
                   )}
                 </div>
 
@@ -447,6 +591,65 @@ export default function Catalog() {
                   </div>
                 </div>
               </div>
+          </div>,
+          document.body
+        )}
+
+      {portalReady &&
+        modalProduct &&
+        imageZoomed &&
+        getDisplayImage(modalProduct) &&
+        createPortal(
+          <div
+            className="fixed inset-0 z-[1300] flex items-center justify-center p-3 sm:p-8 bg-black/92 backdrop-blur-sm overscroll-contain"
+            onClick={closeImageZoom}
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Zoom de ${modalProduct.name}`}
+          >
+            <button
+              onClick={closeImageZoom}
+              className="absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center rounded-xl bg-zinc-900/90 border border-white/15 text-zinc-300 hover:text-white transition-all cursor-pointer"
+              aria-label="Cerrar zoom"
+            >
+              <X size={20} />
+            </button>
+            <div
+              ref={setZoomStageNode}
+              className="relative w-full max-w-4xl h-[min(88dvh,900px)] overflow-hidden touch-none select-none"
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                backgroundColor: getProductImageBackgroundColor(
+                  modalProduct,
+                  getSelectedColor(modalProduct)
+                ),
+                cursor: imageScale > 1 ? "zoom-out" : "zoom-in",
+              }}
+            >
+              <div
+                className="absolute inset-0 will-change-transform transition-transform duration-75 ease-out"
+                style={{
+                  transform: `scale(${imageScale})`,
+                  transformOrigin: "center center",
+                }}
+              >
+                <Image
+                  src={getDisplayImage(modalProduct)!}
+                  alt={`${modalProduct.name} ampliada`}
+                  fill
+                  sizes="(max-width: 1024px) 95vw, 900px"
+                  quality={95}
+                  draggable={false}
+                  className={
+                    getProductImageFit(modalProduct) === "cover"
+                      ? "object-cover pointer-events-auto"
+                      : "object-contain p-4 sm:p-8 pointer-events-auto"
+                  }
+                  onClick={onZoomImageClick}
+                  priority
+                />
+              </div>
+            </div>
           </div>,
           document.body
         )}
