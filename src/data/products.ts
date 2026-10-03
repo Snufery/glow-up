@@ -173,7 +173,7 @@ export const products: Product[] = [
   },
 {
     id: "21",
-    name: "Cerradura Esvis Reconocimiento Facial",
+    name: "Cerradura Ezviz Reconocimiento Facial",
     slug: "cerradura-ezviz-dl20fvs-plus",
     category: "seguridad",
     description:
